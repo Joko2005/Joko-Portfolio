@@ -13,7 +13,7 @@ export default function Home() {
     <div id="top" className="min-h-screen bg-bg text-ink">
       <Header />
 
-      <main className="mx-25 w-auto max-w-7xl py-12">
+      <main className="mx-25 w-auto max-w-7xl pb-12 pt-28">
         <HeroSection />
         <AboutSection />
         <SkillsSection />

@@ -17,6 +17,7 @@
   --color-border: #d8d3c8;
   --color-surface: #fdfcfa;
   --color-surface2: #f0ebe1;
+  --color-header-light: #F6F4EF;
 
   /* Font tokens from next/font variables. */
   --font-body: var(--font-instrument-serif);
