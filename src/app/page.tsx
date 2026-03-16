@@ -10,10 +10,10 @@ import {
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[#f5f0e8] text-[#111111]">
+    <div id="top" className="min-h-screen bg-bg text-ink">
       <Header />
 
-      <main className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6">
+      <main className="mx-25 w-auto max-w-7xl py-12">
         <HeroSection />
         <AboutSection />
         <SkillsSection />

@@ -12,14 +12,10 @@ const monoLabelClass = "font-mono text-[11px] tracking-[0.14em]";
 
 export function Header() {
 	return (
-		<header className="w-full px-4 py-4 sm:px-6">
+		<header className="w-auto mx-25 py-4">
 			<div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4">
-				<Link
-					href="/"
-					aria-label="Go to homepage"
-					className={`${pillBaseClass} px-3 font-syne text-16 font-extrabold text-[#111111]`}
-				>
-					JC.
+				<Link href="/" aria-label="Go to homepage" className={`${pillBaseClass} px-3`}>
+				  <img src="/logo.svg" alt="JC" className="h-auto w-auto" />
 				</Link>
 
 				<div className="flex items-center gap-2 sm:gap-3">
