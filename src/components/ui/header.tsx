@@ -17,7 +17,7 @@ export function Header() {
 				<Link
 					href="/"
 					aria-label="Go to homepage"
-					className={`${pillBaseClass} px-3 font-mono text-sm font-semibold text-[#111111]`}
+					className={`${pillBaseClass} px-3 font-syne text-16 font-extrabold text-[#111111]`}
 				>
 					JC.
 				</Link>

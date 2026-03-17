@@ -6,7 +6,7 @@ import {
   JourneySection,
   SkillsSection,
   WorkSection,
-} from "../sections";
+} from "../components/sections";
 
 export default function Home() {
   return (
