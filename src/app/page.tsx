@@ -1,63 +1,150 @@
+import Image from "next/image";
 import Link from "next/link";
+import { PiArrowUpRight, PiCube, PiEnvelopeSimple, PiGithubLogo, PiLinkedinLogo, PiPaintBrushBroad } from "react-icons/pi";
 import { EnterOnce } from "@/components/overview/EnterOnce";
 import { HeroGlow } from "@/components/overview/HeroGlow";
-import { ProjectSummary } from "@/components/projects/ProjectSummary";
-import { ExternalLink } from "@/components/ui";
+import { StackCard } from "@/components/overview/StackCard";
+import { ProjectCard } from "@/components/projects/ProjectCard";
+import type { SectionId } from "@/components/shell/nav";
+import { Card, CardLink, Chip, SectionHeader } from "@/components/ui";
 import { highlightedProjects } from "@/content/projects";
 import { site } from "@/content/site";
 
+const step = (i: number) => ({ "--i": i }) as React.CSSProperties;
+
+const explore: { href: string; section: SectionId; icon: React.ElementType; title: string; body: string }[] = [
+  { href: "/graphics", section: "graphics", icon: PiPaintBrushBroad, title: "Graphics", body: "Pubmats and other graphic design work." },
+  { href: "/playground", section: "playground", icon: PiCube, title: "Playground", body: "A 3D desk of my tools. Pick something up." },
+];
+
+/** Joko's photo; a labelled slot until site.photo is set. */
+function Portrait() {
+  if (site.photo) {
+    return (
+      <Image
+        src={site.photo}
+        alt={`Portrait of ${site.name}`}
+        width={640}
+        height={800}
+        priority
+        className="hidden aspect-4/5 w-full rounded-xl border border-line object-cover md:block"
+      />
+    );
+  }
+  return (
+    <div
+      role="img"
+      aria-label="Placeholder: your photo"
+      className="hidden aspect-4/5 w-full place-items-center rounded-xl border border-dashed border-line bg-surface p-4 text-center text-xs text-muted md:grid"
+    >
+      Your photo (800 × 1000)
+    </div>
+  );
+}
+
 export default function OverviewPage() {
   return (
-    <>
+    <div className="flex flex-col gap-12 md:gap-14">
       <EnterOnce />
-      <HeroGlow className="-mx-5 -mt-10 px-5 pb-16 pt-16 md:-mx-12 md:-mt-16 md:px-12 md:pb-24 md:pt-24 lg:-mx-16 lg:px-16">
-        <h1 style={{ "--i": 0 } as React.CSSProperties} className="enter font-display text-[clamp(3.5rem,10vw,6rem)] font-semibold leading-[0.95] tracking-[-0.03em]">{site.name}</h1>
-        <p style={{ "--i": 1 } as React.CSSProperties} className="enter mt-8 max-w-xl text-balance text-2xl font-semibold leading-snug md:text-3xl">{site.statement}</p>
-        <p style={{ "--i": 2 } as React.CSSProperties} className="enter mt-4 max-w-xl leading-relaxed text-muted">
-          {site.role}. {site.intro}
-        </p>
+
+      <HeroGlow className="enter grid gap-8 rounded-2xl border border-line bg-card p-6 md:grid-cols-[minmax(0,1fr)_13rem] md:items-center md:p-10 lg:grid-cols-[minmax(0,1fr)_16rem]">
+        <div>
+          <h1 className="font-display text-[clamp(2.5rem,6vw,4.25rem)] font-semibold leading-[1] tracking-[-0.03em]">
+            Hi, I&apos;m {site.name}.
+          </h1>
+          <div className="mt-5 flex flex-wrap gap-1.5">
+            {site.roles.map((r) => (
+              <Chip key={r} strong>
+                {r}
+              </Chip>
+            ))}
+          </div>
+          <p className="mt-6 max-w-xl text-balance font-display text-xl font-medium leading-snug md:text-2xl">
+            {site.statement}
+          </p>
+          <p className="mt-3 max-w-xl leading-relaxed text-muted">{site.intro}</p>
+          <div className="mt-7 flex flex-wrap gap-2">
+            <Link href="/projects" className="btn btn-primary pressable">
+              See my projects
+            </Link>
+            <a href={site.links.github} target="_blank" rel="noopener noreferrer" className="btn pressable">
+              <PiGithubLogo aria-hidden className="size-4" />
+              GitHub
+              <span className="sr-only"> (opens in a new tab)</span>
+            </a>
+          </div>
+        </div>
+        <Portrait />
       </HeroGlow>
 
-      <section
-        aria-labelledby="highlights"
-        style={{ "--i": 3 } as React.CSSProperties}
-        className="enter border-t border-line py-14 md:py-20"
-      >
-        <h2 id="highlights" className="text-xl font-semibold">
-          Highlighted work
-        </h2>
-        <ul className="mt-8 grid gap-14 md:grid-cols-2 md:gap-10">
+      <section aria-labelledby="highlights" className="enter" style={step(1)}>
+        <SectionHeader
+          id="highlights"
+          title="Highlighted work"
+          description="Two projects I'm proudest of, and my part in each."
+          action={{ label: "See all projects", href: "/projects" }}
+        />
+        <ul className="grid gap-4 md:grid-cols-2">
           {highlightedProjects.map((project) => (
             <li key={project.slug}>
-              <ProjectSummary project={project} />
+              <ProjectCard project={project} />
             </li>
           ))}
         </ul>
-        <Link href="/projects" className="link mt-12 inline-block">
-          See all projects
-        </Link>
       </section>
 
-      <section aria-labelledby="contact" className="border-t border-line py-14 md:py-20">
-        <h2 id="contact" className="text-xl font-semibold">
-          Contact
-        </h2>
-        <p className="mt-3 max-w-prose leading-relaxed text-muted">
-          I&apos;m looking for an OJT placement in UI/UX design or design engineering. Email is the fastest way to
-          reach me.
-        </p>
-        <div className="mt-6 flex flex-wrap gap-x-8 gap-y-3">
+      <section aria-labelledby="stack" className="enter" style={step(2)}>
+        <SectionHeader id="stack" title="Stack" description="What I design and build with." />
+        <StackCard />
+      </section>
+
+      <section aria-labelledby="explore" className="enter" style={step(3)}>
+        <SectionHeader id="explore" title="More to see" />
+        <ul className="grid gap-4 sm:grid-cols-2">
+          {explore.map(({ href, section, icon: Icon, title, body }) => (
+            <li key={href}>
+              <CardLink href={href} section={section} className="flex h-full items-start gap-4 p-5">
+                <span className="grid size-10 shrink-0 place-items-center rounded-xl border border-line text-ink group-hover:text-accent">
+                  <Icon aria-hidden className="size-5" />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block font-display font-semibold group-hover:text-accent">{title}</span>
+                  <span className="mt-0.5 block text-sm text-muted">{body}</span>
+                </span>
+                <PiArrowUpRight aria-hidden className="card-arrow size-4 shrink-0 text-muted group-hover:text-accent" />
+              </CardLink>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <Card as="section" aria-labelledby="contact" className="flex flex-col gap-6 p-6 md:flex-row md:items-center md:justify-between md:p-8">
+        <div>
+          <h2 id="contact" className="font-display text-xl font-semibold tracking-[-0.01em]">
+            Looking for an OJT placement
+          </h2>
+          <p className="mt-1 max-w-lg text-pretty text-sm leading-relaxed text-muted">
+            In UI/UX design or design engineering. Email is the fastest way to reach me.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
           {site.email ? (
-            <a href={`mailto:${site.email}`} className="link">
-              {site.email}
+            <a href={`mailto:${site.email}`} className="btn btn-primary pressable">
+              <PiEnvelopeSimple aria-hidden className="size-4" />
+              Email me
             </a>
           ) : (
-            <span className="text-sm text-muted">[Add your email in src/content/site.ts]</span>
+            <span className="btn border-dashed text-muted">[Add your email in src/content/site.ts]</span>
           )}
-          <ExternalLink href={site.links.github}>GitHub</ExternalLink>
-          {site.links.linkedin && <ExternalLink href={site.links.linkedin}>LinkedIn</ExternalLink>}
+          {site.links.linkedin && (
+            <a href={site.links.linkedin} target="_blank" rel="noopener noreferrer" className="btn pressable">
+              <PiLinkedinLogo aria-hidden className="size-4" />
+              LinkedIn
+              <span className="sr-only"> (opens in a new tab)</span>
+            </a>
+          )}
         </div>
-      </section>
-    </>
+      </Card>
+    </div>
   );
 }

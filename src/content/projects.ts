@@ -6,6 +6,8 @@ export type ProjectLink = { label: string; href: string };
 export type Project = {
   slug: string;
   title: string;
+  /** What kind of work this is, shown as the first chip. */
+  kind: string;
   summary: string;
   role: string;
   result: string;
@@ -19,6 +21,7 @@ export const projects: Project[] = [
   {
     slug: "avera",
     title: "AVERA",
+    kind: "Team thesis",
     summary: "Forensic signature-verification Android app with a machine-learning model.",
     role: "[Your role on the team]",
     result: "Completed as a team thesis project.",
@@ -30,6 +33,7 @@ export const projects: Project[] = [
   {
     slug: "cryolipo",
     title: "CryoLipo",
+    kind: "Shopify theme",
     summary: "Shopify store theme, designed and built with custom sections.",
     role: "Design and front-end development",
     result: "[One result, e.g. the store is live]",
@@ -41,6 +45,7 @@ export const projects: Project[] = [
   {
     slug: "resqline",
     title: "ResQLine",
+    kind: "[Kind of project]",
     summary: "[One line on what ResQLine does]",
     role: "[Your role]",
     result: "[One result]",
@@ -52,6 +57,7 @@ export const projects: Project[] = [
   {
     slug: "statera",
     title: "Statera",
+    kind: "[Kind of project]",
     summary: "[One line on what Statera does]",
     role: "[Your role]",
     result: "[One result]",

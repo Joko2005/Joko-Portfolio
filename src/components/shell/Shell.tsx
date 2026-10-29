@@ -1,57 +1,109 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { PiMagnifyingGlass } from "react-icons/pi";
+import { PiEnvelopeSimple, PiGithubLogo, PiMagnifyingGlass } from "react-icons/pi";
 import { site } from "@/content/site";
 import { CommandPalette, ShortcutHint } from "./CommandPalette";
-import { NAV, sectionFromPath } from "./nav";
+import { NAV, NAV_GROUPS, sectionFromPath } from "./nav";
 import { ThemeToggle } from "./ThemeToggle";
 
-function Brand() {
+/** Profile block: who this is and whether they're available. */
+function Brand({ compact = false }: { compact?: boolean }) {
   return (
-    <div>
-      <Link href="/" className="text-lg font-semibold tracking-tight">
-        {site.name}
-      </Link>
-      <p className="mt-1 flex items-center gap-2 text-sm text-muted">
-        <span aria-hidden className="inline-block size-1.5 rounded-full bg-ink" />
-        {site.status}
-      </p>
-    </div>
+    <Link href="/" className="flex items-center gap-3">
+      {site.photo ? (
+        <Image
+          src={site.photo}
+          alt=""
+          width={88}
+          height={88}
+          className={`shrink-0 rounded-full border border-line object-cover ${compact ? "size-9" : "size-11"}`}
+        />
+      ) : (
+        <span
+          aria-hidden
+          className={`grid shrink-0 place-items-center rounded-full border border-line bg-bg font-display font-semibold ${
+            compact ? "size-9 text-sm" : "size-11 text-base"
+          }`}
+        >
+          {site.name.charAt(0)}
+        </span>
+      )}
+      <span className="min-w-0">
+        <span className="block font-display font-semibold leading-tight">{site.name}</span>
+        <span className="mt-0.5 flex items-center gap-1.5 text-xs text-muted">
+          <span aria-hidden className="inline-block size-1.5 rounded-full bg-ink" />
+          {site.status}
+        </span>
+      </span>
+    </Link>
   );
 }
 
 function NavList({ pathname, onNavigate }: { pathname: string; onNavigate?: () => void }) {
   const current = sectionFromPath(pathname);
   return (
-    <ul className="flex flex-col gap-1">
-      {NAV.map((item) => {
-        const active = item.id === current;
-        return (
-          <li key={item.id}>
-            <Link
-              href={item.href}
-              data-section={item.id}
-              aria-current={active ? "page" : undefined}
-              onClick={onNavigate}
-              className={`relative flex items-center py-1.5 pl-4 transition-colors duration-150 ease-out hover:text-accent ${
-                active ? "font-semibold text-accent" : "text-muted"
-              }`}
-            >
-              <span
-                aria-hidden
-                className={`absolute left-0 top-1/2 h-4 w-0.5 -translate-y-1/2 bg-accent transition-transform duration-200 ease-out ${
-                  active ? "scale-y-100" : "scale-y-0"
-                }`}
-              />
-              {item.label}
-            </Link>
-          </li>
-        );
-      })}
-    </ul>
+    <div className="flex flex-col gap-5">
+      {NAV_GROUPS.map((group) => (
+        <div key={group}>
+          <p id={`nav-${group}`} className="px-3 pb-1.5 text-xs text-muted">
+            {group}
+          </p>
+          <ul aria-labelledby={`nav-${group}`} className="flex flex-col gap-0.5">
+            {NAV.filter((item) => item.group === group).map(({ id, label, href, icon: Icon }) => {
+              const active = id === current;
+              return (
+                <li key={id}>
+                  <Link
+                    href={href}
+                    data-section={id}
+                    aria-current={active ? "page" : undefined}
+                    onClick={onNavigate}
+                    className={`nav-item flex items-center gap-2.5 rounded-xl border px-3 py-2 text-sm ${
+                      active
+                        ? "border-line bg-bg font-medium text-ink"
+                        : "border-transparent text-muted hover:text-ink"
+                    }`}
+                  >
+                    <Icon aria-hidden className={`size-[1.125rem] shrink-0 ${active ? "text-accent" : ""}`} />
+                    {label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** Ways to reach Joko, pinned to the bottom of the sidebar. */
+function ContactLinks() {
+  return (
+    <div className="flex flex-col gap-1 text-sm">
+      {site.email ? (
+        <a href={`mailto:${site.email}`} className="flex items-center gap-2 text-muted hover:text-ink">
+          <PiEnvelopeSimple aria-hidden className="size-4" />
+          <span className="truncate">{site.email}</span>
+        </a>
+      ) : (
+        <span className="text-xs text-muted">[Add your email]</span>
+      )}
+      <a
+        href={site.links.github}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center gap-2 text-muted hover:text-ink"
+      >
+        <PiGithubLogo aria-hidden className="size-4" />
+        GitHub
+        <span className="sr-only"> (opens in a new tab)</span>
+      </a>
+    </div>
   );
 }
 
@@ -71,14 +123,16 @@ export function Shell({ children }: { children: React.ReactNode }) {
       </a>
 
       {/* Desktop sidebar */}
-      <aside className="sticky top-0 hidden h-dvh flex-col gap-12 border-r border-line bg-surface px-6 py-8 md:flex">
-        <Brand />
+      <aside className="sticky top-0 hidden h-dvh flex-col gap-8 overflow-y-auto border-r border-line bg-surface px-4 py-6 md:flex">
+        <div className="px-1">
+          <Brand />
+        </div>
         <div className="flex flex-col gap-6">
           <button
             type="button"
             aria-haspopup="dialog"
             onClick={() => setPaletteOpen(true)}
-            className="pressable flex items-center gap-2 border border-line bg-bg px-3 py-2 text-sm text-muted hover:text-ink"
+            className="pressable flex items-center gap-2 rounded-xl border border-line bg-bg px-3 py-2 text-sm text-muted hover:text-ink"
           >
             <PiMagnifyingGlass aria-hidden className="size-4" />
             <span className="mr-auto">Search</span>
@@ -88,15 +142,16 @@ export function Shell({ children }: { children: React.ReactNode }) {
             <NavList pathname={pathname} />
           </nav>
         </div>
-        <div className="mt-auto">
+        <div className="mt-auto flex flex-col gap-4 border-t border-line px-1 pt-5">
+          <ContactLinks />
           <ThemeToggle />
         </div>
       </aside>
 
       {/* Mobile top bar */}
       <header className="sticky top-0 z-40 border-b border-line bg-bg md:hidden">
-        <div className="flex items-center justify-between px-5 py-4">
-          <Brand />
+        <div className="flex items-center justify-between px-5 py-3">
+          <Brand compact />
           <div className="flex items-center gap-5">
             <button
               type="button"
@@ -122,9 +177,12 @@ export function Shell({ children }: { children: React.ReactNode }) {
           </div>
         </div>
         {menuOpen && (
-          <nav id="mobile-nav" aria-label="Main" className="flex flex-col gap-6 border-t border-line px-5 py-5">
+          <nav id="mobile-nav" aria-label="Main" className="flex flex-col gap-6 border-t border-line px-3 py-5">
             <NavList pathname={pathname} onNavigate={() => setMenuOpen(false)} />
-            <ThemeToggle />
+            <div className="flex flex-col gap-4 border-t border-line px-3 pt-5">
+              <ContactLinks />
+              <ThemeToggle />
+            </div>
           </nav>
         )}
       </header>
