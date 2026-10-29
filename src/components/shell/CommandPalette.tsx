@@ -31,7 +31,7 @@ function useIsMac() {
 export function ShortcutHint() {
   const mac = useIsMac();
   return (
-    <kbd className="font-sans text-xs text-muted">
+    <kbd className="font-sans text-[0.8125rem] text-muted">
       {mac ? "⌘" : "Ctrl"} K
     </kbd>
   );
@@ -159,7 +159,7 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
         onOpenChange(false);
       }}
       onClick={(e) => e.target === e.currentTarget && onOpenChange(false)}
-      className="mx-auto mt-[12vh] w-[min(36rem,calc(100%-2rem))] rounded-3xl bg-bg p-0 text-ink shadow-[0_24px_64px_-16px_rgb(0_0_0/0.35)] backdrop:bg-black/40 dark:backdrop:bg-black/70"
+      className="mx-auto mt-[12vh] w-[min(36rem,calc(100%-2rem))] rounded-3xl bg-bg p-0 text-ink shadow-[0_24px_64px_-16px_rgb(0_0_0/0.35)] backdrop:bg-black/40 dark:backdrop:bg-black/70" // taste-skill-ignore: a modal floats, so it keeps its shadow
     >
       {/* Contents mount only while open: the theme label is unknown during server render. */}
       {open && (
@@ -183,7 +183,7 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
             onKeyDown={onKeyDown}
             className="h-12 w-full bg-transparent text-base outline-none placeholder:text-muted"
           />
-          <kbd className="shrink-0 font-sans text-xs text-muted">Esc</kbd>
+          <kbd className="shrink-0 font-sans text-[0.8125rem] text-muted">Esc</kbd>
         </div>
 
         <div id={`${baseId}-list`} role="listbox" aria-label="Results" className="max-h-[min(40rem,calc(70vh-4rem))] overflow-y-auto py-2">
@@ -198,7 +198,7 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
             const headingId = `${baseId}-${group}`;
             return (
               <div key={group} role="group" aria-labelledby={headingId} className="pb-2">
-                <div id={headingId} role="presentation" className="px-5 pb-1 pt-2 text-xs text-muted">
+                <div id={headingId} role="presentation" className="px-5 pb-1 pt-2 text-[0.8125rem] text-muted">
                   {group}
                 </div>
                 {items.map((c) => {

@@ -146,36 +146,6 @@
   }
 }
 
-/* Overview first-load stagger: the one entrance on the site.
-   Waits for the first-visit intro, plays once per page load, fades only under reduced motion. */
-@keyframes enter {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-}
-@keyframes enter-fade {
-  from {
-    opacity: 0;
-  }
-}
-.enter {
-  --enter-offset: 2300ms;
-  animation: enter 500ms var(--ease-out) backwards;
-  animation-delay: calc(var(--enter-offset) + var(--i, 0) * 60ms);
-}
-.intro-seen .enter {
-  --enter-offset: 0ms;
-}
-.overview-entered .enter {
-  animation: none;
-}
-@media (prefers-reduced-motion: reduce) {
-  .enter {
-    animation-name: enter-fade;
-  }
-}
-
 /* A palette or desk jump to /projects#slug marks where it landed. */
 .project-anchor:is(:target, [data-target]) h2 {
   color: var(--accent);
@@ -228,29 +198,11 @@
   }
 }
 
-/* Filtered chips fade in on mount with a tiny stagger. */
-.chip-in {
-  transition:
-    opacity 150ms var(--ease-out),
-    transform 150ms var(--ease-out);
-  transition-delay: calc(var(--i, 0) * 20ms);
-  @starting-style {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .card-link:active,
   .card-link:hover .card-arrow,
   .card-link:hover .card-media {
     transform: none;
-  }
-  .chip-in {
-    transition-property: opacity;
-    @starting-style {
-      transform: none;
-    }
   }
 }
 
@@ -378,7 +330,7 @@
   border-radius: 9999px;
   background: var(--surface);
   padding: 4px;
-  font-size: 0.9375rem;
+  font-size: 1rem;
   font-weight: 500;
 }
 .switch button {
@@ -387,23 +339,14 @@
   border-radius: 9999px;
   padding: 0.5rem 1.1rem;
   color: var(--muted);
-  transition: color 200ms var(--ease-out);
+  transition:
+    color 200ms var(--ease-out),
+    background-color 200ms var(--ease-out);
 }
 .switch button[aria-pressed="true"] {
+  background: var(--ink);
   color: var(--bg);
 }
-.switch-thumb {
-  position: absolute;
-  inset: 4px auto 4px 4px;
-  width: calc(50% - 4px);
-  border-radius: 9999px;
-  background: var(--ink);
-  transition: translate 260ms var(--ease-out);
-}
-.switch[data-built="true"] .switch-thumb {
-  translate: 100% 0;
-}
-
 /* Statement: the two lines share one slot and swap with a short roll. */
 .statement {
   display: grid;
@@ -434,8 +377,128 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .switch-thumb,
   .statement > span {
     transition-property: opacity;
   }
+}
+
+/* ---- Overview sections ---- */
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 2.5vw, 2.25rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+/* Work index: big names, the active one in full ink. */
+.work-name {
+  font-family: var(--font-display);
+  font-size: clamp(2.75rem, 5vw, 4.5rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  transition: color 200ms var(--ease-out);
+}
+/* Inactive stills are hidden outright once faded, so their titles aren't text lying under the active one. */
+.work-still {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 200ms var(--ease-out),
+    visibility 0s linear 200ms;
+}
+.work-still.is-active {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 200ms var(--ease-out),
+    visibility 0s;
+}
+.work-row:focus-visible {
+  outline-offset: 6px;
+  border-radius: 0.75rem;
+}
+
+/* About: a statement-sized paragraph with the portrait as its drop capital. */
+.about-text {
+  font-size: clamp(1.375rem, 2vw, 1.75rem);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  max-width: 44ch;
+}
+
+/* Contact: display-size rows on flat bands that invert under the pointer. */
+.contact-row {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  min-height: 9rem;
+  border-radius: 1.5rem;
+  background: var(--surface);
+  padding: 1.25rem;
+  transition:
+    background-color 200ms var(--ease-out),
+    color 200ms var(--ease-out);
+}
+li:nth-child(even) > .contact-row {
+  background: var(--card);
+}
+.contact-value {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 4.5rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  overflow-wrap: anywhere;
+}
+.contact-hello {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+.contact-arrow {
+  display: grid;
+  place-items: center;
+  width: 0.9em;
+  height: 0.9em;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background: var(--ink);
+  color: var(--bg);
+  font-size: clamp(2rem, 5vw, 4.5rem);
+  transition: rotate 300ms var(--ease-out);
+}
+.contact-arrow svg {
+  width: 45%;
+  height: 45%;
+}
+@media (hover: hover) and (pointer: fine) {
+  a.contact-row:hover {
+    background: var(--ink);
+    color: var(--bg);
+  }
+  a.contact-row:hover .contact-arrow {
+    background: var(--bg);
+    color: var(--ink);
+    rotate: 45deg;
+  }
+}
+@media (max-width: 40rem) {
+  .contact-row {
+    min-height: 5.25rem;
+    padding: 1rem;
+  }
+}
+
+/* Footer: the name fitted margin to margin. */
+.footer-mark {
+  font-family: var(--font-display);
+  font-size: 40.5cqi;
+  font-weight: 600;
+  line-height: 0.8;
+  letter-spacing: -0.05em;
+  white-space: nowrap;
+  margin-inline-start: -0.04em;
 }

@@ -1,99 +1,131 @@
-import { PiArrowUpRight, PiCube, PiEnvelopeSimple, PiLinkedinLogo, PiPaintBrushBroad } from "react-icons/pi";
-import { EnterOnce } from "@/components/overview/EnterOnce";
+import Image from "next/image";
+import { PiArrowUpRight } from "react-icons/pi";
 import { Hero } from "@/components/overview/Hero";
-import { StackCard } from "@/components/overview/StackCard";
-import { ProjectCard } from "@/components/projects/ProjectCard";
-import type { SectionId } from "@/components/shell/nav";
-import { Card, CardLink, SectionHeader } from "@/components/ui";
-import { highlightedProjects } from "@/content/projects";
+import { WorkIndex } from "@/components/overview/WorkIndex";
 import { site } from "@/content/site";
+import { stack } from "@/content/stack";
+import { work } from "@/content/work";
 
-const step = (i: number) => ({ "--i": i }) as React.CSSProperties;
+/** Square portrait floated into the paragraph like a drop capital; a monogram until site.photo is set. */
+function DropPortrait() {
+  const cls = "float-left mr-[0.5em] mt-[0.2em] size-[3.6em] rounded-2xl";
+  if (site.photo) {
+    return <Image src={site.photo} alt={`Portrait of ${site.name}`} width={240} height={240} className={`${cls} object-cover`} />;
+  }
+  return (
+    <span aria-hidden className={`${cls} grid place-items-center bg-ink text-bg`}>
+      <span className="font-display text-[1.3em] font-semibold leading-none">{site.name.charAt(0)}</span>
+    </span>
+  );
+}
 
-const explore: { href: string; section: SectionId; icon: React.ElementType; title: string; body: string }[] = [
-  { href: "/graphics", section: "graphics", icon: PiPaintBrushBroad, title: "Graphics", body: "Pubmats and other graphic design work." },
-  { href: "/playground", section: "playground", icon: PiCube, title: "Playground", body: "A 3D desk of my tools. Pick something up." },
+const facts: { term: string; detail: React.ReactNode }[] = [
+  { term: "Status", detail: site.status },
+  { term: "Does", detail: "UI/UX design and front-end development" },
+  { term: "Works with", detail: stack.flatMap((g) => g.items).join(", ") },
+  {
+    term: "Elsewhere",
+    detail: (
+      <a href={site.links.github} target="_blank" rel="noopener noreferrer" className="link">
+        GitHub
+        <span className="sr-only"> (opens in a new tab)</span>
+      </a>
+    ),
+  },
 ];
+
+type ContactRow = { label: string; value: string; href?: string; external?: boolean };
+
+const contactRows: ContactRow[] = [
+  site.email
+    ? { label: "Email", value: site.email, href: `mailto:${site.email}` }
+    : { label: "Email", value: "[Add your email]" },
+  { label: "GitHub", value: site.links.github.replace("https://", ""), href: site.links.github, external: true },
+  ...(site.links.linkedin
+    ? [{ label: "LinkedIn", value: "LinkedIn", href: site.links.linkedin, external: true }]
+    : []),
+];
+
+const helloHref = site.email
+  ? `mailto:${site.email}?subject=${encodeURIComponent("OJT placement")}`
+  : site.links.github;
 
 export default function OverviewPage() {
   return (
-    <div className="flex flex-col gap-12 md:gap-14">
-      <EnterOnce />
-
+    <div className="flex flex-col">
       <Hero name={site.name} role={`${site.role}. ${site.status}.`} intro={site.intro} />
 
-      <section id="work" aria-labelledby="highlights" className="enter scroll-mt-8" style={step(1)}>
-        <SectionHeader
-          id="highlights"
-          title="Highlighted work"
-          description="Two projects I'm proudest of, and my part in each."
-          action={{ label: "See all projects", href: "/projects" }}
-        />
-        <ul className="grid gap-4 md:grid-cols-2">
-          {highlightedProjects.map((project) => (
-            <li key={project.slug}>
-              <ProjectCard project={project} />
+      <section id="work" aria-labelledby="work-title" className="reveal scroll-mt-8 pt-24 md:pt-40">
+        <h2 id="work-title" className="section-title">
+          Selected work
+        </h2>
+        <div className="mt-10">
+          <WorkIndex items={work} />
+        </div>
+      </section>
+
+      <section aria-labelledby="about-title" className="reveal pt-28 md:pt-48">
+        <h2 id="about-title" className="section-title">
+          About
+        </h2>
+        <div className="mt-10 grid gap-10 lg:grid-cols-12 lg:gap-8">
+          <div className="lg:col-span-9 lg:col-start-4 lg:row-start-1">
+            <p className="about-text" data-reveal>
+              <DropPortrait />
+              <span className="text-ink">I&apos;m {site.name},</span> a UI/UX designer who builds what I design. I shape an
+              interface first, then write the code behind it, with as much care for how the code is structured as for how
+              the page looks. Recent work: AVERA, a team thesis app that checks signatures with machine learning, and
+              CryoLipo, a Shopify theme I designed and built.
+            </p>
+            <p className="about-text mt-[1.2em] text-muted" data-reveal>
+              I&apos;m looking for an OJT placement in UI/UX design or design engineering.
+            </p>
+          </div>
+          <dl data-reveal className="grid content-start grid-cols-2 gap-x-6 gap-y-5 text-base sm:grid-cols-4 lg:col-span-3 lg:row-start-1 lg:grid-cols-1">
+            {facts.map((f) => (
+              <div key={f.term}>
+                <dt className="text-muted">{f.term}</dt>
+                <dd className="mt-1">{f.detail}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </section>
+
+      <section aria-labelledby="contact-title" className="reveal pt-28 md:pt-48">
+        <h2 id="contact-title" className="section-title">
+          Contact
+        </h2>
+        <ul className="mt-10 flex flex-col gap-2">
+          {contactRows.map((row) => (
+            <li key={row.label} data-reveal>
+              {row.href ? (
+                <a
+                  href={row.href}
+                  {...(row.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                  aria-label={`${row.label}: ${row.value}`}
+                  className="contact-row"
+                >
+                  <span className="contact-value">{row.value}</span>
+                  {row.external && <span className="sr-only"> (opens in a new tab)</span>}
+                </a>
+              ) : (
+                <div className="contact-row">
+                  <span className="contact-value text-muted">{row.value}</span>
+                </div>
+              )}
             </li>
           ))}
+          <li data-reveal>
+            <a href={helloHref} className="contact-row contact-hello" data-cursor="Write">
+              <span className="contact-value">Say hello</span>
+              <span aria-hidden className="contact-arrow">
+                <PiArrowUpRight />
+              </span>
+            </a>
+          </li>
         </ul>
       </section>
-
-      <section aria-labelledby="stack" className="enter" style={step(2)}>
-        <SectionHeader id="stack" title="Stack" description="What I design and build with." />
-        <StackCard />
-      </section>
-
-      <section aria-labelledby="explore" className="enter" style={step(3)}>
-        <SectionHeader id="explore" title="More to see" />
-        <ul className="grid gap-4 sm:grid-cols-2">
-          {explore.map(({ href, section, icon: Icon, title, body }) => (
-            <li key={href}>
-              <CardLink href={href} section={section} className="flex h-full items-start gap-4 p-5">
-                <span className="grid size-10 shrink-0 place-items-center rounded-full bg-surface text-ink group-hover:text-accent">
-                  <Icon aria-hidden className="size-5" />
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block font-display font-semibold group-hover:text-accent">{title}</span>
-                  <span className="mt-0.5 block text-sm text-muted">{body}</span>
-                </span>
-                <PiArrowUpRight aria-hidden className="card-arrow size-4 shrink-0 text-muted group-hover:text-accent" />
-              </CardLink>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <Card
-        as="section"
-        aria-labelledby="contact"
-        style={step(4)}
-        className="enter flex flex-col gap-6 p-6 md:flex-row md:items-center md:justify-between md:p-8">
-        <div>
-          <h2 id="contact" className="font-display text-xl font-semibold tracking-[-0.01em]">
-            Looking for an OJT placement
-          </h2>
-          <p className="mt-1 max-w-lg text-pretty text-sm leading-relaxed text-muted">
-            In UI/UX design or design engineering. Email is the fastest way to reach me.
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {site.email ? (
-            <a href={`mailto:${site.email}`} className="btn btn-primary pressable">
-              <PiEnvelopeSimple aria-hidden className="size-4" />
-              Email me
-            </a>
-          ) : (
-            <span className="btn text-muted">[Add your email in src/content/site.ts]</span>
-          )}
-          {site.links.linkedin && (
-            <a href={site.links.linkedin} target="_blank" rel="noopener noreferrer" className="btn pressable">
-              <PiLinkedinLogo aria-hidden className="size-4" />
-              LinkedIn
-              <span className="sr-only"> (opens in a new tab)</span>
-            </a>
-          )}
-        </div>
-      </Card>
     </div>
   );
 }

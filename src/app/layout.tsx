@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 
 // Runs before paint: marks script support (hero parts start hidden), and lets repeat visitors
 // and reduced-motion users skip the intro without a flash.
-const introScript = `document.documentElement.classList.add("js");try{if(sessionStorage.getItem("intro-seen")||matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("intro-seen")}catch(e){}`;
+const introScript = `document.documentElement.classList.add("js");try{if(/[?&]nointro/.test(location.search)||sessionStorage.getItem("intro-seen")||matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("intro-seen")}catch(e){}`;
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (

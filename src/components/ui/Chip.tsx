@@ -10,7 +10,7 @@ export function Chip({
 }) {
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs ${
+      className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[0.8125rem] ${
         strong ? "bg-ink text-bg" : "bg-surface text-ink"
       } ${className}`}
     >

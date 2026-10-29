@@ -4,8 +4,11 @@ Source of truth for the visual system. Product truth lives in PRODUCT.md.
 
 ## Concept
 
-The interface is black and white. Color appears only where the visitor interacts.
-"Composed outside, creative inside": a quiet monochrome shell, color as the reward for interaction.
+**The name as a monument; a designer who builds what he designs.**
+The page performs Joko's one-line claim: things arrive first as an outline (the design), then fill solid (the build). The loader draws JOKO in outline and fills it; the hero's 3D cursor arrow turns from its blueprint edges into a glossy solid as you scroll or flip the **Design / Build** switch.
+The shell stays quiet and black-and-white; colour is the reward for interaction (the cursor, the switch, the work previews).
+
+Direction dealt by design-taste-frontend: *The name as a monument* (seed 743643700), palette kept from the brand.
 
 ## Color
 
@@ -13,132 +16,112 @@ The interface is black and white. Color appears only where the visitor interacts
 
 | Token | Light | Dark | Use |
 |---|---|---|---|
-| `bg` | `#FFFFFF` | `#000000` | Page background |
-| `surface` | `#F3F3F3` | `#161616` | Sidebar, raised areas |
-| `ink` | `#000000` | `#FFFFFF` | Text, icons, focus ring |
-| `muted` | `#6E6E6E` | `#8E8E8E` | Secondary text |
-| `line` | `#E2E2E2` | `#262626` | Dividers, borders |
-| `card` | `#F7F7F7` | `#0E0E0E` | Card fill (one step off `bg`) |
+| `bg` | `#FFFFFF` | `#000000` | Page ground |
+| `surface` | `#F3F3F3` | `#161616` | Sidebar, mobile bar, bands, pills |
+| `card` | `#F7F7F7` | `#0E0E0E` | Second band tone, cards |
+| `ink` | `#000000` | `#FFFFFF` | Text, primary fill, footer ground |
+| `muted` | `#6E6E6E` | `#8E8E8E` | Secondary text, inactive work names |
+| `line` | `#E2E2E2` | `#262626` | Link underlines only (no rules or outlines) |
 
-### Section colors (interaction only)
+### Section colors
 
-Each sidebar section owns one hue. It appears only on hover, focus, press, and the active sidebar item. All values pass 4.5:1 text contrast on their theme's `bg`.
-
-| Section | Light | Dark | Contrast (light / dark) |
-|---|---|---|---|
-| Overview | `#1D4ED8` blue | `#7B9CFF` | 6.7 / 8.0 |
-| Projects | `#C2410C` orange | `#FF8A3D` | 5.2 / 9.0 |
-| Graphics | `#0369A1` sky | `#4FC3F7` | 5.9 / 10.5 |
-| Playground | `#A64B00` amber | `#FFB547` | 5.8 / 12.0 |
+| Section | Light | Dark |
+|---|---|---|
+| Overview | `#1D4ED8` blue | `#7B9CFF` |
+| Projects | `#C2410C` orange | `#FF8A3D` |
+| Graphics | `#0369A1` sky | `#4FC3F7` |
+| Playground | `#A64B00` amber | `#FFB547` |
 
 Rules:
-- Expose the current section's hue as `--accent` on the page wrapper; components only use `--accent`.
-- Color is never the only signal: active item also changes weight/position; focus also gets an outline.
-- Touch devices see color through active and pressed states.
-- Project and graphic-design visuals always render in full color. Never gray out the work.
-- No other accent colors, gradients as decoration, or tinted near-blacks.
+- The current section's hue is `--accent`; components read `--accent`, never raw hex.
+- Hues appear on interaction (active nav icon, hover, the desk) and as whole fields in the work previews. The hero arrow's solid is the Overview hue.
+- Surfaces are separated by a tone step, never a line or a shadow. Only the command palette (a real modal) has a shadow.
+- No gradients, glass, or tinted near-blacks.
 
 ## Typography
 
 - **One family, two cuts: Funnel** by NORD ID (SIL Open Font License, free for commercial use), loaded with `next/font/google`.
-  - **Funnel Display**: headings only (hero name, page titles, section and card titles). Semibold, tracking -0.03em at large sizes, max 6rem.
-  - **Funnel Sans**: everything else (body, labels, buttons, nav).
-- Hierarchy from size and weight, not extra families. Sentence case. Line length under 80 characters.
-- Avoid: all-caps eyebrow labels, monospace labels, `01 / 02` numbering, `→` appended to links.
+  - **Funnel Display**: the monument (hero JOKO, footer JOKO, loader), headings, work names, contact rows. Semibold; tracking -0.05em at monument size, -0.02 to -0.04em for headings.
+  - **Funnel Sans**: body, labels, buttons, nav.
+- Scale (about six steps): 13–14px small, 16px body, 18px lead, 28px about text, 36px section titles and statements, 72px display rows, and the monument fitted to its container (`40.5cqi`).
+- Sentence case. Nothing under 13px. No eyebrows, monospace labels, `01 / 02` numbering, or `→` appended to links.
 
 ## Layout
 
-Pattern drawn from bryllim.com and satriabahari.my.id: a persistent sidebar beside one column of cards.
-
-- **Sidebar (desktop)**, top to bottom: profile block (photo or initial, name, "Open for OJT"), Search (⌘K / Ctrl K), nav grouped as **Work** (Overview, Projects, Graphics) and **Play** (Playground), then a ruled footer with email, GitHub and the theme toggle. Group labels are small, muted, sentence case.
-- **Mobile**: top bar with the compact profile, a search icon and Menu; the menu holds the same groups and footer.
-- **Content column**: left-aligned, max 64rem, never centered. Sections stack with 3–3.5rem between them.
-- **Section header**: Funnel Display title, optional one-line description, optional "See all …" link on the right. No numbering, no eyebrow.
-- **Overview order**: intro card (name, role chips, statement, actions, portrait from 1280px up) → Highlighted work (2 project cards) → Stack (filterable chips) → More to see (Graphics, Playground) → contact card.
-
-## Signature: hero glow
-
-One soft blue/orange glow inside the Overview hero only, following the cursor.
-
-- One absolutely positioned, pre-blurred radial-gradient element, moved with `transform` only (spring via Motion `useSpring`).
-- Opacity about 0.35; fades in on enter (200ms ease-out), out on leave.
-- Never behind body text; never on other pages.
-- Off on touch (`(hover: hover) and (pointer: fine)` only) and under `prefers-reduced-motion`.
-- Pointer listeners live on the hero element only, so nothing runs when the cursor is elsewhere.
-- Never use `mix-blend-mode`, `backdrop-filter`, or a full-viewport repainting gradient.
+- **Sidebar (desktop)**: profile block (photo or initial, name, "Open for OJT"), Search (⌘K / Ctrl K), nav grouped **Work** (Overview, Projects, Graphics) and **Play** (Playground), contact links and theme toggle at the bottom. Tone step off the page, no border.
+- **Mobile**: a 3.875rem top bar (`--bar-h`) with the compact profile, search icon and Menu.
+- **Content column**: fills the space beside the sidebar; its right inset matches the sidebar's left one, so the page has one pair of outer margins.
+- **Overview, top to bottom**:
+  1. **Hero** (pinned, two screens): role line and Design / Build switch at the top, the statement ("I design it." / "I build it.") with one sentence and "See the work", the arrow in the right half, JOKO margin to margin at the bottom. On phones JOKO sits under the top row.
+  2. **Selected work**: big names as the index (active one in full ink, the rest muted), each with its kind beneath; a sticky 4:5 preview on the right. Phones: still, then name.
+  3. **About**: 28px paragraph with the portrait as a three-line drop capital, facts in a side column.
+  4. **Contact**: display-size rows on alternating bands, then "Say hello" with a round arrow.
+  5. **Footer** (every page): inverted, link columns, colophon, JOKO fitted margin to margin.
+- Sections are 160–190px apart on desktop; each opens with a heading.
 
 ## Components
 
-Primitives live in `src/components/ui`, shell pieces in `src/components/shell`. Each entry: what it is, when to use it, the rules it keeps.
+Primitives live in `src/components/ui`, shell pieces in `src/components/shell`, Overview pieces in `src/components/overview`.
 
-### Radii
-Cards 16px (`rounded-2xl`), inner tiles and nav pills 12px (`rounded-xl`), buttons 10px, chips 8px (`rounded-lg`). Card media sits flush at the top and inherits the card's corners.
+### Shape
+One button shape: fully round, flat fill. Cards and bands 24px (`rounded-3xl`), the footer 32px, the drop cap 16px.
 
-### Card (`Card`, `CardLink`)
-`bg-card`, 1px `line` border, 16px radius, no shadow. `CardLink` makes the whole card the link and takes a `section`: its border, title and arrow turn that section's hue on hover/focus, so a card always previews where it leads. Press scales to 0.985.
+### Buttons (`btn`, `btn-primary`)
+Round, flat. `btn` on `surface`, `btn-primary` on `ink`. Pair with `pressable`. Magnetic under the custom cursor.
 
-### Project card (`ProjectCard`)
-Screenshot first (16:10, `card-media`), then chips (the kind of work first and `strong`, then stack), title, one-line summary, Role / Result, and the link label with an arrow. Links out (GitHub, live store); without a URL it renders as a plain card with an `[Add link: …]` reminder.
+### Pressable (`pressable`)
+Scales to 0.97 on `:active`. Owns its transitions (transform 160ms, colours 150ms, `--ease-out`); don't add `transition-colors` beside it.
 
-### Chip (`Chip`)
-8px radius, 1px border, `text-xs`. Default is muted; `strong` (ink text, stronger border) marks the leading chip in a set. Not interactive.
+### Custom cursor (`Cursor`)
+A 12px dot in difference blend that follows the mouse (GSAP `quickTo`, 0.18s). Over links and buttons it grows to 56px and inverts what's beneath. `data-cursor="Word"` shows a solid circle with that word (work rows: "View", Say hello: "Write"). Shrinks on press. Re-checks on scroll. `.btn` and `[data-magnetic]` lean 30% toward it via `translate`. Off for touch and reduced motion; the system cursor returns in text fields and while a dialog is open.
 
-### Filter tabs (`StackCard`)
-Pressable chips with a count. The active tab fills with `ink`. Changing the filter fades the chips in with a 20ms stagger.
+### Loader (`Intro`)
+About 2.6s, once per session, skippable (click, key, Skip intro). JOKO rises in outline, a solid fill sweeps left to right while a counter runs 000→100 ("Designing" → "Building"), then the panel lifts away (`expo.inOut`) and fires `INTRO_DONE` for the hero. Waits for fonts, locks scroll, hides itself after 5s if script fails. Skipped under reduced motion; `?nointro` skips it for testing.
 
-### Buttons (`btn`, `btn-primary` utilities)
-10px radius, `text-sm` medium. `btn` is outlined; `btn-primary` fills with `ink`. Both turn `--accent` on hover. Pair with `pressable`. One primary per card.
+### Hero (`Hero`, `HeroObject`)
+- The `h1` is the monument; its visually hidden line carries the role at body size.
+- Letters rise through a mask after the loader (0.9s, 60ms stagger), other parts follow; settled in about 1.1s. Reduced motion: fade only.
+- **Design / Build switch**: two pressed-state buttons on a pill; the active one fills with `ink`. Scrolling past half the pinned hero flips it too.
+- **Arrow**: an extruded cursor shape in R3F. Blueprint edges drawn from its own corners; a glossy physical solid (Overview hue) fades in on Build. Lit by a generated `RoomEnvironment`; tilts toward the pointer, floats, grows on hover, spins on click. Renders only while on screen; geometry disposed on unmount; an SVG outline stands in while it loads.
 
-### Sidebar nav item
-Icon and label. The active item sits on a `bg` pill with a `line` border, and its icon takes the section hue; the pill slides between items (Motion `layoutId`, 200ms `--ease-out`, instant under reduced motion).
+### Work index (`WorkIndex`)
+Names at 72px; hover or focus makes one active and swaps the sticky preview (opacity 200ms; inactive stills are `visibility: hidden`). A preview is the project's screenshot when `image` is set in `src/content/work.ts`, otherwise a drawn title card on its tone (ink, a section hue, or surface).
 
-### Pressable (`pressable` utility)
-Any button-like control. Scales to 0.97 on `:active`. It owns its transitions (transform 160ms, color/background/border 150ms, `--ease-out`), so never add `transition-colors` beside it: the later declaration cancels the press.
-
-### Text link (`link` utility, `ExternalLink`)
-Underlined in `line`, turns `--accent` on hover. External links open in a new tab and say so to screen readers. An empty href renders a visible `[Add link: …]` reminder instead of a dead link.
-
-### Chip
-Square, 1px `line` border, `text-sm`, `px-3 py-1.5`. Pressed state fills with `--accent` and `bg` text. Used for selectable sets (the desk's object list). Toggle with `aria-pressed`.
+### Contact rows
+Bands of `surface` / `card`, value at display size, left-aligned, lower part of the band. A linked row inverts to `ink` under the pointer; the round arrow turns 45°. Labels go to `aria-label`, not above the value.
 
 ### Command palette (`CommandPalette`)
-Jump to any page, project, link or action. ⌘K / Ctrl K, the sidebar Search button, or the mobile search icon.
-- Native `<dialog>` with `showModal` (focus trap, Esc, focus return). Combobox input + grouped listbox (Pages, Projects, Links, Actions).
-- Opens and closes with no animation: it is used many times per visit.
-- The active row takes its own section's hue (`data-section`), on `surface`.
-- Empty state names the recovery. Project rows jump to `/projects#slug`, and the landing title is marked in `--accent` (`HashTarget`).
+Native `<dialog>` with combobox and grouped listbox (Pages, Projects, Links, Actions). Opens instantly (no animation). Round, the only shadow on the site. Project rows jump to `/projects#slug`, marked by `HashTarget`.
 
-### Project list item (`ProjectSummary`)
-Used on the Projects page until it moves to cards: media, title, summary, Role / Result / Built with, links. Anchored by slug for jumps.
+### Text link (`link`)
+Underlined in `line`, `--accent` on hover. External links say "(opens in a new tab)" to screen readers; an empty href shows an `[Add link: …]` reminder.
 
-### Placeholder
-Dashed `line` box on `surface` with the asset it stands for and its size. Temporary only; replace with `next/image`.
+### Chip (`Chip`)
+Round, filled: `surface` with ink text, or `strong` (ink fill) for the leading chip.
 
 ## Playground pieces
 
-The one place for play, 3D and springs. Each piece sits inside the shell, never as a separate app.
-
 ### Design desk (`DeskPiece`, `DeskScene`)
-Joko's tools as monochrome clay on a desk mat; each object opens real work (phone → AVERA, bag → CryoLipo, sketchbook → Graphics, laptop → projects, swatch fan → this palette, mug → coffee).
-- Clay at rest (`#EFEFEF` light, `#6A6A6A` dark) on `surface`. Selected object takes Playground amber; hover tints 35% toward it. The fan opens into the four section hues. Nothing else is colored.
-- Picking lifts the object on a spring (bounce ~0.15); the phone's signature and the laptop's code lines draw themselves in. Drag-to-orbit on fine pointers only, within limited angles.
-- The chip list beside the canvas is the accessible control; the canvas is `aria-hidden`. The caption below is `aria-live`.
-- The camera fits the desk to every canvas size (projected bounds, 94% fill). The canvas is height-capped on wide screens so chips and caption stay in the first viewport.
-- `frameloop="demand"`, loaded with `dynamic(..., { ssr: false })`. Materials created in code are disposed on unmount.
-- Reduced motion: no lift, spring, orbit or draw-in; state changes show instantly. No WebGL: a message, and the list still works.
+Joko's tools as monochrome clay; each object opens real work. The selected object takes Playground amber; the swatch fan opens into the four section hues. Filled round chips are the accessible control; the canvas is `aria-hidden`. Springs, draw-ins and orbit only for fine pointers without reduced motion. `frameloop="demand"`, loaded with `dynamic(..., { ssr: false })`, materials disposed on unmount.
 
 ## Motion
 
-See CLAUDE.md motion rules (emil-design-eng). Hover color changes: `color`/`background-color` 150ms ease. Movement: `transform`/`opacity` only.
+Emil-design-eng rules (CLAUDE.md) hold: transform and opacity, `--ease-out`, hover gated to fine pointers, reduced motion keeps opacity and colour only.
 
-- **Overview first-load stagger** (the site's one entrance): intro card, highlighted work, stack, more to see, contact; 500ms `--ease-out`, 60ms steps, 8px rise.
-- **Card hover** (fine pointers only): border to the section hue (150ms), arrow nudges 2px up-right (200ms), screenshot scales to 1.02 (400ms). Reduced motion keeps only the color. Waits for the first-visit intro, plays once per page load (`EnterOnce`), fades only under reduced motion.
+- **Signature**: the pinned hero, design → build.
+- **Loader**: the one long showpiece (see Loader).
+- **Section entrances** (`Reveals`, GSAP ScrollTrigger): in each `.reveal` section the heading, then every `[data-reveal]` part, rise 24px and fade, 70ms apart, once at 80% of the viewport. Hidden only by the tween, so content stays if script fails.
+- **Feedback**: cursor states, magnetic buttons, press scale, nav pill slide (Motion `layoutId`, 200ms), contact band inversion, work preview crossfade.
 
 ## Theme
 
-- Follow system setting by default; toggle overrides. Use `next-themes` to avoid a flash on load.
-- Tailwind v4: define dark mode with `@custom-variant dark (&:where(.dark, .dark *));` in `globals.css`.
+- Follows the system; the toggle overrides (`next-themes`, class on `<html>`).
+- Tailwind v4 dark mode: `@custom-variant dark (&:where(.dark, .dark *));`.
 
 ## Performance budget
 
-LCP < 2.5s, INP < 200ms, CLS < 0.1. Two font families max. Three.js only inside Playground, loaded on demand. `next/image` for all images; videos lazy with poster.
+LCP < 2.5s, INP < 200ms, CLS < 0.1. One font family. Three.js only in the hero arrow and the Playground, both loaded on demand and rendered only while visible. `next/image` for all images.
+
+## Still needed (not inventable)
+
+Project screenshots (`image` in `src/content/work.ts`), a portrait (`site.photo`), the email, project links, design tools, and the bracketed descriptions. The design inspector's picture floor (four or more real images) fails until they exist.

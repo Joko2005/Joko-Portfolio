@@ -68,8 +68,8 @@ export function Hero({ name, role, intro }: { name: string; role: string; intro:
       if (reduce) {
         tl.from(q(".hero-char, .hero-fade"), { opacity: 0, duration: 0.4, ease: "power1.out" });
       } else {
-        tl.from(q(".hero-char"), { yPercent: 105, duration: 1.1, ease: "expo.out", stagger: 0.07 })
-          .from(q(".hero-fade"), { y: 24, opacity: 0, duration: 0.8, ease: "expo.out", stagger: 0.08 }, 0.25);
+        tl.from(q(".hero-char"), { yPercent: 105, duration: 0.9, ease: "expo.out", stagger: 0.06 })
+          .from(q(".hero-fade"), { y: 24, opacity: 0, duration: 0.7, ease: "expo.out", stagger: 0.08 }, 0.2);
       }
       const play = () => {
         setStarted(true);
@@ -99,13 +99,12 @@ export function Hero({ name, role, intro }: { name: string; role: string; intro:
   );
 
   return (
-    <section ref={root} aria-labelledby="hero-title" className="hero relative -mx-5 -mt-10 h-[200svh] md:-mx-12 md:-mt-16 lg:-mx-16">
-      <div className="@container sticky top-[var(--bar-h)] flex h-[calc(100svh-var(--bar-h))] flex-col md:top-0 md:h-svh justify-between overflow-hidden px-5 pb-4 pt-6 md:px-12 md:pt-10 lg:px-16">
+    <section ref={root} aria-labelledby="hero-title" className="hero relative -mx-5 -mt-10 h-[200svh] md:-mt-16 md:-ml-12 md:-mr-5 lg:-ml-16">
+      <div className="@container sticky top-[var(--bar-h)] flex h-[calc(100svh-var(--bar-h))] flex-col md:top-0 md:h-svh justify-between overflow-hidden px-5 pb-4 pt-6 md:pl-12 md:pr-5 md:pt-10 lg:pl-16">
         {/* Top row: what this is, and the live switch. */}
         <div className="relative z-20 order-0 flex flex-wrap items-start justify-between gap-4">
           <p className="hero-fade max-w-[26ch] text-base font-medium leading-snug md:text-lg">{role}</p>
           <div role="group" aria-label="Show the arrow as" className="hero-fade switch" data-built={built}>
-            <span aria-hidden className="switch-thumb" />
             <button type="button" aria-pressed={!built} onClick={() => setBuilt(false)} data-magnetic>
               Design
             </button>
@@ -116,8 +115,9 @@ export function Hero({ name, role, intro }: { name: string; role: string; intro:
         </div>
 
         {/* The monument. On a phone it sits right under the top row; from md it anchors the bottom. */}
-        <h1 id="hero-title" className="hero-name order-1 mt-6 md:order-3 md:mt-0">
-          <span className="sr-only">
+        <h1 id="hero-title" className="hero-name relative z-20 order-1 mt-6 md:order-3 md:mt-0">
+          {/* Body size, so this hidden line doesn't stretch the heading's text box to the monument's width. */}
+          <span className="sr-only text-base">
             {name}, {role}
           </span>
           <span aria-hidden className="block overflow-hidden">
@@ -130,7 +130,7 @@ export function Hero({ name, role, intro }: { name: string; role: string; intro:
         </h1>
 
         {/* The object, overlapping the name. */}
-        <div className="pointer-events-auto absolute inset-x-0 top-[31%] z-10 mx-auto h-[44%] max-w-[44rem] md:left-auto md:right-0 md:top-[10%] md:mx-0 md:h-[62%] md:w-[52%] md:max-w-none">
+        <div className="pointer-events-auto absolute inset-x-0 top-[31%] z-0 mx-auto h-[44%] max-w-[44rem] md:left-auto md:right-0 md:top-[10%] md:mx-0 md:h-[62%] md:w-[52%] md:max-w-none">
           <HeroObject
             built={built}
             started={started}

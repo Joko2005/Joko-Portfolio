@@ -20,13 +20,13 @@ export default function PlaygroundPage() {
         </div>
       </section>
 
-      <section aria-labelledby="next" className="mt-20 border-t border-line pt-10">
+      <section aria-labelledby="next" className="mt-28">
         <h2 id="next" className="text-xl font-semibold">
           Coming next
         </h2>
-        <ul className="mt-4 divide-y divide-line">
+        <ul className="mt-4 flex flex-col gap-2">
           {playground.map((item) => (
-            <li key={item.title} className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 py-4">
+            <li key={item.title} className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 rounded-3xl bg-surface p-5">
               <div>
                 <p className="font-medium">{item.title}</p>
                 <p className="text-sm text-muted">{item.description}</p>

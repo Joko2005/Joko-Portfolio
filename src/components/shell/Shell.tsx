@@ -8,6 +8,8 @@ import { motion, useReducedMotion } from "motion/react";
 import { PiEnvelopeSimple, PiGithubLogo, PiMagnifyingGlass } from "react-icons/pi";
 import { site } from "@/content/site";
 import { CommandPalette, ShortcutHint } from "./CommandPalette";
+import { Footer } from "./Footer";
+import { Reveals } from "./Reveals";
 import { NAV, NAV_GROUPS, sectionFromPath } from "./nav";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -35,7 +37,7 @@ function Brand({ compact = false }: { compact?: boolean }) {
       )}
       <span className="min-w-0">
         <span className="block font-display font-semibold leading-tight">{site.name}</span>
-        <span className="mt-0.5 flex items-center gap-1.5 text-xs text-muted">
+        <span className="mt-0.5 flex items-center gap-1.5 text-[0.8125rem] text-muted">
           <span aria-hidden className="inline-block size-1.5 rounded-full bg-ink" />
           {site.status}
         </span>
@@ -53,7 +55,7 @@ function NavList({ id, pathname, onNavigate }: { id: string; pathname: string; o
     <div className="flex flex-col gap-5">
       {NAV_GROUPS.map((group) => (
         <div key={group}>
-          <p id={`${id}-${group}`} className="px-3 pb-1.5 text-xs text-muted">
+          <p id={`${id}-${group}`} className="px-3 pb-1.5 text-[0.8125rem] text-muted">
             {group}
           </p>
           <ul aria-labelledby={`${id}-${group}`} className="flex flex-col gap-0.5">
@@ -102,7 +104,7 @@ function ContactLinks() {
           <span className="truncate">{site.email}</span>
         </a>
       ) : (
-        <span className="text-xs text-muted">[Add your email]</span>
+        <span className="text-[0.8125rem] text-muted">[Add your email]</span>
       )}
       <a
         href={site.links.github}
@@ -134,7 +136,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
       </a>
 
       {/* Desktop sidebar */}
-      <aside className="sticky top-0 hidden h-dvh flex-col gap-8 overflow-y-auto bg-surface px-4 py-6 md:flex">
+      <aside className="sticky top-0 hidden h-dvh md:row-span-2 flex-col gap-8 overflow-y-auto bg-surface px-4 py-6 md:flex">
         <div className="px-1">
           <Brand />
         </div>
@@ -198,11 +200,16 @@ export function Shell({ children }: { children: React.ReactNode }) {
         )}
       </header>
 
-      <main id="main" className="w-full max-w-5xl px-5 py-10 md:px-12 md:py-16 lg:px-16">
+      <main id="main" className="w-full px-5 py-10 md:py-16 md:pl-12 md:pr-5 lg:pl-16">
         {children}
       </main>
 
+      <div className="md:col-start-2">
+        <Footer />
+      </div>
+
       <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
+      <Reveals />
     </div>
   );
 }

@@ -56,16 +56,12 @@ export function Cursor() {
       magnet = null;
     };
 
-    const onMove = (e: PointerEvent) => {
-      if (e.pointerType !== "mouse") return;
-      if (first) {
-        gsap.set(ring, { x: e.clientX, y: e.clientY });
-        first = false;
-      }
-      moveX(e.clientX);
-      moveY(e.clientY);
+    let lastX = -1;
+    let lastY = -1;
 
-      const target = e.target instanceof Element ? e.target : null;
+    // Works out what is under the pointer; also run on scroll, when the page moves under a still mouse.
+    const update = (x: number, y: number, hit: EventTarget | null) => {
+      const target = hit instanceof Element ? hit : null;
       const field = target?.closest(TEXT_FIELD);
       const labelled = target?.closest<HTMLElement>("[data-cursor]");
       // The 3D desk marks a hovered object by setting the body cursor to pointer.
@@ -88,9 +84,27 @@ export function Cursor() {
       }
       if (magnet && magnetX && magnetY) {
         const r = magnet.getBoundingClientRect();
-        magnetX((e.clientX - (r.left + r.width / 2)) * PULL);
-        magnetY((e.clientY - (r.top + r.height / 2)) * PULL);
+        magnetX((x - (r.left + r.width / 2)) * PULL);
+        magnetY((y - (r.top + r.height / 2)) * PULL);
       }
+    };
+
+    const onMove = (e: PointerEvent) => {
+      if (e.pointerType !== "mouse") return;
+      if (first) {
+        gsap.set(ring, { x: e.clientX, y: e.clientY });
+        first = false;
+      }
+      moveX(e.clientX);
+      moveY(e.clientY);
+      lastX = e.clientX;
+      lastY = e.clientY;
+      update(e.clientX, e.clientY, e.target);
+    };
+
+    const onScroll = () => {
+      if (lastX < 0) return;
+      update(lastX, lastY, document.elementFromPoint(lastX, lastY));
     };
 
     const onLeave = () => {
@@ -101,6 +115,7 @@ export function Cursor() {
     const onUp = () => ring.classList.remove("is-pressed");
 
     window.addEventListener("pointermove", onMove, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
     document.addEventListener("pointerleave", onLeave);
     window.addEventListener("blur", onLeave);
     window.addEventListener("pointerdown", onDown);
@@ -109,6 +124,7 @@ export function Cursor() {
       root.classList.remove("has-cursor");
       releaseMagnet();
       window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("scroll", onScroll);
       document.removeEventListener("pointerleave", onLeave);
       window.removeEventListener("blur", onLeave);
       window.removeEventListener("pointerdown", onDown);

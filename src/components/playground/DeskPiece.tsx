@@ -100,7 +100,7 @@ export function DeskPiece() {
         )}
       </div>
 
-      <div className="mt-6 grid gap-8 border-t border-line pt-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] md:gap-12">
+      <div className="mt-8 grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] md:gap-12">
         <div>
           <h3 id="desk-objects" className="text-sm text-muted">
             On the desk
@@ -119,10 +119,8 @@ export function DeskPiece() {
                     onPointerLeave={() => setHovered(null)}
                     onFocus={() => setHovered(o.id)}
                     onBlur={() => setHovered(null)}
-                    className={`pressable border px-3 py-1.5 text-sm ${
-                      active
-                        ? "border-accent bg-accent font-medium text-bg"
-                        : "border-line text-ink hover:border-accent hover:text-accent"
+                    className={`pressable rounded-full px-4 py-2 text-sm font-medium ${
+                      active ? "bg-accent text-bg" : "bg-surface text-ink hover:text-accent"
                     }`}
                   >
                     {o.label}
