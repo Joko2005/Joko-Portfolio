@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local-only skill with large binaries (installed separately)
+/.claude/skills/impeccable/

@@ -1,2 +1,2 @@
-export { Button } from './Button'
-export { Header } from './header'
+export { Placeholder } from "./Placeholder";
+export { ExternalLink } from "./ExternalLink";

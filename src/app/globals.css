@@ -1,44 +1,120 @@
 @import "tailwindcss";
 
-/* App semantic base colors. */
+/* Dark mode follows the .dark class that next-themes puts on <html>. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Display face. Drop the licensed file at public/fonts/Humane-Variable.woff2
+   (see public/fonts/README.md). Until then the fallback stack is used. */
+@font-face {
+  font-family: "Humane";
+  src: url("/fonts/Humane-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+/* ---- Tokens (see DESIGN.md) ---- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #ffffff;
+  --surface: #f3f3f3;
+  --ink: #000000;
+  --muted: #6e6e6e;
+  --line: #e2e2e2;
+
+  /* Section hues: shown only on interaction. */
+  --c-overview: #1d4ed8;
+  --c-projects: #c2410c;
+  --c-graphics: #0369a1;
+  --c-playground: #a64b00;
+
+  --accent: var(--ink);
+  --glow-opacity: 0.35;
+  color-scheme: light;
 }
 
-/* Tailwind v4 tokens for utility generation. */
+.dark {
+  --bg: #000000;
+  --surface: #161616;
+  --ink: #ffffff;
+  --muted: #8e8e8e;
+  --line: #262626;
+
+  --c-overview: #7b9cff;
+  --c-projects: #ff8a3d;
+  --c-graphics: #4fc3f7;
+  --c-playground: #ffb547;
+
+  --glow-opacity: 0.3;
+  color-scheme: dark;
+}
+
+/* Any element can take a section's hue as --accent. */
+[data-section="overview"] { --accent: var(--c-overview); }
+[data-section="projects"] { --accent: var(--c-projects); }
+[data-section="graphics"] { --accent: var(--c-graphics); }
+[data-section="playground"] { --accent: var(--c-playground); }
+
+@theme {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+}
+
 @theme inline {
-  /* Brand and UI colors. */
-  --color-bg: #f5f0e8;
-  --color-bg-alt: #fdfcfa;
-  --color-ink: #0f0e0c;
-  --color-red: #d63b2f;
-  --color-muted: #8a8780;
-  --color-border: #d8d3c8;
-  --color-surface: #fdfcfa;
-  --color-surface2: #f0ebe1;
-  --color-header-light: #F6F4EF;
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
 
-  /* Font tokens from next/font variables. */
-  --font-body: var(--font-instrument-serif);
-  --font-heading: var(--font-syne);
-  --font-mono: var(--font-dm-mono);
-
-  /* Shared easing token. */
-  --ease-expo-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --font-sans: var(--font-sora), ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Humane", "Arial Narrow", var(--font-sora), sans-serif;
 }
 
-/* System dark-mode fallback. */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html,
+  body {
+    background: var(--bg);
+    color: var(--ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--bg);
   }
 }
 
-/* Global document defaults. */
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-heading), sans-serif;
+/* Repeat visitors and reduced-motion users never see the intro
+   (class is set by an inline script before first paint). */
+.intro-seen .intro {
+  display: none;
+}
+
+/* Pressable feedback (emil-design-eng). */
+@utility pressable {
+  transition: transform 160ms var(--ease-out);
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+/* Text link: color appears only on hover, in the current section's hue. */
+@utility link {
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--line);
+  transition:
+    color 150ms ease,
+    text-decoration-color 150ms ease;
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      color: var(--accent);
+      text-decoration-color: var(--accent);
+    }
+  }
 }
