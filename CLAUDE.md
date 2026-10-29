@@ -10,7 +10,8 @@ Read `PRODUCT.md` first: it is the source of truth for audience, structure, and 
 - **Tailwind v4 is CSS-first.** All tokens live in `src/app/globals.css` (`:root` / `.dark` values, exposed through `@theme inline`). Dark mode is `@custom-variant dark`. There is no `tailwind.config.ts`; don't add one.
 - Content lives in `src/content/*.ts`. Bracketed text like `[Your role]` and empty `href`s are placeholders to fill before launch.
 - Theme: `next-themes` (class on `<html>`). Section hue: `data-section` → `--accent`; use `text-accent`/`bg-accent`, never raw hex.
-- Components: `src/components/shell` (sidebar, mobile bar, theme toggle, intro), `src/components/overview`, `src/components/projects`, `src/components/ui` (Placeholder, ExternalLink).
+- Components: `src/components/shell` (sidebar, mobile bar, theme toggle, intro, reveals), `src/components/overview`, `src/components/projects`, `src/components/graphics`, `src/components/ui` (PageHeader, ExternalLink, Chip).
+- Text animation: add `data-split="chars"` (headings) or `data-split="words"` (paragraphs); `Reveals` does the rest.
 
 ## Skills (in `.claude/skills/`)
 
@@ -35,7 +36,7 @@ Spend boldness in one place: the Playground plus one signature detail in the she
 - Animate only `transform` and `opacity`. Never `transition: all`. Never enter from `scale(0)`.
 - Buttons/pressables: `scale(0.97)` on `:active`.
 - Hover effects inside `@media (hover: hover) and (pointer: fine)`.
-- Springs (bounce 0.1–0.2) and spring-follow cursor: Playground only.
+- Springs (bounce 0.1–0.2) and spring-follow cursor: Playground only. Exception: the Overview's Play words section (visitor-triggered).
 - One-time showpieces only: Overview first-load stagger (30–80ms steps) and the first-visit intro (<1s, skippable, once per session).
 - No fade-up-on-scroll on every section.
 - `prefers-reduced-motion`: keep opacity/color, remove movement; Playground shows a static poster.

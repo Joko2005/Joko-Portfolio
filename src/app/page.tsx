@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { PiArrowUpRight } from "react-icons/pi";
 import { Hero } from "@/components/overview/Hero";
+import { PlayWords } from "@/components/overview/PlayWords";
 import { WorkIndex } from "@/components/overview/WorkIndex";
 import { site } from "@/content/site";
 import { stack } from "@/content/stack";
@@ -90,6 +91,8 @@ export default function OverviewPage() {
           </dl>
         </div>
       </section>
+
+      <PlayWords />
 
       <section aria-labelledby="contact-title" className="reveal pt-28 md:pt-48">
         <h2 id="contact-title" className="section-title" data-split="chars">

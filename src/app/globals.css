@@ -527,7 +527,103 @@ li:nth-child(even) > .cert-row {
   }
 }
 
+/* Graphics: three columns, the middle one set lower so the grid reads like a spread. */
+.graphics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2.5rem 1rem;
+}
+@media (min-width: 64rem) {
+  .graphics-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 3.5rem 1.5rem;
+    padding-bottom: 6rem;
+  }
+  .graphics-grid > li:nth-child(3n + 2) {
+    translate: 0 6rem;
+  }
+}
+.graphic-media {
+  transition: transform 400ms var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .group:hover .graphic-media {
+    transform: scale(1.03);
+  }
+}
+
+/* Viewer: a full-screen dialog on the page ground; it settles in, and closes instantly. */
+.viewer {
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  border: 0;
+  background: var(--bg);
+  color: var(--ink);
+  padding: 1rem;
+}
+@media (min-width: 48rem) {
+  .viewer {
+    padding: 1.5rem 2rem;
+  }
+}
+.viewer[open] {
+  opacity: 1;
+  transform: scale(1);
+  transition:
+    opacity 220ms var(--ease-out),
+    transform 220ms var(--ease-out);
+  @starting-style {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+.viewer::backdrop {
+  background: var(--bg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .viewer[open] {
+    transition-property: opacity;
+  }
+}
+
 /* ---- Overview sections ---- */
+/* Play words: three display rows of loose letters. Sized so the longest row, I DESIGN, runs margin to margin. */
+.play-line {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 25.5cqi;
+  font-weight: 600;
+  line-height: 0.86;
+  letter-spacing: -0.05em;
+  white-space: nowrap;
+  margin-inline-start: -0.04em;
+}
+.play-letter {
+  position: relative;
+  display: inline-block;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: color 200ms var(--ease-out);
+}
+.play-space {
+  display: inline-block;
+  width: 0.22em;
+}
+.play-hint-touch {
+  display: none;
+}
+@media (hover: none), (pointer: coarse) {
+  .play-hint-fine {
+    display: none;
+  }
+  .play-hint-touch {
+    display: inline;
+  }
+}
+
 .section-title {
   font-family: var(--font-display);
   font-size: clamp(1.75rem, 2.5vw, 2.25rem);

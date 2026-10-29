@@ -30,6 +30,7 @@ Direction dealt by design-taste-frontend: *The name as a monument* (seed 7436437
 | Overview | `#1D4ED8` blue | `#7B9CFF` |
 | Projects | `#C2410C` orange | `#FF8A3D` |
 | Graphics | `#0369A1` sky | `#4FC3F7` |
+| Certificates | `#15803D` green | `#5EE38B` |
 | Playground | `#A64B00` amber | `#FFB547` |
 
 Rules:
@@ -48,15 +49,16 @@ Rules:
 
 ## Layout
 
-- **Sidebar (desktop)**: a name card (JOKO fitted to the card at the hero's `40.5cqi` proportion, role beneath, on `bg`), Search (⌘K / Ctrl K), nav grouped **Work** (Overview, Projects, Graphics) and **Play** (Playground), contact links and the Light / Dark switch at the bottom. Tone step off the page, no border.
+- **Sidebar (desktop)**: a name card (JOKO fitted to the card at the hero's `40.5cqi` proportion, role beneath, on `bg`), Search (⌘K / Ctrl K), nav grouped **Work** (Overview, Projects, Graphics, Certificates) and **Play** (Playground), contact links and the Light / Dark switch at the bottom. Tone step off the page, no border.
 - **Mobile**: a 3.875rem top bar (`--bar-h`) with JOKO, search icon and Menu.
 - **Content column**: fills the space beside the sidebar; its right inset matches the sidebar's left one, so the page has one pair of outer margins.
 - **Overview, top to bottom**:
   1. **Hero** (pinned, two screens): role line and Design / Build switch at the top, the statement ("I design it." / "I build it.") with one sentence and "See the work", the arrow in the right half, JOKO margin to margin at the bottom. On phones JOKO sits under the top row.
   2. **Selected work**: big names as the index (active one in full ink, the rest muted), each with its kind beneath; a sticky 4:5 preview on the right. Phones: still, then name.
   3. **About**: 28px paragraph with the portrait as a three-line drop capital, facts in a side column.
-  4. **Contact**: display-size rows on alternating bands, then "Say hello" with a round arrow.
-  5. **Footer** (every page): inverted, link columns, colophon, JOKO fitted margin to margin.
+  4. **Play words**: "I DESIGN / I CODE / I BUILD" as three display rows fitted margin to margin (`25.5cqi`), every letter loose (see Play words).
+  5. **Contact**: display-size rows on alternating bands, then "Say hello" with a round arrow.
+  6. **Footer** (every page): inverted, link columns, colophon, JOKO fitted margin to margin.
 - Sections are 160–190px apart on desktop; each opens with a heading.
 
 ## Components
@@ -93,6 +95,21 @@ Names at 72px; hover or focus makes one active and swaps the sticky preview (opa
 ### Contact rows
 Bands of `surface` / `card`, value at display size, left-aligned, lower part of the band. A linked row inverts to `ink` under the pointer; the round arrow turns 45°. Labels go to `aria-label`, not above the value.
 
+### Play words (`PlayWords`)
+The Overview's one place to play. Fine pointers grab and throw letters (GSAP Draggable + InertiaPlugin, bounded to the section, tilt and 1.08 scale while held); touch taps make a letter hop, so the section never traps scrolling. A moved letter takes its row's hue (Overview, Projects, Playground). **Scatter** throws all letters to random spots; **Put back** springs them home (`elastic.out(1, 0.6)`, random 25ms stagger) and clears the hue. The `h2` carries the sentence for screen readers; letters are `aria-hidden`. Reduced motion: drag without momentum, Scatter and Put back jump.
+
+### Page header (`PageHeader`)
+Inner pages open with the title at display size (`.page-title`, `clamp(3.5rem, 10vw, 9rem)`, letters rising in), the item count in muted display type at its top right (`aria-hidden`), and one lead line.
+
+### Projects (`ProjectRow`)
+One row per project, outcome first: kind and stack chips, the name at work-index size, summary, Role and Result, then the link (highlighted projects use `btn-primary`). The still sits right at 16:10, the work index's title card until a screenshot exists; it leans in on hover with the "View" cursor. Rows are 160px apart. `/projects#slug` marks its row in the section hue.
+
+### Graphics (`GraphicsGallery`)
+4:5 pieces in three columns, the middle one set 6rem lower like a spread (two even columns on phones). A piece opens a full-screen viewer (native `<dialog>` on `bg`): title, close, the piece fitted to the height, previous / next and arrow keys. It settles in (opacity and `scale(0.98)`, 220ms, `@starting-style`) and closes instantly; stepping does not animate.
+
+### Certificates
+Bands like the contact rows: title at heading size, issuer and year beneath, a round arrow at the right that turns 45° as the linked band inverts to `ink`.
+
 ### Command palette (`CommandPalette`)
 Native `<dialog>` with combobox and grouped listbox (Pages, Projects, Links, Actions). Opens instantly (no animation). Round, the only shadow on the site. Project rows jump to `/projects#slug`, marked by `HashTarget`.
 
@@ -114,6 +131,8 @@ Emil-design-eng rules (CLAUDE.md) hold: transform and opacity, `--ease-out`, hov
 - **Signature**: the pinned hero, design → build.
 - **Loader**: the one long showpiece (see Loader).
 - **Section entrances** (`Reveals`, GSAP ScrollTrigger): in each `.reveal` section the heading, then every `[data-reveal]` part, rise 24px and fade, 70ms apart, once at 80% of the viewport. Hidden only by the tween, so content stays if script fails.
+- **Text** (`Reveals`, GSAP SplitText): `data-split="chars"` headings rise letter by letter through their line masks (0.9s, 22ms stagger, once); `data-split="words"` paragraphs fill from 18% to full ink, scrubbed as they cross the view (reading pace). Screen readers get the whole text. Reduced motion: headings fade, paragraphs stay solid.
+- **Play words** is the one spring outside the Playground, by request: it is play, and only runs when the visitor asks for it.
 - **Feedback**: cursor states, magnetic buttons, press scale, nav pill slide (Motion `layoutId`, 200ms), contact band inversion, work preview crossfade.
 - **Theme change** (`switchTheme` in `src/lib/themeTransition.ts`): a view transition where the new theme grows in through the cursor arrow. The arrow launches whole from the pressed control, aimed at the page centre and righting a 28° turn, then floods the page (950ms, `--ease-in-out`, exponential scale). The palette's theme action uses it from the centre. Reduced motion: 200ms crossfade. No view transitions: instant.
 

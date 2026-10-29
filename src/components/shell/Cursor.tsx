@@ -5,7 +5,7 @@ import gsap from "gsap";
 
 // Only for a mouse, and never under reduced motion: touch and keyboard users keep the system cursor.
 const QUERY = "(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)";
-const INTERACTIVE = "a, button, [role='button'], [role='option'], label, summary, [data-cursor]";
+const INTERACTIVE = "a, button, [role='button'], [role='option'], label, summary, [data-cursor], [data-grab]";
 const TEXT_FIELD = "input, textarea, select, [contenteditable='true']";
 const MAGNETIC = ".btn, [data-magnetic]";
 const PULL = 0.3; // how far a magnetic control follows the cursor, as a share of the offset
