@@ -11,7 +11,7 @@ export default function OverviewPage() {
     <>
       <EnterOnce />
       <HeroGlow className="-mx-5 -mt-10 px-5 pb-16 pt-16 md:-mx-12 md:-mt-16 md:px-12 md:pb-24 md:pt-24 lg:-mx-16 lg:px-16">
-        <h1 style={{ "--i": 0 } as React.CSSProperties} className="enter font-display text-[clamp(5rem,18vw,11rem)] font-medium leading-[0.85]">{site.name}</h1>
+        <h1 style={{ "--i": 0 } as React.CSSProperties} className="enter font-display text-[clamp(3.5rem,10vw,6rem)] font-semibold leading-[0.95] tracking-[-0.03em]">{site.name}</h1>
         <p style={{ "--i": 1 } as React.CSSProperties} className="enter mt-8 max-w-xl text-balance text-2xl font-semibold leading-snug md:text-3xl">{site.statement}</p>
         <p style={{ "--i": 2 } as React.CSSProperties} className="enter mt-4 max-w-xl leading-relaxed text-muted">
           {site.role}. {site.intro}

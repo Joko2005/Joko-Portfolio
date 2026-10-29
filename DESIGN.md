@@ -39,8 +39,9 @@ Rules:
 
 ## Typography
 
-- **Display: Humane** (variable). Hero name and Playground titles only. Never body, labels, or buttons. Verify license on the designer's Gumroad before shipping. Self-host with `next/font/local`.
-- **Text/UI: Sora** (OFL, Google Fonts via `next/font/google`). Everything else.
+- **One family, two cuts: Funnel** by NORD ID (SIL Open Font License, free for commercial use), loaded with `next/font/google`.
+  - **Funnel Display**: headings only (hero name, page titles, section and card titles). Semibold, tracking -0.03em at large sizes, max 6rem.
+  - **Funnel Sans**: everything else (body, labels, buttons, nav).
 - Hierarchy from size and weight, not extra families. Sentence case. Line length under 80 characters.
 - Avoid: all-caps eyebrow labels, monospace labels, `01 / 02` numbering, `→` appended to links.
 

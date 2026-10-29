@@ -3,15 +3,6 @@
 /* Dark mode follows the .dark class that next-themes puts on <html>. */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Display face. Drop the licensed file at public/fonts/Humane-Variable.woff2
-   (see public/fonts/README.md). Until then the fallback stack is used. */
-@font-face {
-  font-family: "Humane";
-  src: url("/fonts/Humane-Variable.woff2") format("woff2");
-  font-weight: 100 900;
-  font-display: swap;
-}
-
 /* ---- Tokens (see DESIGN.md) ---- */
 :root {
   --bg: #ffffff;
@@ -66,8 +57,9 @@
   --color-line: var(--line);
   --color-accent: var(--accent);
 
-  --font-sans: var(--font-sora), ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Humane", "Arial Narrow", var(--font-sora), sans-serif;
+  /* Funnel Sans (text/UI) and Funnel Display (headings): one OFL family, loaded in layout.tsx. */
+  --font-sans: var(--font-funnel-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-funnel-display), var(--font-funnel-sans), ui-sans-serif, sans-serif;
 }
 
 @layer base {

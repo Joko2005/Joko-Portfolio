@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
-import { Sora } from "next/font/google";
+import { Funnel_Display, Funnel_Sans } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { Intro } from "@/components/shell/Intro";
 import { Shell } from "@/components/shell/Shell";
 import { site } from "@/content/site";
 import "./globals.css";
 
-const sora = Sora({ subsets: ["latin"], variable: "--font-sora", display: "swap" });
+// One OFL family (free for commercial use): Funnel Sans for text/UI, Funnel Display for headings.
+const funnelSans = Funnel_Sans({ subsets: ["latin"], variable: "--font-funnel-sans", display: "swap" });
+const funnelDisplay = Funnel_Display({ subsets: ["latin"], variable: "--font-funnel-display", display: "swap" });
 
 export const metadata: Metadata = {
   title: { default: `${site.name} | ${site.role}`, template: `%s | ${site.name}` },
@@ -18,7 +20,7 @@ const introScript = `try{if(sessionStorage.getItem("intro-seen")||matchMedia("(p
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={sora.variable} suppressHydrationWarning>
+    <html lang="en" className={`${funnelSans.variable} ${funnelDisplay.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: introScript }} />
       </head>

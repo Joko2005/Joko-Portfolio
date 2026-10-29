@@ -41,7 +41,7 @@ export function Intro({ name }: { name: string }) {
       data-leaving={phase === "leaving"}
       className="intro fixed inset-0 z-50 flex items-center justify-center bg-bg transition-opacity duration-200 ease-out data-[leaving=true]:opacity-0"
     >
-      <span className="font-display text-[clamp(6rem,24vw,16rem)] leading-none">{name}</span>
+      <span className="font-display text-[clamp(4rem,14vw,9rem)] font-semibold leading-none tracking-[-0.03em]">{name}</span>
     </div>
   );
 }
