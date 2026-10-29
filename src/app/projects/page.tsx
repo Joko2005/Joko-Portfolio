@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { HashTarget } from "@/components/projects/HashTarget";
 import { ProjectSummary } from "@/components/projects/ProjectSummary";
 import { ExternalLink } from "@/components/ui";
 import { certificates } from "@/content/certificates";
@@ -9,6 +10,7 @@ export const metadata: Metadata = { title: "Projects" };
 export default function ProjectsPage() {
   return (
     <>
+      <HashTarget />
       <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">Projects</h1>
       <p className="mt-4 max-w-prose leading-relaxed text-muted">
         Everything I&apos;ve designed and built, with my role in each.
@@ -16,7 +18,7 @@ export default function ProjectsPage() {
 
       <ul className="mt-12 grid gap-16 md:grid-cols-2 md:gap-x-10">
         {projects.map((project) => (
-          <li key={project.slug}>
+          <li key={project.slug} id={project.slug} className="project-anchor scroll-mt-24">
             <ProjectSummary project={project} headingLevel="h2" />
           </li>
         ))}

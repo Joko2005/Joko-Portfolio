@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { PiMagnifyingGlass } from "react-icons/pi";
 import { site } from "@/content/site";
+import { CommandPalette, ShortcutHint } from "./CommandPalette";
 import { NAV, sectionFromPath } from "./nav";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -57,6 +59,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const section = sectionFromPath(pathname);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
 
   return (
     <div data-section={section} className="min-h-dvh md:grid md:grid-cols-[15rem_minmax(0,1fr)]">
@@ -70,9 +73,21 @@ export function Shell({ children }: { children: React.ReactNode }) {
       {/* Desktop sidebar */}
       <aside className="sticky top-0 hidden h-dvh flex-col gap-12 border-r border-line bg-surface px-6 py-8 md:flex">
         <Brand />
-        <nav aria-label="Main">
-          <NavList pathname={pathname} />
-        </nav>
+        <div className="flex flex-col gap-6">
+          <button
+            type="button"
+            aria-haspopup="dialog"
+            onClick={() => setPaletteOpen(true)}
+            className="pressable flex items-center gap-2 border border-line bg-bg px-3 py-2 text-sm text-muted hover:text-ink"
+          >
+            <PiMagnifyingGlass aria-hidden className="size-4" />
+            <span className="mr-auto">Search</span>
+            <ShortcutHint />
+          </button>
+          <nav aria-label="Main">
+            <NavList pathname={pathname} />
+          </nav>
+        </div>
         <div className="mt-auto">
           <ThemeToggle />
         </div>
@@ -82,15 +97,29 @@ export function Shell({ children }: { children: React.ReactNode }) {
       <header className="sticky top-0 z-40 border-b border-line bg-bg md:hidden">
         <div className="flex items-center justify-between px-5 py-4">
           <Brand />
-          <button
-            type="button"
-            aria-expanded={menuOpen}
-            aria-controls="mobile-nav"
-            onClick={() => setMenuOpen((open) => !open)}
-            className="pressable text-sm font-medium"
-          >
-            {menuOpen ? "Close" : "Menu"}
-          </button>
+          <div className="flex items-center gap-5">
+            <button
+              type="button"
+              aria-label="Search"
+              aria-haspopup="dialog"
+              onClick={() => {
+                setMenuOpen(false);
+                setPaletteOpen(true);
+              }}
+              className="pressable -m-2 p-2"
+            >
+              <PiMagnifyingGlass aria-hidden className="size-5" />
+            </button>
+            <button
+              type="button"
+              aria-expanded={menuOpen}
+              aria-controls="mobile-nav"
+              onClick={() => setMenuOpen((open) => !open)}
+              className="pressable text-sm font-medium"
+            >
+              {menuOpen ? "Close" : "Menu"}
+            </button>
+          </div>
         </div>
         {menuOpen && (
           <nav id="mobile-nav" aria-label="Main" className="flex flex-col gap-6 border-t border-line px-5 py-5">
@@ -100,9 +129,11 @@ export function Shell({ children }: { children: React.ReactNode }) {
         )}
       </header>
 
-      <main id="main" className="mx-auto w-full max-w-5xl px-5 py-10 md:px-12 md:py-16">
+      <main id="main" className="w-full max-w-5xl px-5 py-10 md:px-12 md:py-16 lg:px-16">
         {children}
       </main>
+
+      <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
     </div>
   );
 }

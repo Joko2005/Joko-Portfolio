@@ -77,6 +77,10 @@
     color: var(--ink);
   }
 
+  html {
+    scrollbar-color: var(--line) var(--bg);
+  }
+
   :focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 3px;
@@ -94,9 +98,11 @@
   display: none;
 }
 
-/* Pressable feedback (emil-design-eng). */
+/* Pressable feedback (emil-design-eng). Owns all its transitions so color utilities can't cancel the press. */
 @utility pressable {
-  transition: transform 160ms var(--ease-out);
+  transition-property: transform, color, background-color, border-color;
+  transition-duration: 160ms, 150ms, 150ms, 150ms;
+  transition-timing-function: var(--ease-out);
   &:active {
     transform: scale(0.97);
   }
@@ -117,4 +123,39 @@
       text-decoration-color: var(--accent);
     }
   }
+}
+
+/* Overview first-load stagger: the one entrance on the site.
+   Waits for the first-visit intro, plays once per page load, fades only under reduced motion. */
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+@keyframes enter-fade {
+  from {
+    opacity: 0;
+  }
+}
+.enter {
+  --enter-offset: 650ms;
+  animation: enter 500ms var(--ease-out) backwards;
+  animation-delay: calc(var(--enter-offset) + var(--i, 0) * 60ms);
+}
+.intro-seen .enter {
+  --enter-offset: 0ms;
+}
+.overview-entered .enter {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .enter {
+    animation-name: enter-fade;
+  }
+}
+
+/* A palette or desk jump to /projects#slug marks where it landed. */
+.project-anchor:is(:target, [data-target]) h2 {
+  color: var(--accent);
 }

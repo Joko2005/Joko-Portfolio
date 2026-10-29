@@ -18,7 +18,7 @@ export function ThemeToggle() {
       type="button"
       onClick={() => setTheme(isDark ? "light" : "dark")}
       aria-label={mounted ? `Switch to ${isDark ? "light" : "dark"} mode` : "Switch theme"}
-      className="pressable inline-flex items-center gap-2 text-sm text-muted transition-colors duration-150 hover:text-ink"
+      className="pressable inline-flex items-center gap-2 text-sm text-muted hover:text-ink"
     >
       <PiCircleHalfFill aria-hidden className="size-4" />
       <span>{label}</span>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { EnterOnce } from "@/components/overview/EnterOnce";
 import { HeroGlow } from "@/components/overview/HeroGlow";
 import { ProjectSummary } from "@/components/projects/ProjectSummary";
 import { ExternalLink } from "@/components/ui";
@@ -8,15 +9,20 @@ import { site } from "@/content/site";
 export default function OverviewPage() {
   return (
     <>
-      <HeroGlow className="-mx-5 -mt-10 border-b border-line px-5 pb-16 pt-16 md:-mx-12 md:-mt-16 md:px-12 md:pb-24 md:pt-24">
-        <h1 className="font-display text-[clamp(5rem,18vw,11rem)] font-medium leading-[0.85]">{site.name}</h1>
-        <p className="mt-8 max-w-xl text-balance text-2xl font-semibold leading-snug md:text-3xl">{site.statement}</p>
-        <p className="mt-4 max-w-xl leading-relaxed text-muted">
+      <EnterOnce />
+      <HeroGlow className="-mx-5 -mt-10 px-5 pb-16 pt-16 md:-mx-12 md:-mt-16 md:px-12 md:pb-24 md:pt-24 lg:-mx-16 lg:px-16">
+        <h1 style={{ "--i": 0 } as React.CSSProperties} className="enter font-display text-[clamp(5rem,18vw,11rem)] font-medium leading-[0.85]">{site.name}</h1>
+        <p style={{ "--i": 1 } as React.CSSProperties} className="enter mt-8 max-w-xl text-balance text-2xl font-semibold leading-snug md:text-3xl">{site.statement}</p>
+        <p style={{ "--i": 2 } as React.CSSProperties} className="enter mt-4 max-w-xl leading-relaxed text-muted">
           {site.role}. {site.intro}
         </p>
       </HeroGlow>
 
-      <section aria-labelledby="highlights" className="py-14 md:py-20">
+      <section
+        aria-labelledby="highlights"
+        style={{ "--i": 3 } as React.CSSProperties}
+        className="enter border-t border-line py-14 md:py-20"
+      >
         <h2 id="highlights" className="text-xl font-semibold">
           Highlighted work
         </h2>
