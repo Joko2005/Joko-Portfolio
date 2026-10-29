@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Funnel_Display, Funnel_Sans } from "next/font/google";
 import { ThemeProvider } from "next-themes";
+import { Cursor } from "@/components/shell/Cursor";
 import { Intro } from "@/components/shell/Intro";
 import { Shell } from "@/components/shell/Shell";
 import { site } from "@/content/site";
@@ -15,8 +16,9 @@ export const metadata: Metadata = {
   description: `${site.role}. ${site.statement}`,
 };
 
-// Runs before paint so repeat visitors and reduced-motion users never see the intro flash.
-const introScript = `try{if(sessionStorage.getItem("intro-seen")||matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("intro-seen")}catch(e){}`;
+// Runs before paint: marks script support (hero parts start hidden), and lets repeat visitors
+// and reduced-motion users skip the intro without a flash.
+const introScript = `document.documentElement.classList.add("js");try{if(sessionStorage.getItem("intro-seen")||matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("intro-seen")}catch(e){}`;
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
@@ -28,6 +30,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <Intro name={site.name} />
           <Shell>{children}</Shell>
+          <Cursor />
         </ThemeProvider>
       </body>
     </html>

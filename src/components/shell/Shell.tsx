@@ -161,7 +161,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
 
       {/* Mobile top bar */}
       <header className="sticky top-0 z-40 bg-surface md:hidden">
-        <div className="flex items-center justify-between px-5 py-3">
+        <div className="flex h-[var(--bar-h)] items-center justify-between px-5">
           <Brand compact />
           <div className="flex items-center gap-5">
             <button

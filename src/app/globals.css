@@ -19,7 +19,8 @@
   --c-playground: #a64b00;
 
   --accent: var(--ink);
-  --glow-opacity: 0.35;
+  /* Height of the mobile top bar; the pinned hero sits under it. */
+  --bar-h: 3.875rem;
   color-scheme: light;
 }
 
@@ -36,7 +37,6 @@
   --c-graphics: #4fc3f7;
   --c-playground: #ffb547;
 
-  --glow-opacity: 0.3;
   color-scheme: dark;
 }
 
@@ -92,6 +92,32 @@
 .intro-seen .intro {
   display: none;
 }
+/* Safety net: if the script never runs, the loader still gets out of the way. */
+.intro {
+  animation: intro-bail 0s 5s forwards;
+}
+@keyframes intro-bail {
+  to {
+    visibility: hidden;
+  }
+}
+.is-loading {
+  overflow: hidden;
+}
+.intro-type {
+  font-family: var(--font-display);
+  font-size: clamp(6rem, 37vw, 40rem);
+  font-weight: 600;
+  line-height: 0.82;
+  letter-spacing: -0.05em;
+  white-space: nowrap;
+  /* Room for the letters to rise from below the line. */
+  padding-block: 0.04em;
+}
+.intro-outline {
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--bg);
+}
 
 /* Pressable feedback (emil-design-eng). Owns all its transitions so color utilities can't cancel the press. */
 @utility pressable {
@@ -134,7 +160,7 @@
   }
 }
 .enter {
-  --enter-offset: 650ms;
+  --enter-offset: 2300ms;
   animation: enter 500ms var(--ease-out) backwards;
   animation-delay: calc(var(--enter-offset) + var(--i, 0) * 60ms);
 }
@@ -225,5 +251,191 @@
     @starting-style {
       transform: none;
     }
+  }
+}
+
+/* ---- Custom cursor (Cursor.tsx). Only active for a mouse without reduced motion. ---- */
+.has-cursor,
+.has-cursor * {
+  cursor: none !important;
+}
+.has-cursor :is(input, textarea, select, [contenteditable="true"]) {
+  cursor: text !important;
+}
+.cursor {
+  pointer-events: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100;
+  /* GSAP moves the wrapper; the dot scales inside it so the two never fight.
+     The blend sits on the wrapper: a fixed, z-indexed box is its own stacking context,
+     so a blend on the dot alone would only mix with the empty wrapper. */
+  mix-blend-mode: difference;
+}
+.cursor[data-state="label"] {
+  mix-blend-mode: normal;
+}
+.cursor-dot,
+.cursor-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  translate: -50% -50%;
+  border-radius: 9999px;
+  transition:
+    scale 220ms var(--ease-out),
+    opacity 150ms ease;
+}
+.cursor-dot {
+  width: 56px;
+  height: 56px;
+  background: #fff;
+  scale: 0.22;
+}
+.cursor-label {
+  display: grid;
+  place-items: center;
+  width: 88px;
+  height: 88px;
+  background: var(--ink);
+  color: var(--bg);
+  font-size: 0.875rem;
+  font-weight: 500;
+  opacity: 0;
+  scale: 0.4;
+}
+.cursor[data-state="hover"] .cursor-dot {
+  scale: 1;
+}
+.cursor[data-state="label"] .cursor-dot,
+.cursor[data-state="text"] .cursor-dot,
+.cursor[data-state="hidden"] .cursor-dot {
+  opacity: 0;
+}
+.cursor[data-state="label"] .cursor-label {
+  opacity: 1;
+  scale: 1;
+}
+.cursor.is-pressed .cursor-dot {
+  scale: 0.18;
+}
+.cursor.is-pressed[data-state="hover"] .cursor-dot {
+  scale: 0.85;
+}
+.cursor.is-pressed .cursor-label {
+  scale: 0.9;
+}
+
+/* Magnetic controls lean toward the cursor through `translate`, leaving `transform` to the press. */
+:is(.btn, [data-magnetic]) {
+  translate: var(--mx, 0px) var(--my, 0px);
+}
+/* A modal dialog renders in the top layer, above the custom cursor: hand back the system cursor while one is open. */
+.has-cursor:has(dialog[open]),
+.has-cursor:has(dialog[open]) * {
+  cursor: auto !important;
+}
+.has-cursor:has(dialog[open]) :is(a, button, [role="option"]) {
+  cursor: pointer !important;
+}
+.has-cursor:has(dialog[open]) .cursor {
+  display: none;
+}
+
+/* ---- Overview hero (Hero.tsx) ---- */
+/* The name, sized to the hero's own width so it runs margin to margin beside the sidebar. */
+.hero-name {
+  font-family: var(--font-display);
+  font-size: 40.5cqi;
+  font-weight: 600;
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  white-space: nowrap;
+  margin-inline-start: -0.04em;
+}
+/* The mask the letters rise through; padded so it never clips the glyphs at rest. */
+.hero-name > span[aria-hidden] {
+  padding-block: 0.02em 0.04em;
+}
+/* With script on, the parts that animate in start hidden; GSAP reveals them. A safety net shows them anyway. */
+.js .hero-char,
+.js .hero-fade {
+  visibility: hidden;
+  animation: hero-bail 0s 6s forwards;
+}
+@keyframes hero-bail {
+  to {
+    visibility: visible;
+  }
+}
+
+/* Design / Build switch: two words on a pill, a thumb slides under the active one. */
+.switch {
+  position: relative;
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr;
+  border-radius: 9999px;
+  background: var(--surface);
+  padding: 4px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+}
+.switch button {
+  position: relative;
+  z-index: 1;
+  border-radius: 9999px;
+  padding: 0.5rem 1.1rem;
+  color: var(--muted);
+  transition: color 200ms var(--ease-out);
+}
+.switch button[aria-pressed="true"] {
+  color: var(--bg);
+}
+.switch-thumb {
+  position: absolute;
+  inset: 4px auto 4px 4px;
+  width: calc(50% - 4px);
+  border-radius: 9999px;
+  background: var(--ink);
+  transition: translate 260ms var(--ease-out);
+}
+.switch[data-built="true"] .switch-thumb {
+  translate: 100% 0;
+}
+
+/* Statement: the two lines share one slot and swap with a short roll. */
+.statement {
+  display: grid;
+  overflow: hidden;
+}
+.statement > span {
+  grid-area: 1 / 1;
+  transition:
+    translate 420ms var(--ease-out),
+    opacity 300ms var(--ease-out);
+}
+.statement > span:last-child,
+.statement[data-built="true"] > span:first-child {
+  translate: 0 -100%;
+  opacity: 0;
+}
+.statement[data-built="true"] > span:last-child {
+  translate: 0 0;
+  opacity: 1;
+}
+.statement > span:last-child {
+  translate: 0 100%;
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --bar-h: 0px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .switch-thumb,
+  .statement > span {
+    transition-property: opacity;
   }
 }

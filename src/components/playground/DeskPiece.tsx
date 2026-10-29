@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useMemo, useState, useSyncExternalStore } from "react";
 import { deskObjects, type DeskObjectId } from "@/content/playground";
+import { useThemeClass } from "@/lib/useThemeClass";
 import type { DeskPalette } from "./DeskScene";
 
 const DeskScene = dynamic(() => import("./DeskScene"), {
@@ -40,20 +41,9 @@ function hasWebGL() {
   return webglSupport;
 }
 
-// Tracks the theme class next-themes puts on <html>, so tokens are read after it changes.
-function subscribeTheme(cb: () => void) {
-  const observer = new MutationObserver(cb);
-  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
-  return () => observer.disconnect();
-}
-
 /** Reads the current theme's tokens so the scene matches the page. */
 function usePalette(): DeskPalette | null {
-  const theme = useSyncExternalStore(
-    subscribeTheme,
-    () => (document.documentElement.classList.contains("dark") ? "dark" : "light"),
-    () => null,
-  );
+  const theme = useThemeClass();
   return useMemo(() => {
     if (!theme) return null;
     const css = getComputedStyle(document.documentElement);
