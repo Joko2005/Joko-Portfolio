@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { SectionId } from "@/components/shell/nav";
 
-const base = "rounded-2xl border border-line bg-card";
+const base = "rounded-3xl bg-card";
 
 /** Static container for a block of content. */
 export function Card({
@@ -18,7 +18,7 @@ export function Card({
 }
 
 /**
- * Whole-card link. The border takes the card's own section hue on hover,
+ * Whole-card link. Its title and arrow take the card's own section hue on hover,
  * so a card that leads to Playground lights up amber, one to Projects orange.
  */
 export function CardLink({

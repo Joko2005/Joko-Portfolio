@@ -13,7 +13,7 @@ export function Placeholder({
       role="img"
       aria-label={`Placeholder: ${label}`}
       style={{ aspectRatio: ratio }}
-      className={`flex items-center justify-center border border-dashed border-line bg-surface p-4 text-center text-sm text-muted ${className}`}
+      className={`flex items-center justify-center bg-surface p-4 text-center text-sm text-muted ${className}`}
     >
       {label}
     </div>

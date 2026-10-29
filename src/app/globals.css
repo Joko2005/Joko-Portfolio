@@ -156,44 +156,29 @@
 }
 
 /* Buttons. Pair with `pressable` for press feedback. */
+/* One button shape on the whole site: fully round, flat fill, no outline. */
 @utility btn {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  border-radius: 0.625rem;
-  border: 1px solid var(--line);
-  padding: 0.5rem 0.875rem;
-  font-size: 0.875rem;
+  border-radius: 9999px;
+  background: var(--surface);
+  color: var(--ink);
+  padding: 0.75rem 1.25rem;
+  font-size: 1rem;
   font-weight: 500;
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-  }
 }
 @utility btn-primary {
-  border-color: var(--ink);
   background: var(--ink);
   color: var(--bg);
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      border-color: var(--accent);
-      background: var(--accent);
-      color: var(--bg);
-    }
-  }
 }
 
-/* Whole-card links: the border takes the card's section hue on hover or keyboard focus,
-   the arrow nudges toward where the link goes, and the screenshot leans in slightly. */
+/* Whole-card links: a tone step on hover, the arrow nudges toward where the link goes,
+   and the screenshot leans in slightly. */
 .card-link {
   transition:
-    border-color 150ms ease,
+    background-color 150ms ease,
     transform 160ms var(--ease-out);
-}
-.card-link:focus-visible {
-  border-color: var(--accent);
 }
 .card-link:active {
   transform: scale(0.985);
@@ -207,7 +192,7 @@
 }
 @media (hover: hover) and (pointer: fine) {
   .card-link:hover {
-    border-color: var(--accent);
+    background-color: var(--surface);
   }
   .card-link:hover .card-arrow {
     transform: translate(2px, -2px);

@@ -21,12 +21,12 @@ function Brand({ compact = false }: { compact?: boolean }) {
           alt=""
           width={88}
           height={88}
-          className={`shrink-0 rounded-full border border-line object-cover ${compact ? "size-9" : "size-11"}`}
+          className={`shrink-0 rounded-full object-cover ${compact ? "size-9" : "size-11"}`}
         />
       ) : (
         <span
           aria-hidden
-          className={`grid shrink-0 place-items-center rounded-full border border-line bg-bg font-display font-semibold ${
+          className={`grid shrink-0 place-items-center rounded-full bg-ink font-display text-bg font-semibold ${
             compact ? "size-9 text-sm" : "size-11 text-base"
           }`}
         >
@@ -66,7 +66,7 @@ function NavList({ id, pathname, onNavigate }: { id: string; pathname: string; o
                     data-section={id}
                     aria-current={active ? "page" : undefined}
                     onClick={onNavigate}
-                    className={`relative flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm transition-colors duration-150 ease-out ${
+                    className={`relative flex items-center gap-2.5 rounded-full px-3.5 py-2 text-sm transition-colors duration-150 ease-out ${
                       active ? "font-medium text-ink" : "text-muted hover:text-ink"
                     }`}
                   >
@@ -75,7 +75,7 @@ function NavList({ id, pathname, onNavigate }: { id: string; pathname: string; o
                       <motion.span
                         layoutId={`${id}-pill`}
                         aria-hidden
-                        className="absolute inset-0 rounded-xl border border-line bg-bg"
+                        className="absolute inset-0 rounded-full bg-bg"
                         transition={{ duration: reduceMotion ? 0 : 0.2, ease: PILL_EASE }}
                       />
                     )}
@@ -134,7 +134,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
       </a>
 
       {/* Desktop sidebar */}
-      <aside className="sticky top-0 hidden h-dvh flex-col gap-8 overflow-y-auto border-r border-line bg-surface px-4 py-6 md:flex">
+      <aside className="sticky top-0 hidden h-dvh flex-col gap-8 overflow-y-auto bg-surface px-4 py-6 md:flex">
         <div className="px-1">
           <Brand />
         </div>
@@ -143,7 +143,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
             type="button"
             aria-haspopup="dialog"
             onClick={() => setPaletteOpen(true)}
-            className="pressable flex items-center gap-2 rounded-xl border border-line bg-bg px-3 py-2 text-sm text-muted hover:text-ink"
+            className="pressable flex items-center gap-2 rounded-full bg-bg px-4 py-2.5 text-sm text-muted hover:text-ink"
           >
             <PiMagnifyingGlass aria-hidden className="size-4" />
             <span className="mr-auto">Search</span>
@@ -153,14 +153,14 @@ export function Shell({ children }: { children: React.ReactNode }) {
             <NavList id="nav" pathname={pathname} />
           </nav>
         </div>
-        <div className="mt-auto flex flex-col gap-4 border-t border-line px-1 pt-5">
+        <div className="mt-auto flex flex-col gap-4 px-1 pt-5">
           <ContactLinks />
           <ThemeToggle />
         </div>
       </aside>
 
       {/* Mobile top bar */}
-      <header className="sticky top-0 z-40 border-b border-line bg-bg md:hidden">
+      <header className="sticky top-0 z-40 bg-surface md:hidden">
         <div className="flex items-center justify-between px-5 py-3">
           <Brand compact />
           <div className="flex items-center gap-5">
@@ -188,9 +188,9 @@ export function Shell({ children }: { children: React.ReactNode }) {
           </div>
         </div>
         {menuOpen && (
-          <nav id="mobile-nav" aria-label="Main" className="flex flex-col gap-6 border-t border-line px-3 py-5">
+          <nav id="mobile-nav" aria-label="Main" className="flex flex-col gap-6 px-3 pb-6 pt-2">
             <NavList id="mobile-nav-list" pathname={pathname} onNavigate={() => setMenuOpen(false)} />
-            <div className="flex flex-col gap-4 border-t border-line px-3 pt-5">
+            <div className="flex flex-col gap-4 px-3 pt-2">
               <ContactLinks />
               <ThemeToggle />
             </div>

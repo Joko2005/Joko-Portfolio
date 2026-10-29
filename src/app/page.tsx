@@ -27,7 +27,7 @@ function Portrait() {
         width={640}
         height={800}
         priority
-        className="hidden aspect-4/5 w-full rounded-xl border border-line object-cover xl:block"
+        className="hidden aspect-4/5 w-full rounded-2xl object-cover xl:block"
       />
     );
   }
@@ -35,7 +35,7 @@ function Portrait() {
     <div
       role="img"
       aria-label="Placeholder: your photo"
-      className="hidden aspect-4/5 w-full place-items-center rounded-xl border border-dashed border-line bg-surface p-4 text-center text-xs text-muted xl:grid"
+      className="hidden aspect-4/5 w-full place-items-center rounded-2xl bg-surface p-4 text-center text-xs text-muted xl:grid"
     >
       Your photo (800 × 1000)
     </div>
@@ -47,7 +47,7 @@ export default function OverviewPage() {
     <div className="flex flex-col gap-12 md:gap-14">
       <EnterOnce />
 
-      <HeroGlow className="enter grid gap-8 rounded-2xl border border-line bg-card p-6 md:p-10 xl:grid-cols-[minmax(0,1fr)_15rem] xl:items-center">
+      <HeroGlow className="enter grid gap-8 rounded-3xl bg-card p-6 md:p-10 xl:grid-cols-[minmax(0,1fr)_15rem] xl:items-center">
         <div>
           <h1 className="font-display text-[clamp(2.5rem,6vw,4.25rem)] font-semibold leading-[1] tracking-[-0.03em]">
             Hi, I&apos;m {site.name}.
@@ -104,7 +104,7 @@ export default function OverviewPage() {
           {explore.map(({ href, section, icon: Icon, title, body }) => (
             <li key={href}>
               <CardLink href={href} section={section} className="flex h-full items-start gap-4 p-5">
-                <span className="grid size-10 shrink-0 place-items-center rounded-xl border border-line text-ink group-hover:text-accent">
+                <span className="grid size-10 shrink-0 place-items-center rounded-full bg-surface text-ink group-hover:text-accent">
                   <Icon aria-hidden className="size-5" />
                 </span>
                 <span className="min-w-0 flex-1">
@@ -138,7 +138,7 @@ export default function OverviewPage() {
               Email me
             </a>
           ) : (
-            <span className="btn border-dashed text-muted">[Add your email in src/content/site.ts]</span>
+            <span className="btn text-muted">[Add your email in src/content/site.ts]</span>
           )}
           {site.links.linkedin && (
             <a href={site.links.linkedin} target="_blank" rel="noopener noreferrer" className="btn pressable">

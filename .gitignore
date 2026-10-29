@@ -66,3 +66,6 @@ desktop.ini
 /.impeccable/mocks/
 /.impeccable/*.cache.json
 /.impeccable/config.local.json
+
+# design-taste-frontend working files
+/.taste-skill/

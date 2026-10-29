@@ -159,12 +159,12 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
         onOpenChange(false);
       }}
       onClick={(e) => e.target === e.currentTarget && onOpenChange(false)}
-      className="mx-auto mt-[12vh] w-[min(36rem,calc(100%-2rem))] border border-line bg-bg p-0 text-ink shadow-[0_24px_64px_-16px_rgb(0_0_0/0.35)] backdrop:bg-black/40 dark:backdrop:bg-black/70"
+      className="mx-auto mt-[12vh] w-[min(36rem,calc(100%-2rem))] rounded-3xl bg-bg p-0 text-ink shadow-[0_24px_64px_-16px_rgb(0_0_0/0.35)] backdrop:bg-black/40 dark:backdrop:bg-black/70"
     >
       {/* Contents mount only while open: the theme label is unknown during server render. */}
       {open && (
         <>
-        <div className="flex items-center gap-3 border-b border-line px-4">
+        <div className="m-2 flex items-center gap-3 rounded-full bg-surface px-4">
           <PiMagnifyingGlass aria-hidden className="size-4 shrink-0 text-muted" />
           <input
             autoFocus
@@ -181,7 +181,7 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
               setActive(0);
             }}
             onKeyDown={onKeyDown}
-            className="h-14 w-full bg-transparent text-base outline-none placeholder:text-muted"
+            className="h-12 w-full bg-transparent text-base outline-none placeholder:text-muted"
           />
           <kbd className="shrink-0 font-sans text-xs text-muted">Esc</kbd>
         </div>
@@ -198,7 +198,7 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
             const headingId = `${baseId}-${group}`;
             return (
               <div key={group} role="group" aria-labelledby={headingId} className="pb-2">
-                <div id={headingId} role="presentation" className="px-4 pb-1 pt-2 text-xs text-muted">
+                <div id={headingId} role="presentation" className="px-5 pb-1 pt-2 text-xs text-muted">
                   {group}
                 </div>
                 {items.map((c) => {
@@ -212,7 +212,7 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
                       data-section={c.section}
                       onPointerMove={() => !selected && setActive(results.indexOf(c))}
                       onClick={() => run(c)}
-                      className={`flex cursor-pointer items-baseline justify-between gap-6 px-4 py-2.5 ${
+                      className={`mx-2 flex cursor-pointer items-baseline justify-between gap-6 rounded-2xl px-3 py-2.5 ${
                         selected ? "bg-surface text-accent" : ""
                       }`}
                     >

@@ -8,7 +8,7 @@ export function ProjectCard({ project }: { project: Project }) {
 
   const body = (
     <>
-      <div className="overflow-hidden border-b border-line">
+      <div className="overflow-hidden">
         {/* TODO: swap for next/image (keep the card-media class) once the screenshot exists. */}
         <div
           role="img"
