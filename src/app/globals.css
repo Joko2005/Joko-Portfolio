@@ -185,15 +185,60 @@
   }
 }
 
-/* Whole-card links: the border takes the card's section hue on hover or keyboard focus. */
+/* Whole-card links: the border takes the card's section hue on hover or keyboard focus,
+   the arrow nudges toward where the link goes, and the screenshot leans in slightly. */
 .card-link {
-  transition: border-color 150ms ease;
+  transition:
+    border-color 150ms ease,
+    transform 160ms var(--ease-out);
 }
 .card-link:focus-visible {
   border-color: var(--accent);
 }
+.card-link:active {
+  transform: scale(0.985);
+}
+.card-arrow,
+.card-media {
+  transition: transform 200ms var(--ease-out);
+}
+.card-media {
+  transition-duration: 400ms;
+}
 @media (hover: hover) and (pointer: fine) {
   .card-link:hover {
     border-color: var(--accent);
+  }
+  .card-link:hover .card-arrow {
+    transform: translate(2px, -2px);
+  }
+  .card-link:hover .card-media {
+    transform: scale(1.02);
+  }
+}
+
+/* Filtered chips fade in on mount with a tiny stagger. */
+.chip-in {
+  transition:
+    opacity 150ms var(--ease-out),
+    transform 150ms var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 20ms);
+  @starting-style {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-link:active,
+  .card-link:hover .card-arrow,
+  .card-link:hover .card-media {
+    transform: none;
+  }
+  .chip-in {
+    transition-property: opacity;
+    @starting-style {
+      transform: none;
+    }
   }
 }

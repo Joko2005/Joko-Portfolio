@@ -8,13 +8,15 @@ export function ProjectCard({ project }: { project: Project }) {
 
   const body = (
     <>
-      {/* TODO: swap for next/image once the screenshot exists. */}
-      <div
-        role="img"
-        aria-label={`Placeholder: ${project.media}`}
-        className="flex aspect-16/10 items-center justify-center border-b border-line bg-surface p-4 text-center text-xs text-muted"
-      >
-        {project.media}
+      <div className="overflow-hidden border-b border-line">
+        {/* TODO: swap for next/image (keep the card-media class) once the screenshot exists. */}
+        <div
+          role="img"
+          aria-label={`Placeholder: ${project.media}`}
+          className="card-media flex aspect-16/10 items-center justify-center bg-surface p-4 text-center text-xs text-muted"
+        >
+          {project.media}
+        </div>
       </div>
       <div className="p-5">
         <div className="flex flex-wrap gap-1.5">

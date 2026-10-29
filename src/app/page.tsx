@@ -118,7 +118,11 @@ export default function OverviewPage() {
         </ul>
       </section>
 
-      <Card as="section" aria-labelledby="contact" className="flex flex-col gap-6 p-6 md:flex-row md:items-center md:justify-between md:p-8">
+      <Card
+        as="section"
+        aria-labelledby="contact"
+        style={step(4)}
+        className="enter flex flex-col gap-6 p-6 md:flex-row md:items-center md:justify-between md:p-8">
         <div>
           <h2 id="contact" className="font-display text-xl font-semibold tracking-[-0.01em]">
             Looking for an OJT placement

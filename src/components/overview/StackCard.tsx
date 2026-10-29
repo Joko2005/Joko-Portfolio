@@ -35,8 +35,8 @@ export function StackCard() {
         })}
       </div>
       <ul aria-live="polite" className="mt-4 flex flex-wrap gap-1.5">
-        {items.map((item) => (
-          <li key={item}>
+        {items.map((item, i) => (
+          <li key={`${filter}-${item}`} className="chip-in" style={{ "--i": i } as React.CSSProperties}>
             <Chip strong className="px-3 py-1.5 text-sm">
               {item}
             </Chip>

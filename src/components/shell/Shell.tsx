@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
 import { PiEnvelopeSimple, PiGithubLogo, PiMagnifyingGlass } from "react-icons/pi";
 import { site } from "@/content/site";
 import { CommandPalette, ShortcutHint } from "./CommandPalette";
@@ -43,16 +44,19 @@ function Brand({ compact = false }: { compact?: boolean }) {
   );
 }
 
-function NavList({ pathname, onNavigate }: { pathname: string; onNavigate?: () => void }) {
+const PILL_EASE = [0.23, 1, 0.32, 1] as const;
+
+function NavList({ id, pathname, onNavigate }: { id: string; pathname: string; onNavigate?: () => void }) {
   const current = sectionFromPath(pathname);
+  const reduceMotion = useReducedMotion();
   return (
     <div className="flex flex-col gap-5">
       {NAV_GROUPS.map((group) => (
         <div key={group}>
-          <p id={`nav-${group}`} className="px-3 pb-1.5 text-xs text-muted">
+          <p id={`${id}-${group}`} className="px-3 pb-1.5 text-xs text-muted">
             {group}
           </p>
-          <ul aria-labelledby={`nav-${group}`} className="flex flex-col gap-0.5">
+          <ul aria-labelledby={`${id}-${group}`} className="flex flex-col gap-0.5">
             {NAV.filter((item) => item.group === group).map(({ id, label, href, icon: Icon }) => {
               const active = id === current;
               return (
@@ -62,14 +66,21 @@ function NavList({ pathname, onNavigate }: { pathname: string; onNavigate?: () =
                     data-section={id}
                     aria-current={active ? "page" : undefined}
                     onClick={onNavigate}
-                    className={`nav-item flex items-center gap-2.5 rounded-xl border px-3 py-2 text-sm ${
-                      active
-                        ? "border-line bg-bg font-medium text-ink"
-                        : "border-transparent text-muted hover:text-ink"
+                    className={`relative flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm transition-colors duration-150 ease-out ${
+                      active ? "font-medium text-ink" : "text-muted hover:text-ink"
                     }`}
                   >
-                    <Icon aria-hidden className={`size-[1.125rem] shrink-0 ${active ? "text-accent" : ""}`} />
-                    {label}
+                    {/* The pill slides to the new page's item, so the move reads as one place to another. */}
+                    {active && (
+                      <motion.span
+                        layoutId={`${id}-pill`}
+                        aria-hidden
+                        className="absolute inset-0 rounded-xl border border-line bg-bg"
+                        transition={{ duration: reduceMotion ? 0 : 0.2, ease: PILL_EASE }}
+                      />
+                    )}
+                    <Icon aria-hidden className={`relative size-[1.125rem] shrink-0 ${active ? "text-accent" : ""}`} />
+                    <span className="relative">{label}</span>
                   </Link>
                 </li>
               );
@@ -139,7 +150,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
             <ShortcutHint />
           </button>
           <nav aria-label="Main">
-            <NavList pathname={pathname} />
+            <NavList id="nav" pathname={pathname} />
           </nav>
         </div>
         <div className="mt-auto flex flex-col gap-4 border-t border-line px-1 pt-5">
@@ -178,7 +189,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         </div>
         {menuOpen && (
           <nav id="mobile-nav" aria-label="Main" className="flex flex-col gap-6 border-t border-line px-3 py-5">
-            <NavList pathname={pathname} onNavigate={() => setMenuOpen(false)} />
+            <NavList id="mobile-nav-list" pathname={pathname} onNavigate={() => setMenuOpen(false)} />
             <div className="flex flex-col gap-4 border-t border-line px-3 pt-5">
               <ContactLinks />
               <ThemeToggle />
