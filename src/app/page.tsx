@@ -27,7 +27,7 @@ function Portrait() {
         width={640}
         height={800}
         priority
-        className="hidden aspect-4/5 w-full rounded-xl border border-line object-cover md:block"
+        className="hidden aspect-4/5 w-full rounded-xl border border-line object-cover xl:block"
       />
     );
   }
@@ -35,7 +35,7 @@ function Portrait() {
     <div
       role="img"
       aria-label="Placeholder: your photo"
-      className="hidden aspect-4/5 w-full place-items-center rounded-xl border border-dashed border-line bg-surface p-4 text-center text-xs text-muted md:grid"
+      className="hidden aspect-4/5 w-full place-items-center rounded-xl border border-dashed border-line bg-surface p-4 text-center text-xs text-muted xl:grid"
     >
       Your photo (800 × 1000)
     </div>
@@ -47,7 +47,7 @@ export default function OverviewPage() {
     <div className="flex flex-col gap-12 md:gap-14">
       <EnterOnce />
 
-      <HeroGlow className="enter grid gap-8 rounded-2xl border border-line bg-card p-6 md:grid-cols-[minmax(0,1fr)_13rem] md:items-center md:p-10 lg:grid-cols-[minmax(0,1fr)_16rem]">
+      <HeroGlow className="enter grid gap-8 rounded-2xl border border-line bg-card p-6 md:p-10 xl:grid-cols-[minmax(0,1fr)_15rem] xl:items-center">
         <div>
           <h1 className="font-display text-[clamp(2.5rem,6vw,4.25rem)] font-semibold leading-[1] tracking-[-0.03em]">
             Hi, I&apos;m {site.name}.

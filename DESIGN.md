@@ -18,6 +18,7 @@ The interface is black and white. Color appears only where the visitor interacts
 | `ink` | `#000000` | `#FFFFFF` | Text, icons, focus ring |
 | `muted` | `#6E6E6E` | `#8E8E8E` | Secondary text |
 | `line` | `#E2E2E2` | `#262626` | Dividers, borders |
+| `card` | `#F7F7F7` | `#0E0E0E` | Card fill (one step off `bg`) |
 
 ### Section colors (interaction only)
 
@@ -47,10 +48,13 @@ Rules:
 
 ## Layout
 
-- Desktop: fixed left sidebar (name, "Open for OJT" status, Search, Overview / Projects / Graphics / Playground, theme toggle) + left-aligned content column (max 64rem, never centered).
-- Mobile: sidebar becomes a top bar with a search icon and a menu.
-- Dividers run the content width (`border-line`, 1px); no rule bleeds past the column.
-- Highlight items (AVERA, CryoLipo) are separated by spacing and lines, not boxed cards with shadows. Each shows: what it is, Joko's role, one result, link.
+Pattern drawn from bryllim.com and satriabahari.my.id: a persistent sidebar beside one column of cards.
+
+- **Sidebar (desktop)**, top to bottom: profile block (photo or initial, name, "Open for OJT"), Search (⌘K / Ctrl K), nav grouped as **Work** (Overview, Projects, Graphics) and **Play** (Playground), then a ruled footer with email, GitHub and the theme toggle. Group labels are small, muted, sentence case.
+- **Mobile**: top bar with the compact profile, a search icon and Menu; the menu holds the same groups and footer.
+- **Content column**: left-aligned, max 64rem, never centered. Sections stack with 3–3.5rem between them.
+- **Section header**: Funnel Display title, optional one-line description, optional "See all …" link on the right. No numbering, no eyebrow.
+- **Overview order**: intro card (name, role chips, statement, actions, portrait from 1280px up) → Highlighted work (2 project cards) → Stack (filterable chips) → More to see (Graphics, Playground) → contact card.
 
 ## Signature: hero glow
 
@@ -66,6 +70,27 @@ One soft blue/orange glow inside the Overview hero only, following the cursor.
 ## Components
 
 Primitives live in `src/components/ui`, shell pieces in `src/components/shell`. Each entry: what it is, when to use it, the rules it keeps.
+
+### Radii
+Cards 16px (`rounded-2xl`), inner tiles and nav pills 12px (`rounded-xl`), buttons 10px, chips 8px (`rounded-lg`). Card media sits flush at the top and inherits the card's corners.
+
+### Card (`Card`, `CardLink`)
+`bg-card`, 1px `line` border, 16px radius, no shadow. `CardLink` makes the whole card the link and takes a `section`: its border, title and arrow turn that section's hue on hover/focus, so a card always previews where it leads. Press scales to 0.985.
+
+### Project card (`ProjectCard`)
+Screenshot first (16:10, `card-media`), then chips (the kind of work first and `strong`, then stack), title, one-line summary, Role / Result, and the link label with an arrow. Links out (GitHub, live store); without a URL it renders as a plain card with an `[Add link: …]` reminder.
+
+### Chip (`Chip`)
+8px radius, 1px border, `text-xs`. Default is muted; `strong` (ink text, stronger border) marks the leading chip in a set. Not interactive.
+
+### Filter tabs (`StackCard`)
+Pressable chips with a count. The active tab fills with `ink`. Changing the filter fades the chips in with a 20ms stagger.
+
+### Buttons (`btn`, `btn-primary` utilities)
+10px radius, `text-sm` medium. `btn` is outlined; `btn-primary` fills with `ink`. Both turn `--accent` on hover. Pair with `pressable`. One primary per card.
+
+### Sidebar nav item
+Icon and label. The active item sits on a `bg` pill with a `line` border, and its icon takes the section hue; the pill slides between items (Motion `layoutId`, 200ms `--ease-out`, instant under reduced motion).
 
 ### Pressable (`pressable` utility)
 Any button-like control. Scales to 0.97 on `:active`. It owns its transitions (transform 160ms, color/background/border 150ms, `--ease-out`), so never add `transition-colors` beside it: the later declaration cancels the press.
@@ -83,8 +108,8 @@ Jump to any page, project, link or action. ⌘K / Ctrl K, the sidebar Search but
 - The active row takes its own section's hue (`data-section`), on `surface`.
 - Empty state names the recovery. Project rows jump to `/projects#slug`, and the landing title is marked in `--accent` (`HashTarget`).
 
-### Highlight item (`ProjectSummary`)
-Media, title, one-line summary, Role / Result / Built with list, links. Separated by space and lines, never boxed or shadowed. Anchored by slug for jumps.
+### Project list item (`ProjectSummary`)
+Used on the Projects page until it moves to cards: media, title, summary, Role / Result / Built with, links. Anchored by slug for jumps.
 
 ### Placeholder
 Dashed `line` box on `surface` with the asset it stands for and its size. Temporary only; replace with `next/image`.
@@ -106,7 +131,8 @@ Joko's tools as monochrome clay on a desk mat; each object opens real work (phon
 
 See CLAUDE.md motion rules (emil-design-eng). Hover color changes: `color`/`background-color` 150ms ease. Movement: `transform`/`opacity` only.
 
-- **Overview first-load stagger** (the site's one entrance): name, statement, intro, highlights; 500ms `--ease-out`, 60ms steps, 8px rise. Waits for the first-visit intro, plays once per page load (`EnterOnce`), fades only under reduced motion.
+- **Overview first-load stagger** (the site's one entrance): intro card, highlighted work, stack, more to see, contact; 500ms `--ease-out`, 60ms steps, 8px rise.
+- **Card hover** (fine pointers only): border to the section hue (150ms), arrow nudges 2px up-right (200ms), screenshot scales to 1.02 (400ms). Reduced motion keeps only the color. Waits for the first-visit intro, plays once per page load (`EnterOnce`), fades only under reduced motion.
 
 ## Theme
 
