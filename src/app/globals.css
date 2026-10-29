@@ -16,6 +16,7 @@
   --c-overview: #1d4ed8;
   --c-projects: #c2410c;
   --c-graphics: #0369a1;
+  --c-certificates: #15803d;
   --c-playground: #a64b00;
 
   --accent: var(--ink);
@@ -35,6 +36,7 @@
   --c-overview: #7b9cff;
   --c-projects: #ff8a3d;
   --c-graphics: #4fc3f7;
+  --c-certificates: #5ee38b;
   --c-playground: #ffb547;
 
   color-scheme: dark;
@@ -44,6 +46,7 @@
 [data-section="overview"] { --accent: var(--c-overview); }
 [data-section="projects"] { --accent: var(--c-projects); }
 [data-section="graphics"] { --accent: var(--c-graphics); }
+[data-section="certificates"] { --accent: var(--c-certificates); }
 [data-section="playground"] { --accent: var(--c-playground); }
 
 @theme {
@@ -444,6 +447,83 @@
 @media (prefers-reduced-motion: reduce) {
   .statement > span {
     transition-property: opacity;
+  }
+}
+
+/* ---- Inner pages ---- */
+/* Page title: a display row, smaller than the hero monument, with the item count tucked in its corner. */
+.page-title {
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 10vw, 9rem);
+  font-weight: 600;
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  margin-inline-start: -0.04em;
+}
+.page-count {
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 2vw, 1.75rem);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--muted);
+}
+
+/* Certificates: bands like the contact rows, the title at heading size, inverting under the pointer. */
+.cert-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  min-height: 9rem;
+  border-radius: 1.5rem;
+  background: var(--surface);
+  padding: 1.25rem 1.5rem;
+  transition:
+    background-color 200ms var(--ease-out),
+    color 200ms var(--ease-out);
+}
+li:nth-child(even) > .cert-row {
+  background: var(--card);
+}
+.cert-title {
+  display: block;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3.5vw, 3rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.cert-arrow {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 9999px;
+  background: var(--ink);
+  color: var(--bg);
+  font-size: 1.5rem;
+  transition: rotate 300ms var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  a.cert-row:hover {
+    background: var(--ink);
+    color: var(--bg);
+  }
+  a.cert-row:hover .text-muted {
+    color: color-mix(in srgb, var(--bg) 65%, var(--ink));
+  }
+  a.cert-row:hover .cert-arrow {
+    background: var(--bg);
+    color: var(--ink);
+    rotate: 45deg;
+  }
+}
+
+/* Projects: the still leans in under the pointer, like the work cards. */
+@media (hover: hover) and (pointer: fine) {
+  .project-still:hover .card-media {
+    transform: scale(1.015);
   }
 }
 

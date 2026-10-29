@@ -20,10 +20,10 @@ const FIELD: Record<WorkTone, string> = {
  * A still for the work: its screenshot when one exists, otherwise its title card drawn in its colour.
  * `compact` drops the title for layouts where the name is set right under the still.
  */
-function WorkStill({ item, className = "", compact = false }: { item: WorkItem; className?: string; compact?: boolean }) {
+export function WorkStill({ item, className = "", compact = false }: { item: WorkItem; className?: string; compact?: boolean }) {
   if (item.image) {
     return (
-      <Image src={item.image} alt={`${item.title} screenshot`} fill sizes="(min-width: 1024px) 26vw, 100vw" className={`object-cover ${className}`} />
+      <Image src={item.image} alt={`${item.title} screenshot`} fill sizes="(min-width: 1024px) 40vw, 100vw" className={`object-cover ${className}`} />
     );
   }
   return (

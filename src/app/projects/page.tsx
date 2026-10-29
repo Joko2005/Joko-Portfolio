@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { HashTarget } from "@/components/projects/HashTarget";
-import { ProjectSummary } from "@/components/projects/ProjectSummary";
-import { ExternalLink } from "@/components/ui";
-import { certificates } from "@/content/certificates";
+import { ProjectRow } from "@/components/projects/ProjectRow";
+import { PageHeader } from "@/components/ui";
 import { projects } from "@/content/projects";
 
 export const metadata: Metadata = { title: "Projects" };
@@ -11,37 +10,15 @@ export default function ProjectsPage() {
   return (
     <>
       <HashTarget />
-      <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">Projects</h1>
-      <p className="mt-4 max-w-prose leading-relaxed text-muted">
-        Everything I&apos;ve designed and built, with my role in each.
-      </p>
+      <PageHeader title="Projects" lead="Everything I've designed and built, with my role in each." count={projects.length} />
 
-      <ul className="mt-12 grid gap-16 md:grid-cols-2 md:gap-x-10">
+      <ul className="flex flex-col gap-28 md:gap-40">
         {projects.map((project) => (
-          <li key={project.slug} id={project.slug} className="project-anchor scroll-mt-24">
-            <ProjectSummary project={project} headingLevel="h2" />
+          <li key={project.slug} id={project.slug} className="project-anchor scroll-mt-16">
+            <ProjectRow project={project} />
           </li>
         ))}
       </ul>
-
-      <section aria-labelledby="certificates" className="mt-28">
-        <h2 id="certificates" className="text-xl font-semibold">
-          Certificates
-        </h2>
-        <ul className="mt-6 flex flex-col gap-2">
-          {certificates.map((c, i) => (
-            <li key={i} className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 rounded-3xl bg-surface p-5">
-              <div>
-                <p className="font-medium">{c.title}</p>
-                <p className="text-sm text-muted">
-                  {c.issuer}, {c.year}
-                </p>
-              </div>
-              <ExternalLink href={c.href}>View certificate</ExternalLink>
-            </li>
-          ))}
-        </ul>
-      </section>
     </>
   );
 }

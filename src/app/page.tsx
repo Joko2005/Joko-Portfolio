@@ -10,10 +10,10 @@ import { work } from "@/content/work";
 function DropPortrait() {
   const cls = "float-left mr-[0.5em] mt-[0.2em] size-[3.6em] rounded-2xl";
   if (site.photo) {
-    return <Image src={site.photo} alt={`Portrait of ${site.name}`} width={240} height={240} className={`${cls} object-cover`} />;
+    return <Image data-split-ignore src={site.photo} alt={`Portrait of ${site.name}`} width={240} height={240} className={`${cls} object-cover`} />;
   }
   return (
-    <span aria-hidden className={`${cls} grid place-items-center bg-ink text-bg`}>
+    <span aria-hidden data-split-ignore className={`${cls} grid place-items-center bg-ink text-bg`}>
       <span className="font-display text-[1.3em] font-semibold leading-none">{site.name.charAt(0)}</span>
     </span>
   );
@@ -55,7 +55,7 @@ export default function OverviewPage() {
       <Hero name={site.name} role={`${site.role}.`} intro={site.intro} />
 
       <section id="work" aria-labelledby="work-title" className="reveal scroll-mt-8 pt-24 md:pt-40">
-        <h2 id="work-title" className="section-title">
+        <h2 id="work-title" className="section-title" data-split="chars">
           Selected work
         </h2>
         <div className="mt-10">
@@ -64,12 +64,12 @@ export default function OverviewPage() {
       </section>
 
       <section aria-labelledby="about-title" className="reveal pt-28 md:pt-48">
-        <h2 id="about-title" className="section-title">
+        <h2 id="about-title" className="section-title" data-split="chars">
           About
         </h2>
         <div className="mt-10 grid gap-10 lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-9 lg:col-start-4 lg:row-start-1">
-            <p className="about-text" data-reveal>
+            <p className="about-text" data-split="words">
               <DropPortrait />
               <span className="text-ink">I&apos;m {site.name},</span> a UI/UX designer who builds what I design. I shape an
               interface first, then write the code behind it, with as much care for how the code is structured as for how
@@ -92,7 +92,7 @@ export default function OverviewPage() {
       </section>
 
       <section aria-labelledby="contact-title" className="reveal pt-28 md:pt-48">
-        <h2 id="contact-title" className="section-title">
+        <h2 id="contact-title" className="section-title" data-split="chars">
           Contact
         </h2>
         <ul className="mt-10 flex flex-col gap-2">

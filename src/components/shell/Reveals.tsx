@@ -3,14 +3,18 @@
 import { usePathname } from "next/navigation";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { SplitText } from "gsap/SplitText";
 import { useGSAP } from "@gsap/react";
 
-gsap.registerPlugin(ScrollTrigger, useGSAP);
+gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
 
 /**
- * Section entrances: in every `.reveal` section, the heading rises first, then each
- * `[data-reveal]` part, 70ms apart, once, as the section enters. Content is only hidden
- * by the tween itself, so it stays visible if scripts fail. Reduced motion fades only.
+ * Scroll entrances, once per element:
+ * - `.reveal` sections: the heading, then each `[data-reveal]` part, rise and fade 70ms apart.
+ * - `[data-split="chars"]`: letters rise through their line, like the hero's JOKO.
+ * - `[data-split="words"]`: words go from faint to full ink as the text scrolls through the view (reading pace).
+ *   `[data-split-ignore]` children are left whole.
+ * Content is only hidden by the tweens, so it stays readable if scripts fail. Reduced motion fades only.
  */
 export function Reveals() {
   const pathname = usePathname();
@@ -18,8 +22,12 @@ export function Reveals() {
   useGSAP(
     () => {
       const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const splits: SplitText[] = [];
+
       for (const section of gsap.utils.toArray<HTMLElement>(".reveal")) {
-        const parts = [section.querySelector("h2"), ...section.querySelectorAll("[data-reveal]")].filter(Boolean);
+        const heading = section.querySelector("h2:not([data-split])");
+        const parts = [heading, ...section.querySelectorAll("[data-reveal]")].filter(Boolean);
+        if (!parts.length) continue;
         gsap.from(parts, {
           opacity: 0,
           y: reduce ? 0 : 24,
@@ -29,6 +37,56 @@ export function Reveals() {
           scrollTrigger: { trigger: section, start: "top 80%", once: true },
         });
       }
+
+      for (const el of gsap.utils.toArray<HTMLElement>('[data-split="chars"]')) {
+        if (reduce) {
+          gsap.from(el, { opacity: 0, duration: 0.4, scrollTrigger: { trigger: el, start: "top 85%", once: true } });
+          continue;
+        }
+        let played = false;
+        splits.push(
+          SplitText.create(el, {
+            type: "lines, chars",
+            mask: "lines",
+            autoSplit: true,
+            // Re-split on resize and font load; once played, later splits just stay at rest.
+            onSplit: (self) => {
+              if (played) return;
+              return gsap.from(self.chars, {
+                yPercent: 110,
+                duration: 0.9,
+                ease: "expo.out",
+                stagger: 0.022,
+                scrollTrigger: { trigger: el, start: "top 85%", once: true, onEnter: () => (played = true) },
+              });
+            },
+          }),
+        );
+      }
+
+      for (const el of gsap.utils.toArray<HTMLElement>('[data-split="words"]')) {
+        if (reduce) continue;
+        splits.push(
+          SplitText.create(el, {
+            type: "words",
+            ignore: "[data-split-ignore]",
+            autoSplit: true,
+            onSplit: (self) =>
+              gsap.fromTo(
+                self.words,
+                { opacity: 0.18 },
+                {
+                  opacity: 1,
+                  ease: "none",
+                  stagger: 0.1,
+                  scrollTrigger: { trigger: el, start: "top 80%", end: "bottom 45%", scrub: 0.4 },
+                },
+              ),
+          }),
+        );
+      }
+
+      return () => splits.forEach((s) => s.revert());
     },
     { dependencies: [pathname], revertOnUpdate: true },
   );
