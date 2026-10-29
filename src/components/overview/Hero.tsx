@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -42,6 +42,24 @@ function useReducedMotion() {
   );
 }
 
+/**
+ * True once the browser is idle after the page mounts. Starting WebGL (context, shaders, lighting) is the
+ * heaviest thing on the page, so it waits until the navigation has painted; the sketch stands in until then.
+ */
+function useIdle() {
+  const [idle, setIdle] = useState(false);
+  useEffect(() => {
+    const done = () => setIdle(true);
+    if ("requestIdleCallback" in window) {
+      const id = requestIdleCallback(done, { timeout: 800 });
+      return () => cancelIdleCallback(id);
+    }
+    const id = setTimeout(done, 200);
+    return () => clearTimeout(id);
+  }, []);
+  return idle;
+}
+
 const STATEMENTS = { design: "I design it.", build: "I build it." } as const;
 
 /**
@@ -53,6 +71,7 @@ export function Hero({ name, role, intro }: { name: string; role: string; intro:
   const root = useRef<HTMLElement>(null);
   const [built, setBuilt] = useState(false);
   const [started, setStarted] = useState(false);
+  const idle = useIdle();
   const reducedMotion = useReducedMotion();
   const theme = useThemeClass();
   const ink = theme ? cssVar("--ink") : "#000";
@@ -131,14 +150,18 @@ export function Hero({ name, role, intro }: { name: string; role: string; intro:
 
         {/* The object, overlapping the name. */}
         <div className="pointer-events-auto absolute inset-x-0 top-[31%] z-0 mx-auto h-[44%] max-w-[44rem] md:left-auto md:right-0 md:top-[10%] md:mx-0 md:h-[62%] md:w-[52%] md:max-w-none">
-          <HeroObject
-            built={built}
-            started={started}
-            reducedMotion={reducedMotion}
-            ink={ink}
-            accent={accent}
-            onSpin={() => setBuilt((b) => !b)}
-          />
+          {idle ? (
+            <HeroObject
+              built={built}
+              started={started}
+              reducedMotion={reducedMotion}
+              ink={ink}
+              accent={accent}
+              onSpin={() => setBuilt((b) => !b)}
+            />
+          ) : (
+            <ArrowSketch />
+          )}
         </div>
 
         {/* The statement and the action, just above the name from md. */}

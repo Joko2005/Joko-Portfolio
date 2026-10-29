@@ -53,20 +53,28 @@ function arrowEdges(offset: THREE.Vector3) {
   return g;
 }
 
-/** Studio light baked from three's RoomEnvironment: no HDR file to download. */
+/**
+ * Studio light baked from three's RoomEnvironment: no HDR file to download.
+ * Baked a frame after the canvas starts, so context creation and the bake land in separate tasks.
+ * The arrow only shows its edges until Build, and the bake is long done by then.
+ */
 function RoomLight() {
   const get = useThree((s) => s.get);
   useEffect(() => {
-    const { gl, scene } = get();
-    const pmrem = new THREE.PMREMGenerator(gl);
-    const room = new RoomEnvironment();
-    const env = pmrem.fromScene(room, 0.04).texture;
-    scene.environment = env;
-    room.dispose();
-    pmrem.dispose();
+    let env: THREE.Texture | null = null;
+    const frame = requestAnimationFrame(() => {
+      const { gl, scene } = get();
+      const pmrem = new THREE.PMREMGenerator(gl);
+      const room = new RoomEnvironment();
+      env = pmrem.fromScene(room, 0.04).texture;
+      scene.environment = env;
+      room.dispose();
+      pmrem.dispose();
+    });
     return () => {
-      scene.environment = null;
-      env.dispose();
+      cancelAnimationFrame(frame);
+      get().scene.environment = null;
+      env?.dispose();
     };
   }, [get]);
   return null;

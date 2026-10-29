@@ -2,12 +2,16 @@
 
 import { useRef } from "react";
 import gsap from "gsap";
-import { Draggable } from "gsap/Draggable";
 import { InertiaPlugin } from "gsap/InertiaPlugin";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 
-gsap.registerPlugin(Draggable, InertiaPlugin, ScrollTrigger, useGSAP);
+gsap.registerPlugin(InertiaPlugin, ScrollTrigger, useGSAP);
+
+// Past the section's edge a letter moves at a quarter of the pointer's pace, so the edge reads as soft.
+const EDGE_RESISTANCE = 0.25;
+const resist = (v: number, min: number, max: number) =>
+  v < min ? min + (v - min) * EDGE_RESISTANCE : v > max ? max + (v - max) * EDGE_RESISTANCE : v;
 
 // Each line takes a section hue when its letters are moved: colour is the reward for touching it.
 const LINES = [
@@ -48,21 +52,63 @@ export function PlayWords() {
         scrollTrigger: { trigger: el, start: "top 75%", once: true },
       });
 
+      const ac = new AbortController();
+      const { signal } = ac;
+
       if (fine) {
-        Draggable.create(letters, {
-          type: "x,y",
-          bounds: el,
-          inertia: !reduce,
-          edgeResistance: 0.75,
-          zIndexBoost: false,
-          onPress() {
-            lift(this.target);
-            if (!reduce) gsap.to(this.target, { scale: 1.08, rotation: gsap.utils.random(-10, 10), duration: 0.2, ease: "power3.out" });
+        // One delegated listener and nothing measured up front (Draggable measured all 19 letters on mount,
+        // which stalled the page for seconds). Layout is read once, on press, for the letter in hand.
+        el.addEventListener(
+          "pointerdown",
+          (e) => {
+            const letter = (e.target as HTMLElement).closest<HTMLElement>(".play-letter");
+            if (!letter || e.button !== 0) return;
+            e.preventDefault();
+            letter.setPointerCapture(e.pointerId);
+
+            gsap.killTweensOf(letter, "x,y");
+            const box = el.getBoundingClientRect();
+            const r = letter.getBoundingClientRect();
+            const x0 = Number(gsap.getProperty(letter, "x"));
+            const y0 = Number(gsap.getProperty(letter, "y"));
+            const x = { min: x0 + box.left - r.left, max: x0 + box.right - r.right };
+            const y = { min: y0 + box.top - r.top, max: y0 + box.bottom - r.bottom };
+            const sx = e.clientX;
+            const sy = e.clientY;
+            const setX = gsap.quickSetter(letter, "x", "px");
+            const setY = gsap.quickSetter(letter, "y", "px");
+
+            lift(letter);
+            if (!reduce) {
+              InertiaPlugin.track(letter, "x,y");
+              gsap.to(letter, { scale: 1.08, rotation: gsap.utils.random(-10, 10), duration: 0.2, ease: "power3.out" });
+            }
+
+            const move = (ev: PointerEvent) => {
+              setX(resist(x0 + ev.clientX - sx, x.min, x.max));
+              setY(resist(y0 + ev.clientY - sy, y.min, y.max));
+            };
+            const up = () => {
+              letter.removeEventListener("pointermove", move);
+              letter.removeEventListener("pointerup", up);
+              letter.removeEventListener("pointercancel", up);
+              if (reduce) {
+                gsap.set(letter, { x: gsap.utils.clamp(x.min, x.max, Number(gsap.getProperty(letter, "x"))), y: gsap.utils.clamp(y.min, y.max, Number(gsap.getProperty(letter, "y"))) });
+                return;
+              }
+              // The throw carries the release velocity and settles inside the section.
+              gsap.to(letter, {
+                inertia: { x: { min: x.min, max: x.max }, y: { min: y.min, max: y.max } },
+                scale: 1,
+                onComplete: () => InertiaPlugin.untrack(letter),
+              });
+            };
+            letter.addEventListener("pointermove", move, { signal });
+            letter.addEventListener("pointerup", up, { signal });
+            letter.addEventListener("pointercancel", up, { signal });
           },
-          onRelease() {
-            if (!reduce) gsap.to(this.target, { scale: 1, duration: 0.3, ease: "power3.out" });
-          },
-        });
+          { signal },
+        );
       } else {
         for (const letter of letters) {
           letter.addEventListener("click", () => {
@@ -72,15 +118,17 @@ export function PlayWords() {
               .timeline()
               .to(letter, { y: "-=40", rotation: gsap.utils.random(-14, 14), duration: 0.22, ease: "power2.out" })
               .to(letter, { y: "+=40", duration: 0.7, ease: "bounce.out" });
-          });
+          }, { signal });
         }
       }
 
       scatterRef.current = () => {
+        // Read every position first, then write, so the page lays out once instead of once per letter.
         const box = el.getBoundingClientRect();
-        for (const letter of letters) {
+        const rects = letters.map((letter) => letter.getBoundingClientRect());
+        letters.forEach((letter, i) => {
+          const r = rects[i];
           lift(letter);
-          const r = letter.getBoundingClientRect();
           const cur = { x: Number(gsap.getProperty(letter, "x")), y: Number(gsap.getProperty(letter, "y")) };
           // A random spot that keeps the letter inside the section.
           const x = cur.x + gsap.utils.random(box.left - r.left, box.right - r.right);
@@ -92,7 +140,7 @@ export function PlayWords() {
             duration: reduce ? 0 : gsap.utils.random(0.7, 1.1),
             ease: "expo.out",
           });
-        }
+        });
       };
 
       resetRef.current = () => {
@@ -109,6 +157,8 @@ export function PlayWords() {
           },
         });
       };
+
+      return () => ac.abort();
     },
     { scope: root },
   );
