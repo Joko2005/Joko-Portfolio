@@ -6,6 +6,7 @@ import { useTheme } from "next-themes";
 import { PiMagnifyingGlass } from "react-icons/pi";
 import { projects } from "@/content/projects";
 import { site } from "@/content/site";
+import { switchTheme } from "@/lib/themeTransition";
 import { NAV, type SectionId } from "./nav";
 
 type Group = "Pages" | "Projects" | "Links" | "Actions";
@@ -89,7 +90,8 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
       group: "Actions",
       label: isDark ? "Switch to light mode" : "Switch to dark mode",
       keywords: "theme dark light appearance",
-      run: () => setTheme(isDark ? "light" : "dark"),
+      // After the dialog has closed, so the arrow grows over the page and not over the palette.
+      run: () => requestAnimationFrame(() => switchTheme(isDark ? "light" : "dark", setTheme)),
     });
     return list;
   }, [router, resolvedTheme, setTheme]);

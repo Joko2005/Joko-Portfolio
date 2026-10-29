@@ -42,7 +42,6 @@ export function Footer() {
         <div>
           <p className="font-medium">Contact</p>
           <p className="mt-2">{site.email ? <a href={`mailto:${site.email}`}>{site.email}</a> : "[Add your email]"}</p>
-          <p className="mt-1">{site.status}</p>
         </div>
         <div>
           <p className="font-medium">Colophon</p>

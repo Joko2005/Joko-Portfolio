@@ -20,7 +20,6 @@ function DropPortrait() {
 }
 
 const facts: { term: string; detail: React.ReactNode }[] = [
-  { term: "Status", detail: site.status },
   { term: "Does", detail: "UI/UX design and front-end development" },
   { term: "Works with", detail: stack.flatMap((g) => g.items).join(", ") },
   {
@@ -53,7 +52,7 @@ const helloHref = site.email
 export default function OverviewPage() {
   return (
     <div className="flex flex-col">
-      <Hero name={site.name} role={`${site.role}. ${site.status}.`} intro={site.intro} />
+      <Hero name={site.name} role={`${site.role}.`} intro={site.intro} />
 
       <section id="work" aria-labelledby="work-title" className="reveal scroll-mt-8 pt-24 md:pt-40">
         <h2 id="work-title" className="section-title">

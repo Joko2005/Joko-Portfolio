@@ -48,8 +48,8 @@ Rules:
 
 ## Layout
 
-- **Sidebar (desktop)**: profile block (photo or initial, name, "Open for OJT"), Search (⌘K / Ctrl K), nav grouped **Work** (Overview, Projects, Graphics) and **Play** (Playground), contact links and theme toggle at the bottom. Tone step off the page, no border.
-- **Mobile**: a 3.875rem top bar (`--bar-h`) with the compact profile, search icon and Menu.
+- **Sidebar (desktop)**: a name card (JOKO fitted to the card at the hero's `40.5cqi` proportion, role beneath, on `bg`), Search (⌘K / Ctrl K), nav grouped **Work** (Overview, Projects, Graphics) and **Play** (Playground), contact links and the Light / Dark switch at the bottom. Tone step off the page, no border.
+- **Mobile**: a 3.875rem top bar (`--bar-h`) with JOKO, search icon and Menu.
 - **Content column**: fills the space beside the sidebar; its right inset matches the sidebar's left one, so the page has one pair of outer margins.
 - **Overview, top to bottom**:
   1. **Hero** (pinned, two screens): role line and Design / Build switch at the top, the statement ("I design it." / "I build it.") with one sentence and "See the work", the arrow in the right half, JOKO margin to margin at the bottom. On phones JOKO sits under the top row.
@@ -68,6 +68,9 @@ One button shape: fully round, flat fill. Cards and bands 24px (`rounded-3xl`), 
 
 ### Buttons (`btn`, `btn-primary`)
 Round, flat. `btn` on `surface`, `btn-primary` on `ink`. Pair with `pressable`. Magnetic under the custom cursor.
+
+### Sidebar nav
+The active item is an `ink` pill with `bg` text (the switch's active fill) that slides between items. Inactive items are `muted`; on hover they turn `ink` and their icon takes that item's section hue.
 
 ### Pressable (`pressable`)
 Scales to 0.97 on `:active`. Owns its transitions (transform 160ms, colours 150ms, `--ease-out`); don't add `transition-colors` beside it.
@@ -112,10 +115,12 @@ Emil-design-eng rules (CLAUDE.md) hold: transform and opacity, `--ease-out`, hov
 - **Loader**: the one long showpiece (see Loader).
 - **Section entrances** (`Reveals`, GSAP ScrollTrigger): in each `.reveal` section the heading, then every `[data-reveal]` part, rise 24px and fade, 70ms apart, once at 80% of the viewport. Hidden only by the tween, so content stays if script fails.
 - **Feedback**: cursor states, magnetic buttons, press scale, nav pill slide (Motion `layoutId`, 200ms), contact band inversion, work preview crossfade.
+- **Theme change** (`switchTheme` in `src/lib/themeTransition.ts`): a view transition where the new theme grows in through the cursor arrow. The arrow launches whole from the pressed control, aimed at the page centre and righting a 28° turn, then floods the page (950ms, `--ease-in-out`, exponential scale). The palette's theme action uses it from the centre. Reduced motion: 200ms crossfade. No view transitions: instant.
 
 ## Theme
 
-- Follows the system; the toggle overrides (`next-themes`, class on `<html>`).
+- Follows the system; the sidebar's Light / Dark switch overrides (`next-themes`, class on `<html>`). It is the hero switch at sidebar size on `bg`, with Phosphor sun and moon icons.
+- Icons: Phosphor only (`react-icons/pi`), everywhere.
 - Tailwind v4 dark mode: `@custom-variant dark (&:where(.dark, .dark *));`.
 
 ## Performance budget

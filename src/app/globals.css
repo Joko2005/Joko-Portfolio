@@ -295,6 +295,71 @@
   display: none;
 }
 
+/* ---- Sidebar (Shell.tsx) ---- */
+/* The name fitted to its card, in the same proportion as the hero's monument. */
+.sidebar-mark {
+  font-family: var(--font-display);
+  font-size: 40.5cqi;
+  font-weight: 600;
+  line-height: 0.8;
+  letter-spacing: -0.05em;
+  white-space: nowrap;
+  margin-inline-start: -0.04em;
+}
+/* Inactive nav and contact rows: ink on hover, and the row's section hue lights its icon. */
+.nav-item {
+  transition-property: transform, color;
+}
+.nav-icon {
+  transition: color 150ms var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .nav-item:not([aria-current]):hover {
+    color: var(--ink);
+  }
+  .nav-item[data-section]:not([aria-current]):hover .nav-icon {
+    color: var(--accent);
+  }
+}
+
+/* Theme switch: the hero switch at sidebar size, on the page ground, with icons. */
+.switch.switch-compact {
+  background: var(--bg);
+  font-size: 0.875rem;
+}
+.switch-compact button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.75rem;
+  transition-property: transform, color, background-color;
+  transition-duration: 160ms, 200ms, 200ms;
+}
+@media (hover: hover) and (pointer: fine) {
+  .switch-compact button[aria-pressed="false"]:hover {
+    color: var(--ink);
+  }
+}
+
+/* Theme change (themeTransition.ts): the new theme grows in through the cursor arrow, drawn by script. */
+.theme-arrow::view-transition-old(root),
+.theme-arrow::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+.theme-arrow::view-transition-old(root) {
+  z-index: 0;
+}
+.theme-arrow::view-transition-new(root) {
+  z-index: 1;
+}
+/* Reduced motion: a short crossfade, no movement. */
+.theme-fade::view-transition-old(root),
+.theme-fade::view-transition-new(root) {
+  animation-duration: 200ms;
+}
+
 /* ---- Overview hero (Hero.tsx) ---- */
 /* The name, sized to the hero's own width so it runs margin to margin beside the sidebar. */
 .hero-name {
