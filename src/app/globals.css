@@ -1,44 +1,960 @@
 @import "tailwindcss";
 
-/* App semantic base colors. */
+/* Dark mode follows the .dark class that next-themes puts on <html>. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---- Tokens (see DESIGN.md) ---- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #ffffff;
+  --surface: #f3f3f3;
+  --ink: #000000;
+  --muted: #6e6e6e;
+  --line: #e2e2e2;
+  --card: #f7f7f7;
+
+  /* Section hues: shown only on interaction. */
+  --c-overview: #1d4ed8;
+  --c-projects: #c2410c;
+  --c-experience: #6d28d9;
+  --c-graphics: #0369a1;
+  --c-certificates: #15803d;
+  --c-stack: #be123c;
+  --c-writing: #0f766e;
+  --c-playground: #a64b00;
+
+  --accent: var(--ink);
+  /* Height of the mobile top bar; the pinned hero sits under it. */
+  --bar-h: 3.875rem;
+  color-scheme: light;
 }
 
-/* Tailwind v4 tokens for utility generation. */
+.dark {
+  --bg: #000000;
+  --surface: #161616;
+  --ink: #ffffff;
+  --muted: #8e8e8e;
+  --line: #262626;
+  --card: #0e0e0e;
+
+  --c-overview: #7b9cff;
+  --c-projects: #ff8a3d;
+  --c-experience: #b69cff;
+  --c-graphics: #4fc3f7;
+  --c-certificates: #5ee38b;
+  --c-stack: #ff7a93;
+  --c-writing: #2dd4bf;
+  --c-playground: #ffb547;
+
+  color-scheme: dark;
+}
+
+/* Any element can take a section's hue as --accent. */
+[data-section="overview"] { --accent: var(--c-overview); }
+[data-section="projects"] { --accent: var(--c-projects); }
+[data-section="experience"] { --accent: var(--c-experience); }
+[data-section="graphics"] { --accent: var(--c-graphics); }
+[data-section="certificates"] { --accent: var(--c-certificates); }
+[data-section="stack"] { --accent: var(--c-stack); }
+[data-section="writing"] { --accent: var(--c-writing); }
+[data-section="playground"] { --accent: var(--c-playground); }
+
+@theme {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+}
+
 @theme inline {
-  /* Brand and UI colors. */
-  --color-bg: #f5f0e8;
-  --color-bg-alt: #fdfcfa;
-  --color-ink: #0f0e0c;
-  --color-red: #d63b2f;
-  --color-muted: #8a8780;
-  --color-border: #d8d3c8;
-  --color-surface: #fdfcfa;
-  --color-surface2: #f0ebe1;
-  --color-header-light: #F6F4EF;
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-card: var(--card);
+  --color-accent: var(--accent);
 
-  /* Font tokens from next/font variables. */
-  --font-body: var(--font-instrument-serif);
-  --font-heading: var(--font-syne);
-  --font-mono: var(--font-dm-mono);
-
-  /* Shared easing token. */
-  --ease-expo-out: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Funnel Sans (text/UI) and Funnel Display (headings): one OFL family, loaded in layout.tsx. */
+  --font-sans: var(--font-funnel-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-funnel-display), var(--font-funnel-sans), ui-sans-serif, sans-serif;
 }
 
-/* System dark-mode fallback. */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html,
+  body {
+    background: var(--bg);
+    color: var(--ink);
+  }
+
+  html {
+    scrollbar-color: var(--line) var(--bg);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--bg);
   }
 }
 
-/* Global document defaults. */
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-heading), sans-serif;
+/* Repeat visitors and reduced-motion users never see the intro
+   (class is set by an inline script before first paint). */
+.intro-seen .intro {
+  display: none;
+}
+/* Safety net: if the script never runs, the loader still gets out of the way. */
+.intro {
+  animation: intro-bail 0s 5s forwards;
+}
+@keyframes intro-bail {
+  to {
+    visibility: hidden;
+  }
+}
+.is-loading {
+  overflow: hidden;
+}
+.intro-type {
+  font-family: var(--font-display);
+  font-size: clamp(6rem, 37vw, 40rem);
+  font-weight: 600;
+  line-height: 0.82;
+  letter-spacing: -0.05em;
+  white-space: nowrap;
+  /* Room for the letters to rise from below the line. */
+  padding-block: 0.04em;
+}
+.intro-outline {
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--bg);
+}
+
+/* Pressable feedback (emil-design-eng). Owns all its transitions so color utilities can't cancel the press. */
+@utility pressable {
+  transition-property: transform, color, background-color, border-color;
+  transition-duration: 160ms, 150ms, 150ms, 150ms;
+  transition-timing-function: var(--ease-out);
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+/* Text link: color appears only on hover, in the current section's hue. */
+@utility link {
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--line);
+  transition:
+    color 150ms ease,
+    text-decoration-color 150ms ease;
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      color: var(--accent);
+      text-decoration-color: var(--accent);
+    }
+  }
+}
+
+/* A palette or desk jump to /projects#slug marks where it landed. */
+.project-anchor:is(:target, [data-target]) h2 {
+  color: var(--accent);
+}
+
+/* Buttons. Pair with `pressable` for press feedback. */
+/* One button shape on the whole site: fully round, flat fill, no outline. */
+@utility btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  background: var(--surface);
+  color: var(--ink);
+  padding: 0.75rem 1.25rem;
+  font-size: 1rem;
+  font-weight: 500;
+}
+@utility btn-primary {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+/* Whole-card links: a tone step on hover, the arrow nudges toward where the link goes,
+   and the screenshot leans in slightly. */
+.card-link {
+  transition:
+    background-color 150ms ease,
+    transform 160ms var(--ease-out);
+}
+.card-link:active {
+  transform: scale(0.985);
+}
+.card-arrow,
+.card-media {
+  transition: transform 200ms var(--ease-out);
+}
+.card-media {
+  transition-duration: 400ms;
+}
+@media (hover: hover) and (pointer: fine) {
+  .card-link:hover {
+    background-color: var(--surface);
+  }
+  .card-link:hover .card-arrow {
+    transform: translate(2px, -2px);
+  }
+  .card-link:hover .card-media {
+    transform: scale(1.02);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-link:active,
+  .card-link:hover .card-arrow,
+  .card-link:hover .card-media {
+    transform: none;
+  }
+}
+
+/* ---- Custom cursor (Cursor.tsx). Only active for a mouse without reduced motion. ---- */
+.has-cursor,
+.has-cursor * {
+  cursor: none !important;
+}
+.has-cursor :is(input, textarea, select, [contenteditable="true"]) {
+  cursor: text !important;
+}
+.cursor {
+  pointer-events: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100;
+  /* GSAP moves the wrapper; the dot scales inside it so the two never fight.
+     The blend sits on the wrapper: a fixed, z-indexed box is its own stacking context,
+     so a blend on the dot alone would only mix with the empty wrapper. */
+  mix-blend-mode: difference;
+}
+.cursor[data-state="label"] {
+  mix-blend-mode: normal;
+}
+.cursor-dot,
+.cursor-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  translate: -50% -50%;
+  border-radius: 9999px;
+  transition:
+    scale 220ms var(--ease-out),
+    opacity 150ms ease;
+}
+.cursor-dot {
+  width: 56px;
+  height: 56px;
+  background: #fff;
+  scale: 0.22;
+}
+.cursor-label {
+  display: grid;
+  place-items: center;
+  width: 88px;
+  height: 88px;
+  background: var(--ink);
+  color: var(--bg);
+  font-size: 0.875rem;
+  font-weight: 500;
+  opacity: 0;
+  scale: 0.4;
+}
+.cursor[data-state="hover"] .cursor-dot {
+  scale: 1;
+}
+.cursor[data-state="label"] .cursor-dot,
+.cursor[data-state="text"] .cursor-dot,
+.cursor[data-state="hidden"] .cursor-dot {
+  opacity: 0;
+}
+.cursor[data-state="label"] .cursor-label {
+  opacity: 1;
+  scale: 1;
+}
+.cursor.is-pressed .cursor-dot {
+  scale: 0.18;
+}
+.cursor.is-pressed[data-state="hover"] .cursor-dot {
+  scale: 0.85;
+}
+.cursor.is-pressed .cursor-label {
+  scale: 0.9;
+}
+
+/* Magnetic controls lean toward the cursor through `translate`, leaving `transform` to the press. */
+:is(.btn, [data-magnetic]) {
+  translate: var(--mx, 0px) var(--my, 0px);
+}
+/* A modal dialog renders in the top layer, above the custom cursor: hand back the system cursor while one is open. */
+.has-cursor:has(dialog[open]),
+.has-cursor:has(dialog[open]) * {
+  cursor: auto !important;
+}
+.has-cursor:has(dialog[open]) :is(a, button, [role="option"]) {
+  cursor: pointer !important;
+}
+.has-cursor:has(dialog[open]) .cursor {
+  display: none;
+}
+
+/* ---- Sidebar (Shell.tsx) ---- */
+/* The name fitted to its card, in the same proportion as the hero's monument. */
+.sidebar-mark {
+  font-family: var(--font-display);
+  font-size: 40.5cqi;
+  font-weight: 600;
+  line-height: 0.8;
+  letter-spacing: -0.05em;
+  white-space: nowrap;
+  margin-inline-start: -0.04em;
+}
+/* Inactive nav and contact rows: ink on hover, and the row's section hue lights its icon. */
+.nav-item {
+  transition-property: transform, color;
+}
+.nav-icon {
+  transition: color 150ms var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .nav-item:not([aria-current]):hover {
+    color: var(--ink);
+  }
+  .nav-item[data-section]:not([aria-current]):hover .nav-icon {
+    color: var(--accent);
+  }
+}
+
+/* Socials: round icon buttons on the page ground, ink under the pointer. */
+.social-link {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 9999px;
+  background: var(--bg);
+  color: var(--muted);
+}
+@media (hover: hover) and (pointer: fine) {
+  .social-link:hover {
+    background: var(--ink);
+    color: var(--bg);
+  }
+}
+
+/* Résumé: a pill beside the social buttons, same height, labelled because a download needs a name. */
+.resume-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 2.75rem;
+  border-radius: 9999px;
+  background: var(--bg);
+  padding-inline: 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+@media (hover: hover) and (pointer: fine) {
+  .resume-link:hover {
+    background: var(--ink);
+    color: var(--bg);
+  }
+}
+
+/* Theme switch: the hero switch at sidebar size, on the page ground, with icons. */
+.switch.switch-compact {
+  background: var(--bg);
+  font-size: 0.875rem;
+}
+.switch-compact button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.75rem;
+  transition-property: transform, color, background-color;
+  transition-duration: 160ms, 200ms, 200ms;
+}
+@media (hover: hover) and (pointer: fine) {
+  .switch-compact button[aria-pressed="false"]:hover {
+    color: var(--ink);
+  }
+}
+
+/* Theme change (themeTransition.ts): the new theme grows in through the cursor arrow, drawn by script. */
+.theme-arrow::view-transition-old(root),
+.theme-arrow::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+.theme-arrow::view-transition-old(root) {
+  z-index: 0;
+}
+.theme-arrow::view-transition-new(root) {
+  z-index: 1;
+}
+/* Reduced motion: a short crossfade, no movement. */
+.theme-fade::view-transition-old(root),
+.theme-fade::view-transition-new(root) {
+  animation-duration: 200ms;
+}
+
+/* ---- Overview hero (Hero.tsx) ---- */
+/* The name, sized to the hero's own width so it runs margin to margin beside the sidebar. */
+.hero-name {
+  font-family: var(--font-display);
+  font-size: 40.5cqi;
+  font-weight: 600;
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  white-space: nowrap;
+  margin-inline-start: -0.04em;
+}
+/* The mask the letters rise through; padded so it never clips the glyphs at rest. */
+.hero-name > span[aria-hidden] {
+  padding-block: 0.02em 0.04em;
+}
+/* With script on, the parts that animate in start hidden; GSAP reveals them. A safety net shows them anyway. */
+.js .hero-char,
+.js .hero-fade {
+  visibility: hidden;
+  animation: hero-bail 0s 6s forwards;
+}
+@keyframes hero-bail {
+  to {
+    visibility: visible;
+  }
+}
+
+/* Design / Build switch: two words on a pill, a thumb slides under the active one. */
+.switch {
+  position: relative;
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr;
+  border-radius: 9999px;
+  background: var(--surface);
+  padding: 4px;
+  font-size: 1rem;
+  font-weight: 500;
+}
+.switch button {
+  position: relative;
+  z-index: 1;
+  border-radius: 9999px;
+  padding: 0.5rem 1.1rem;
+  color: var(--muted);
+  transition:
+    color 200ms var(--ease-out),
+    background-color 200ms var(--ease-out);
+}
+.switch button[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--bg);
+}
+/* Statement: the two lines share one slot and swap with a short roll. */
+.statement {
+  display: grid;
+  overflow: hidden;
+}
+.statement > span {
+  grid-area: 1 / 1;
+  transition:
+    translate 420ms var(--ease-out),
+    opacity 300ms var(--ease-out);
+}
+.statement > span:last-child,
+.statement[data-built="true"] > span:first-child {
+  translate: 0 -100%;
+  opacity: 0;
+}
+.statement[data-built="true"] > span:last-child {
+  translate: 0 0;
+  opacity: 1;
+}
+.statement > span:last-child {
+  translate: 0 100%;
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --bar-h: 0px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .statement > span {
+    transition-property: opacity;
+  }
+}
+
+/* ---- Inner pages ---- */
+/* Page title: a display row, smaller than the hero monument, with the item count tucked in its corner. */
+.page-title {
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 10vw, 9rem);
+  font-weight: 600;
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  margin-inline-start: -0.04em;
+}
+.page-count {
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 2vw, 1.75rem);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--muted);
+}
+
+/* Experience: one band per role; the dates take a narrow column on wide screens. */
+.exp-row {
+  display: grid;
+  gap: 1rem;
+  border-radius: 1.5rem;
+  background: var(--surface);
+  padding: 1.5rem;
+}
+li:nth-child(even).exp-row {
+  background: var(--card);
+}
+@media (min-width: 64rem) {
+  .exp-row {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 2rem;
+    padding: 2rem;
+  }
+}
+.exp-role {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3.5vw, 3rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+/* Stack: each tool a word at heading size; under the pointer it lifts and takes its own section hue (--pop). */
+.stack-item {
+  display: inline-block;
+  transition:
+    color 180ms var(--ease-out),
+    translate 220ms var(--ease-out),
+    rotate 220ms var(--ease-out);
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4.5vw, 4rem);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+}
+
+/* Writing: list titles take the section hue under the pointer; a post reads at 18px within 65 characters. */
+.post-title {
+  transition: color 150ms var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .post-title:hover {
+    color: var(--accent);
+  }
+}
+.post-heading {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-weight: 600;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+.post-body {
+  max-width: 65ch;
+  font-size: 1.125rem;
+  line-height: 1.6;
+}
+.post-body > * + * {
+  margin-top: 1.1em;
+}
+.post-body h2,
+.post-body h3 {
+  margin-top: 2em;
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.post-body h2 {
+  font-size: 1.75rem;
+}
+.post-body h3 {
+  font-size: 1.375rem;
+}
+.post-body ul,
+.post-body ol {
+  padding-left: 1.25em;
+}
+.post-body ul {
+  list-style: disc;
+}
+.post-body ol {
+  list-style: decimal;
+}
+.post-body li + li {
+  margin-top: 0.4em;
+}
+.post-body li::marker {
+  color: var(--muted);
+}
+.post-body a {
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--line);
+}
+@media (hover: hover) and (pointer: fine) {
+  .post-body a:hover {
+    color: var(--accent);
+    text-decoration-color: var(--accent);
+  }
+}
+.post-body blockquote {
+  padding-left: 1em;
+  color: var(--muted);
+  font-size: 1.25rem;
+}
+.post-body img {
+  border-radius: 1.5rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  /* translate/rotate, not transform: the scroll reveal owns transform. */
+  .stack-item:hover {
+    color: var(--pop);
+    translate: 0 -0.08em;
+    rotate: -2deg;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stack-item:hover {
+    translate: none;
+    rotate: none;
+  }
+}
+
+/* Competitions: the placing set at display size, the event beneath it. */
+.comp-result {
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 8vw, 6rem);
+  font-weight: 600;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+}
+
+/* Certificates: bands like the contact rows, the title at heading size, inverting under the pointer. */
+.cert-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  min-height: 9rem;
+  border-radius: 1.5rem;
+  background: var(--surface);
+  padding: 1.25rem 1.5rem;
+  transition:
+    background-color 200ms var(--ease-out),
+    color 200ms var(--ease-out);
+}
+li:nth-child(even) > .cert-row {
+  background: var(--card);
+}
+.cert-title {
+  display: block;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3.5vw, 3rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.cert-arrow {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 9999px;
+  background: var(--ink);
+  color: var(--bg);
+  font-size: 1.5rem;
+  transition: rotate 300ms var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  a.cert-row:hover {
+    background: var(--ink);
+    color: var(--bg);
+  }
+  a.cert-row:hover .text-muted {
+    color: color-mix(in srgb, var(--bg) 65%, var(--ink));
+  }
+  a.cert-row:hover .cert-arrow {
+    background: var(--bg);
+    color: var(--ink);
+    rotate: 45deg;
+  }
+}
+
+/* Projects: the still leans in under the pointer, like the work cards. */
+@media (hover: hover) and (pointer: fine) {
+  .project-still:hover .card-media {
+    transform: scale(1.015);
+  }
+}
+
+/* Graphics: three columns, the middle one set lower so the grid reads like a spread. */
+.graphics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2.5rem 1rem;
+}
+@media (min-width: 64rem) {
+  .graphics-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 3.5rem 1.5rem;
+    padding-bottom: 6rem;
+  }
+  .graphics-grid > li:nth-child(3n + 2) {
+    translate: 0 6rem;
+  }
+}
+.graphic-media {
+  transition: transform 400ms var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .group:hover .graphic-media {
+    transform: scale(1.03);
+  }
+}
+
+/* Viewer: a full-screen dialog on the page ground; it settles in, and closes instantly. */
+.viewer {
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  border: 0;
+  background: var(--bg);
+  color: var(--ink);
+  padding: 1rem;
+}
+@media (min-width: 48rem) {
+  .viewer {
+    padding: 1.5rem 2rem;
+  }
+}
+.viewer[open] {
+  opacity: 1;
+  transform: scale(1);
+  transition:
+    opacity 220ms var(--ease-out),
+    transform 220ms var(--ease-out);
+  @starting-style {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+.viewer::backdrop {
+  background: var(--bg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .viewer[open] {
+    transition-property: opacity;
+  }
+}
+
+/* ---- Overview sections ---- */
+/* Play words: three display rows of loose letters. Sized so the longest row, I DESIGN, runs margin to margin. */
+.play-line {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 25.5cqi;
+  font-weight: 600;
+  line-height: 0.86;
+  letter-spacing: -0.05em;
+  white-space: nowrap;
+  margin-inline-start: -0.04em;
+}
+.play-letter {
+  position: relative;
+  display: inline-block;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: color 200ms var(--ease-out);
+}
+.play-space {
+  display: inline-block;
+  width: 0.22em;
+}
+.play-hint-touch {
+  display: none;
+}
+@media (hover: none), (pointer: coarse) {
+  .play-hint-fine {
+    display: none;
+  }
+  .play-hint-touch {
+    display: inline;
+  }
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 2.5vw, 2.25rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+/* Work index: big names, the active one in full ink. */
+.work-name {
+  font-family: var(--font-display);
+  font-size: clamp(2.75rem, 5vw, 4.5rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  transition: color 200ms var(--ease-out);
+}
+/* Inactive stills are hidden outright once faded, so their titles aren't text lying under the active one. */
+.work-still {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 200ms var(--ease-out),
+    visibility 0s linear 200ms;
+}
+.work-still.is-active {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 200ms var(--ease-out),
+    visibility 0s;
+}
+.work-row:focus-visible {
+  outline-offset: 6px;
+  border-radius: 0.75rem;
+}
+
+/* Experience preview: one band per role, a tone step under the pointer; the whole row goes to /experience. */
+.preview-row {
+  display: grid;
+  gap: 0.5rem;
+  border-radius: 1.5rem;
+  background: var(--surface);
+  padding: 1.25rem 1.5rem;
+  transition: background-color 200ms var(--ease-out);
+}
+li:nth-child(even) > .preview-row {
+  background: var(--card);
+}
+@media (min-width: 64rem) {
+  .preview-row {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    align-items: baseline;
+    gap: 2rem;
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  a.preview-row:hover {
+    background: var(--ink);
+    color: var(--bg);
+  }
+  a.preview-row:hover .text-muted {
+    color: color-mix(in srgb, var(--bg) 65%, var(--ink));
+  }
+}
+
+/* About: a statement-sized paragraph with the portrait as its drop capital. */
+.about-text {
+  font-size: clamp(1.375rem, 2vw, 1.75rem);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  max-width: 44ch;
+}
+
+/* Contact: display-size rows on flat bands that invert under the pointer. */
+.contact-row {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  min-height: 9rem;
+  border-radius: 1.5rem;
+  background: var(--surface);
+  padding: 1.25rem;
+  transition:
+    background-color 200ms var(--ease-out),
+    color 200ms var(--ease-out);
+}
+li:nth-child(even) > .contact-row {
+  background: var(--card);
+}
+.contact-value {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 4.5rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  overflow-wrap: anywhere;
+}
+.contact-hello {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+.contact-arrow {
+  display: grid;
+  place-items: center;
+  width: 0.9em;
+  height: 0.9em;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background: var(--ink);
+  color: var(--bg);
+  font-size: clamp(2rem, 5vw, 4.5rem);
+  transition: rotate 300ms var(--ease-out);
+}
+.contact-arrow svg {
+  width: 45%;
+  height: 45%;
+}
+@media (hover: hover) and (pointer: fine) {
+  a.contact-row:hover {
+    background: var(--ink);
+    color: var(--bg);
+  }
+  a.contact-row:hover .contact-arrow {
+    background: var(--bg);
+    color: var(--ink);
+    rotate: 45deg;
+  }
+}
+@media (max-width: 40rem) {
+  .contact-row {
+    min-height: 5.25rem;
+    padding: 1rem;
+  }
+}
+
+/* Footer: the name fitted margin to margin. */
+.footer-mark {
+  font-family: var(--font-display);
+  font-size: 40.5cqi;
+  font-weight: 600;
+  line-height: 0.8;
+  letter-spacing: -0.05em;
+  white-space: nowrap;
+  margin-inline-start: -0.04em;
 }

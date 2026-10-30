@@ -20,18 +20,16 @@
 # production
 /build
 
-# misc
-.DS_Store
-*.pem
-
-# debug
+# debug and logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files (an example file can still be committed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -39,3 +37,35 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# misc
+*.pem
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# editors
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+
+# Claude Code: per-machine settings and worktrees (shared skills and CLAUDE.md stay tracked)
+.claude/settings.local.json
+.claude/worktrees/
+
+# local-only skill with large binaries (installed separately)
+/.claude/skills/impeccable/
+
+# Impeccable: screenshots, build state, mocks and caches are per-session.
+# config.json and design.json (the DESIGN.md sidecar) stay tracked.
+/.impeccable/review/
+/.impeccable/build/
+/.impeccable/mocks/
+/.impeccable/*.cache.json
+/.impeccable/config.local.json
+
+# design-taste-frontend working files
+/.taste-skill/

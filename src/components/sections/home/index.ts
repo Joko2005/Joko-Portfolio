@@ -1,6 +1,0 @@
-export { HeroSection } from './HeroSection'
-export { AboutSection } from './AboutSection'
-export { SkillsSection } from './SkillsSection'
-export { WorkSection } from './WorkSection'
-export { JourneySection } from './JourneySection'
-export { ContactSection } from './ContactSection'
