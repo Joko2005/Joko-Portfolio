@@ -86,13 +86,23 @@ export const leadership: Activity[] = [
   },
 ];
 
-export type Competition = { place: string; field: string; event: string; host: string; when: string; detail: string };
+/** `short` names the event inside a sentence (the Overview preview). */
+export type Competition = {
+  place: string;
+  field: string;
+  event: string;
+  short: string;
+  host: string;
+  when: string;
+  detail: string;
+};
 
 export const competitions: Competition[] = [
   {
     place: "5th",
     field: "nationally, of 106 schools",
     event: "Design Competition, SIKAPtala 2026: The National CS & IT Competition",
+    short: "SIKAPtala 2026",
     host: "CICS Student Government, De La Salle University Dasmariñas",
     when: "May 2026",
     detail: "Designed web interfaces for the theme Innovation Through Accessibility.",
@@ -101,6 +111,7 @@ export const competitions: Competition[] = [
     place: "Top 12",
     field: "finalists, of 48+ universities",
     event: "Batang Techno Hackathon, Team ALGORIZZMS",
+    short: "the Batang Techno Hackathon",
     host: "CICS Student Council, Batangas State University Alangilan",
     when: "Apr 2026",
     detail:

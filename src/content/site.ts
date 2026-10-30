@@ -12,6 +12,8 @@ export const site = {
   email: "jokocomia103@gmail.com",
   // One-page PDF built from the CV in the developer résumé template; replace the file to update it.
   resume: "/joko-comia-resume.pdf",
+  // Credly username: public badges are listed on Certificates automatically (refreshed daily).
+  credly: "joko-ymmanuel-comia",
   links: {
     github: "https://github.com/Joko2005",
     linkedin: "https://www.linkedin.com/in/joko-comia",

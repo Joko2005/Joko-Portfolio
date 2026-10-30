@@ -4,11 +4,14 @@ import { site } from "@/content/site";
 import { NAV } from "./nav";
 import { SOCIALS } from "./socials";
 
-/** The close: inverted colours, a few link columns, and the name returning margin to margin. */
+/**
+ * The close: inverted colours, a few link columns, and the name returning margin to margin.
+ * `overflow-clip`: at line-height 0.8 the huge name's text box runs past the footer and added empty scroll below the page.
+ */
 export function Footer() {
   const year = new Date().getFullYear();
   return (
-    <footer className="@container mx-3 mb-3 grid min-h-[80svh] grid-rows-[auto_1fr_auto] rounded-[2rem] bg-ink px-5 pb-5 pt-8 text-bg md:mx-4 md:mb-4 md:px-10 md:pt-10">
+    <footer className="@container mx-3 mb-3 grid overflow-clip min-h-[80svh] grid-rows-[auto_1fr_auto] rounded-[2rem] bg-ink px-5 pb-5 pt-8 text-bg md:mx-4 md:mb-4 md:px-10 md:pt-10">
       <div className="grid grid-cols-2 gap-x-6 gap-y-8 text-base md:grid-cols-4">
         <div>
           <p className="font-medium">Pages</p>
@@ -37,7 +40,9 @@ export function Footer() {
         </div>
         <div>
           <p className="font-medium">Contact</p>
-          <p className="mt-2">{site.email ? <a href={`mailto:${site.email}`}>{site.email}</a> : "[Add your email]"}</p>
+          <p className="mt-2 [overflow-wrap:anywhere]">
+            {site.email ? <a href={`mailto:${site.email}`}>{site.email}</a> : "[Add your email]"}
+          </p>
           <p className="mt-1">
             <ResumeLink label="Résumé" className="inline-flex items-center gap-1.5" />
           </p>

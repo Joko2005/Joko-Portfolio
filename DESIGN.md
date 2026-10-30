@@ -58,10 +58,11 @@ Rules:
 - **Overview, top to bottom**:
   1. **Hero** (pinned, two screens): role line and Design / Build switch at the top, the statement ("I design it." / "I build it.") with one sentence and "See the work", the arrow in the right half, JOKO margin to margin at the bottom. On phones JOKO sits under the top row.
   2. **Selected work**: big names as the index (active one in full ink, the rest muted), each with its kind beneath; a sticky 4:5 preview on the right. Phones: still, then name.
-  3. **About**: 28px paragraph with the portrait as a three-line drop capital, facts in a side column.
-  4. **Play words**: "I DESIGN / I CODE / I BUILD" as three display rows fitted margin to margin (`25.5cqi`), every letter loose (see Play words).
-  5. **Contact**: display-size rows on alternating bands, then "Say hello" with a round arrow.
-  6. **Footer** (every page): inverted, link columns, colophon, JOKO fitted margin to margin.
+  3. **Experience** (`ExperiencePreview`): the three latest roles as bands (dates, organisation and role, kind), the competition placings in one sentence, certificates only once real ones exist, then links to Experience, Certificates and Stack. The Profile pages hold everything else.
+  4. **About**: 28px paragraph with the portrait as a three-line drop capital, facts in a side column.
+  5. **Play words**: "I DESIGN / I CODE / I BUILD" as three display rows fitted margin to margin (`25.5cqi`), every letter loose (see Play words).
+  6. **Contact**: display-size rows on alternating bands, then "Say hello" with a round arrow.
+  7. **Footer** (every page): inverted, link columns, colophon, JOKO fitted margin to margin.
 - Sections are 160–190px apart on desktop; each opens with a heading.
 
 ## Components
@@ -117,13 +118,13 @@ One PDF, `public/joko-comia-resume.pdf` (one page, built from the CV in the deve
 `/writing` lists posts newest first: date in a three-column side column, the title at heading size (takes the section hue under the pointer), its summary beneath. With no posts, one surface band says the first posts are coming and links to LinkedIn; the header count hides at zero. A post (`/writing/[slug]`) opens with "All writing", a display title (`clamp(2.5rem, 6vw, 5rem)`, balanced), the date and "First posted on LinkedIn" when set, then the body at 18px / 1.6 within 65ch (`.post-body`). Posts are Markdown files in `src/content/posts` (see `_template.md`), rendered at build time with `marked`.
 
 ### Stack
-Each group (Design, Front-end, Code and tools) has its heading in a three-column side column and its tools as words at heading size (`.stack-item`, `clamp(2rem, 4.5vw, 4rem)`), wrapping like a set of type; the CV's stated level sits small and muted at a word's shoulder. Interests close the page as one statement paragraph. Tools marked `featured` in `src/content/stack.ts` make the Overview's one-line "Works with" summary, which links to the page.
+Each group (Design, Front-end, Code and tools) has its heading in a three-column side column and its tools as words at heading size (`.stack-item`, `clamp(2rem, 4.5vw, 4rem)`), wrapping like a set of type; under a fine pointer each word lifts 0.08em, turns 2° and takes its own section hue (all eight hues, ordered so neighbours differ), 180–220ms ease-out, colour only under reduced motion; the CV's stated levels are one muted sentence beneath the group ("Advanced in Figma and Canva; basic in Illustrator and Photoshop."). Interests close the page as one statement paragraph. Tools marked `featured` in `src/content/stack.ts` make the Overview's one-line "Works with" summary, which links to the page.
 
 ### Experience
 One band per role (`surface` / `card` alternating), newest first. On wide screens the dates take three of twelve columns; the role at heading size, then organisation (linked when it has a site), kind and location in muted, the outcome lines, and skill chips. Content lives in `src/content/experience.ts`.
 
 ### Certificates
-Bands like the contact rows: title at heading size, issuer and year beneath, a round arrow at the right that turns 45° as the linked band inverts to `ink`.
+Credly badges (public, accepted) come from Credly's public profile JSON for `site.credly`, fetched on the server and revalidated daily (`src/lib/credly.ts`), merged with any hand-added entries in `src/content/certificates.ts`, newest first. Bands like the contact rows: the badge image (64–80px) beside the title at heading size, issuer and year beneath, a round arrow at the right that turns 45° as the band inverts to `ink`; each links to the badge's public Credly page to verify it. The Overview's Experience section lists the three latest.
 
 ### Command palette (`CommandPalette`)
 Native `<dialog>` with combobox and grouped listbox (Pages, Projects, Links, Actions). Opens instantly (no animation). Round, the only shadow on the site. Project rows jump to `/projects#slug`, marked by `HashTarget`.

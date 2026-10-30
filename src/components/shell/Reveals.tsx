@@ -34,6 +34,8 @@ export function Reveals() {
           duration: reduce ? 0.4 : 0.8,
           ease: "expo.out",
           stagger: 0.07,
+          // Hand the parts back to CSS once they've arrived, so hover moves (translate, rotate) aren't overridden.
+          clearProps: "transform,translate,rotate,scale",
           scrollTrigger: { trigger: section, start: "top 80%", once: true },
         });
       }
@@ -51,6 +53,12 @@ export function Reveals() {
             autoSplit: true,
             // Re-split on resize and font load; once played, later splits just stay at rest.
             onSplit: (self) => {
+              // Tight display leading would clip descenders (the g in Writing) at the mask's edge;
+              // pad the mask and pull it back so the layout doesn't move.
+              for (const mask of self.masks as HTMLElement[]) {
+                mask.style.paddingBottom = "0.18em";
+                mask.style.marginBottom = "-0.18em";
+              }
               if (played) return;
               return gsap.from(self.chars, {
                 yPercent: 110,

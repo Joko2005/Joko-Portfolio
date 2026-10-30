@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { PiArrowUpRight } from "react-icons/pi";
+import { ExperiencePreview } from "@/components/overview/ExperiencePreview";
 import { Hero } from "@/components/overview/Hero";
 import { PlayWords } from "@/components/overview/PlayWords";
 import { WorkIndex } from "@/components/overview/WorkIndex";
@@ -68,6 +69,9 @@ const helloHref = site.email
   ? `mailto:${site.email}?subject=${encodeURIComponent("OJT placement")}`
   : site.links.github;
 
+// The Experience preview lists the latest Credly badges; re-read them once a day.
+export const revalidate = 86400;
+
 export default function OverviewPage() {
   return (
     <div className="flex flex-col">
@@ -81,6 +85,8 @@ export default function OverviewPage() {
           <WorkIndex items={work} />
         </div>
       </section>
+
+      <ExperiencePreview />
 
       <section aria-labelledby="about-title" className="reveal pt-28 md:pt-48">
         <h2 id="about-title" className="section-title" data-split="chars">

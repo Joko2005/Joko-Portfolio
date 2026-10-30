@@ -540,24 +540,18 @@ li:nth-child(even).exp-row {
   letter-spacing: -0.03em;
 }
 
-/* Stack: each tool a word at heading size; the CV's stated level sits small at its shoulder. */
+/* Stack: each tool a word at heading size; under the pointer it lifts and takes its own section hue (--pop). */
 .stack-item {
-  display: inline-flex;
-  align-items: flex-start;
-  gap: 0.4rem;
+  display: inline-block;
+  transition:
+    color 180ms var(--ease-out),
+    translate 220ms var(--ease-out),
+    rotate 220ms var(--ease-out);
   font-family: var(--font-display);
   font-size: clamp(2rem, 4.5vw, 4rem);
   font-weight: 600;
   line-height: 1.05;
   letter-spacing: -0.035em;
-}
-.stack-level {
-  margin-top: 0.35em;
-  font-family: var(--font-sans);
-  font-size: 0.8125rem;
-  font-weight: 400;
-  letter-spacing: 0;
-  color: var(--muted);
 }
 
 /* Writing: list titles take the section hue under the pointer; a post reads at 18px within 65 characters. */
@@ -634,6 +628,21 @@ li:nth-child(even).exp-row {
 }
 .post-body img {
   border-radius: 1.5rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  /* translate/rotate, not transform: the scroll reveal owns transform. */
+  .stack-item:hover {
+    color: var(--pop);
+    translate: 0 -0.08em;
+    rotate: -2deg;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stack-item:hover {
+    translate: none;
+    rotate: none;
+  }
 }
 
 /* Competitions: the placing set at display size, the event beneath it. */
@@ -836,6 +845,35 @@ li:nth-child(even) > .cert-row {
 .work-row:focus-visible {
   outline-offset: 6px;
   border-radius: 0.75rem;
+}
+
+/* Experience preview: one band per role, a tone step under the pointer; the whole row goes to /experience. */
+.preview-row {
+  display: grid;
+  gap: 0.5rem;
+  border-radius: 1.5rem;
+  background: var(--surface);
+  padding: 1.25rem 1.5rem;
+  transition: background-color 200ms var(--ease-out);
+}
+li:nth-child(even) > .preview-row {
+  background: var(--card);
+}
+@media (min-width: 64rem) {
+  .preview-row {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    align-items: baseline;
+    gap: 2rem;
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  a.preview-row:hover {
+    background: var(--ink);
+    color: var(--bg);
+  }
+  a.preview-row:hover .text-muted {
+    color: color-mix(in srgb, var(--bg) 65%, var(--ink));
+  }
 }
 
 /* About: a statement-sized paragraph with the portrait as its drop capital. */
