@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { site } from "@/content/site";
 import { NAV } from "./nav";
+import { SOCIALS } from "./socials";
 
 /** The close: inverted colours, a few link columns, and the name returning margin to margin. */
 export function Footer() {
@@ -23,20 +24,14 @@ export function Footer() {
         <div>
           <p className="font-medium">Elsewhere</p>
           <ul className="mt-2 flex flex-col gap-1">
-            <li>
-              <a href={site.links.github} target="_blank" rel="noopener noreferrer">
-                GitHub
-                <span className="sr-only"> (opens in a new tab)</span>
-              </a>
-            </li>
-            {site.links.linkedin && (
-              <li>
-                <a href={site.links.linkedin} target="_blank" rel="noopener noreferrer">
-                  LinkedIn
+            {SOCIALS.filter((x) => x.external).map((x) => (
+              <li key={x.id}>
+                <a href={x.href} target="_blank" rel="noopener noreferrer">
+                  {x.label}
                   <span className="sr-only"> (opens in a new tab)</span>
                 </a>
               </li>
-            )}
+            ))}
           </ul>
         </div>
         <div>

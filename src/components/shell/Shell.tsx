@@ -4,12 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
-import { PiEnvelopeSimple, PiGithubLogo, PiMagnifyingGlass } from "react-icons/pi";
+import { PiMagnifyingGlass } from "react-icons/pi";
 import { site } from "@/content/site";
 import { CommandPalette, ShortcutHint } from "./CommandPalette";
 import { Footer } from "./Footer";
 import { Reveals } from "./Reveals";
 import { NAV, NAV_GROUPS, sectionFromPath } from "./nav";
+import { SOCIALS } from "./socials";
 import { ThemeToggle } from "./ThemeToggle";
 
 /** The name as a small monument, sized to its card like the hero's JOKO, with the role beneath. */
@@ -79,29 +80,23 @@ function NavList({ id, pathname, onNavigate }: { id: string; pathname: string; o
   );
 }
 
-/** Ways to reach Joko, pinned to the bottom of the sidebar. */
-function ContactLinks() {
+/** Ways to reach Joko as round icon buttons, so they read at a glance and never truncate. */
+function SocialLinks() {
   return (
-    <div className="flex flex-col gap-0.5 text-sm">
-      {site.email ? (
-        <a href={`mailto:${site.email}`} className="nav-item flex items-center gap-3 rounded-full px-4 py-2 text-muted">
-          <PiEnvelopeSimple aria-hidden className="size-4 shrink-0" />
-          <span className="truncate">{site.email}</span>
-        </a>
-      ) : (
-        <span className="px-4 py-2 text-[0.8125rem] text-muted">[Add your email]</span>
-      )}
-      <a
-        href={site.links.github}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="nav-item flex items-center gap-3 rounded-full px-4 py-2 text-muted"
-      >
-        <PiGithubLogo aria-hidden className="size-4 shrink-0" />
-        GitHub
-        <span className="sr-only"> (opens in a new tab)</span>
-      </a>
-    </div>
+    <ul aria-label="Contact" className="flex gap-2">
+      {SOCIALS.map(({ id, label, href, icon: Icon, external }) => (
+        <li key={id}>
+          <a
+            href={href}
+            {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+            aria-label={external ? `${label} (opens in a new tab)` : label}
+            className="social-link pressable"
+          >
+            <Icon aria-hidden className="size-5" />
+          </a>
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -139,7 +134,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
           </nav>
         </div>
         <div className="mt-auto flex flex-col gap-3 pt-5">
-          <ContactLinks />
+          <SocialLinks />
           <ThemeToggle />
         </div>
       </aside>
@@ -176,7 +171,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
           <nav id="mobile-nav" aria-label="Main" className="flex flex-col gap-6 px-3 pb-6 pt-2">
             <NavList id="mobile-nav-list" pathname={pathname} onNavigate={() => setMenuOpen(false)} />
             <div className="flex flex-col gap-3 pt-2">
-              <ContactLinks />
+              <SocialLinks />
               <ThemeToggle />
             </div>
           </nav>

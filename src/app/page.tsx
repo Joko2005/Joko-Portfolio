@@ -1,8 +1,10 @@
 import Image from "next/image";
+import Link from "next/link";
 import { PiArrowUpRight } from "react-icons/pi";
 import { Hero } from "@/components/overview/Hero";
 import { PlayWords } from "@/components/overview/PlayWords";
 import { WorkIndex } from "@/components/overview/WorkIndex";
+import { SOCIALS } from "@/components/shell/socials";
 import { site } from "@/content/site";
 import { education } from "@/content/experience";
 import { stack } from "@/content/stack";
@@ -24,14 +26,28 @@ function DropPortrait() {
 const facts: { term: string; detail: React.ReactNode }[] = [
   { term: "Does", detail: "UI/UX design and front-end development" },
   { term: "Studying", detail: `${education.degree}, ${education.when}` },
-  { term: "Works with", detail: stack.flatMap((g) => g.items.map((i) => i.name)).join(", ") },
+  {
+    term: "Works with",
+    detail: (
+      <>
+        {stack.flatMap((g) => g.items.filter((i) => i.featured).map((i) => i.name)).join(", ")}.{" "}
+        <Link href="/stack" className="link">
+          All tools
+        </Link>
+      </>
+    ),
+  },
   {
     term: "Elsewhere",
     detail: (
-      <a href={site.links.github} target="_blank" rel="noopener noreferrer" className="link">
-        GitHub
-        <span className="sr-only"> (opens in a new tab)</span>
-      </a>
+      <span className="flex flex-wrap gap-x-4 gap-y-1">
+        {SOCIALS.filter((x) => x.external).map((x) => (
+          <a key={x.id} href={x.href} target="_blank" rel="noopener noreferrer" className="link">
+            {x.label}
+            <span className="sr-only"> (opens in a new tab)</span>
+          </a>
+        ))}
+      </span>
     ),
   },
 ];

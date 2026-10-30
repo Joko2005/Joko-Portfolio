@@ -18,6 +18,7 @@
   --c-experience: #6d28d9;
   --c-graphics: #0369a1;
   --c-certificates: #15803d;
+  --c-stack: #be123c;
   --c-playground: #a64b00;
 
   --accent: var(--ink);
@@ -39,6 +40,7 @@
   --c-experience: #b69cff;
   --c-graphics: #4fc3f7;
   --c-certificates: #5ee38b;
+  --c-stack: #ff7a93;
   --c-playground: #ffb547;
 
   color-scheme: dark;
@@ -50,6 +52,7 @@
 [data-section="experience"] { --accent: var(--c-experience); }
 [data-section="graphics"] { --accent: var(--c-graphics); }
 [data-section="certificates"] { --accent: var(--c-certificates); }
+[data-section="stack"] { --accent: var(--c-stack); }
 [data-section="playground"] { --accent: var(--c-playground); }
 
 @theme {
@@ -328,6 +331,23 @@
   }
 }
 
+/* Socials: round icon buttons on the page ground, ink under the pointer. */
+.social-link {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 9999px;
+  background: var(--bg);
+  color: var(--muted);
+}
+@media (hover: hover) and (pointer: fine) {
+  .social-link:hover {
+    background: var(--ink);
+    color: var(--bg);
+  }
+}
+
 /* Theme switch: the hero switch at sidebar size, on the page ground, with icons. */
 .switch.switch-compact {
   background: var(--bg);
@@ -495,6 +515,26 @@ li:nth-child(even).exp-row {
   font-weight: 600;
   line-height: 1;
   letter-spacing: -0.03em;
+}
+
+/* Stack: each tool a word at heading size; the CV's stated level sits small at its shoulder. */
+.stack-item {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4.5vw, 4rem);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+}
+.stack-level {
+  margin-top: 0.35em;
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--muted);
 }
 
 /* Competitions: the placing set at display size, the event beneath it. */

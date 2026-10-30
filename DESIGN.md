@@ -32,6 +32,7 @@ Direction dealt by design-taste-frontend: *The name as a monument* (seed 7436437
 | Graphics | `#0369A1` sky | `#4FC3F7` |
 | Experience | `#6D28D9` violet | `#B69CFF` |
 | Certificates | `#15803D` green | `#5EE38B` |
+| Stack | `#BE123C` rose | `#FF7A93` |
 | Playground | `#A64B00` amber | `#FFB547` |
 
 Rules:
@@ -50,7 +51,7 @@ Rules:
 
 ## Layout
 
-- **Sidebar (desktop)**: a name card (JOKO fitted to the card at the hero's `40.5cqi` proportion, role beneath, on `bg`), Search (⌘K / Ctrl K), nav grouped **Work** (Overview, Projects, Experience, Graphics, Certificates) and **Play** (Playground), contact links and the Light / Dark switch at the bottom. Tone step off the page, no border.
+- **Sidebar (desktop)**: a name card (JOKO fitted to the card at the hero's `40.5cqi` proportion, role beneath, on `bg`), Search (⌘K / Ctrl K), nav grouped **Work** (Overview, Projects, Graphics), **Profile** (Experience, Stack, Certificates) and **Play** (Playground), the socials (LinkedIn, GitHub, Email) as a row of round icon buttons and the Light / Dark switch at the bottom. Every social is also listed in the footer and the About facts; all read from `src/components/shell/socials.ts`. Tone step off the page, no border.
 - **Mobile**: a 3.875rem top bar (`--bar-h`) with JOKO, search icon and Menu.
 - **Content column**: fills the space beside the sidebar; its right inset matches the sidebar's left one, so the page has one pair of outer margins.
 - **Overview, top to bottom**:
@@ -107,6 +108,9 @@ One row per project, outcome first: kind and stack chips, the name at work-index
 
 ### Graphics (`GraphicsGallery`)
 4:5 pieces in three columns, the middle one set 6rem lower like a spread (two even columns on phones). A piece opens a full-screen viewer (native `<dialog>` on `bg`): title, close, the piece fitted to the height, previous / next and arrow keys. It settles in (opacity and `scale(0.98)`, 220ms, `@starting-style`) and closes instantly; stepping does not animate.
+
+### Stack
+Each group (Design, Front-end, Code and tools) has its heading in a three-column side column and its tools as words at heading size (`.stack-item`, `clamp(2rem, 4.5vw, 4rem)`), wrapping like a set of type; the CV's stated level sits small and muted at a word's shoulder. Interests close the page as one statement paragraph. Tools marked `featured` in `src/content/stack.ts` make the Overview's one-line "Works with" summary, which links to the page.
 
 ### Experience
 One band per role (`surface` / `card` alternating), newest first. On wide screens the dates take three of twelve columns; the role at heading size, then organisation (linked when it has a site), kind and location in muted, the outcome lines, and skill chips. Content lives in `src/content/experience.ts`.
