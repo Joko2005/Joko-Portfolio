@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
-import { PiMagnifyingGlass } from "react-icons/pi";
+import { useEffect, useRef, useState } from "react";
+import { PiList, PiMagnifyingGlass, PiX } from "react-icons/pi";
 import { Logo } from "@/components/ui";
 import { site } from "@/content/site";
 import { CommandPalette, ShortcutHint } from "./CommandPalette";
@@ -23,9 +23,9 @@ function Brand() {
 }
 
 /** The mark alone for the mobile bar. */
-function BrandCompact() {
+function BrandCompact({ onNavigate }: { onNavigate: () => void }) {
   return (
-    <Link href="/" aria-label={`${site.name}, home`}>
+    <Link href="/" aria-label={`${site.name}, home`} onClick={onNavigate}>
       <Logo className="h-7 w-auto" />
     </Link>
   );
@@ -44,7 +44,7 @@ function NavList({ id, pathname, onNavigate }: { id: string; pathname: string; o
             {NAV.filter((item) => item.group === group).map(({ id, label, href, icon: Icon }) => {
               const active = id === current;
               return (
-                <li key={id}>
+                <li key={id} style={{ "--i": NAV.findIndex((n) => n.id === id) } as React.CSSProperties}>
                   <Link
                     href={href}
                     data-section={id}
@@ -72,6 +72,29 @@ export function Shell({ children }: { children: React.ReactNode }) {
   const section = sectionFromPath(pathname);
   const [menuOpen, setMenuOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const menuButton = useRef<HTMLButtonElement>(null);
+
+  // While the phone menu is open: the page behind holds still, Escape closes it and returns focus,
+  // and widening to the sidebar layout closes it.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const root = document.documentElement;
+    root.classList.add("menu-open");
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      setMenuOpen(false);
+      menuButton.current?.focus();
+    };
+    const wide = window.matchMedia("(min-width: 48rem)");
+    const onWide = () => wide.matches && setMenuOpen(false);
+    window.addEventListener("keydown", onKey);
+    wide.addEventListener("change", onWide);
+    return () => {
+      root.classList.remove("menu-open");
+      window.removeEventListener("keydown", onKey);
+      wide.removeEventListener("change", onWide);
+    };
+  }, [menuOpen]);
 
   return (
     <div data-section={section} className="min-h-dvh md:grid md:grid-cols-[15rem_minmax(0,1fr)]">
@@ -106,9 +129,9 @@ export function Shell({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* Mobile top bar */}
-      <header className="sticky top-0 z-40 bg-surface md:hidden">
+      <header data-open={menuOpen} className="mobile-header sticky top-0 z-40 bg-surface md:hidden">
         <div className="flex h-[var(--bar-h)] items-center justify-between px-5">
-          <BrandCompact />
+          <BrandCompact onNavigate={() => setMenuOpen(false)} />
           <div className="flex items-center gap-5">
             <button
               type="button"
@@ -123,24 +146,26 @@ export function Shell({ children }: { children: React.ReactNode }) {
               <PiMagnifyingGlass aria-hidden className="size-5" />
             </button>
             <button
+              ref={menuButton}
               type="button"
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
               aria-expanded={menuOpen}
               aria-controls="mobile-nav"
               onClick={() => setMenuOpen((open) => !open)}
-              className="pressable text-sm font-medium"
+              className="menu-toggle pressable -m-2 p-2"
             >
-              {menuOpen ? "Close" : "Menu"}
+              <PiList aria-hidden className="menu-icon menu-icon-open size-6" />
+              <PiX aria-hidden className="menu-icon menu-icon-close size-6" />
             </button>
           </div>
         </div>
-        {menuOpen && (
-          <nav id="mobile-nav" aria-label="Main" className="flex flex-col gap-6 px-3 pb-6 pt-2">
-            <NavList id="mobile-nav-list" pathname={pathname} onNavigate={() => setMenuOpen(false)} />
-            <div className="flex flex-col gap-3 pt-2">
-              <ThemeToggle />
-            </div>
-          </nav>
-        )}
+        <div aria-hidden className="menu-scrim" onClick={() => setMenuOpen(false)} />
+        <nav id="mobile-nav" aria-label="Main" inert={!menuOpen} className="menu-panel flex flex-col gap-6 px-3 pb-6 pt-2">
+          <NavList id="mobile-nav-list" pathname={pathname} onNavigate={() => setMenuOpen(false)} />
+          <div className="menu-theme pt-2">
+            <ThemeToggle />
+          </div>
+        </nav>
       </header>
 
       <main id="main" className="w-full px-5 py-10 md:py-16 md:pl-12 md:pr-5 lg:pl-16">

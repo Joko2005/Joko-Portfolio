@@ -323,6 +323,106 @@ html {
 }
 
 /* ---- Sidebar (Shell.tsx) ---- */
+/* ---- Phone menu ---- */
+.menu-open {
+  overflow: hidden;
+}
+.menu-toggle {
+  display: grid;
+}
+.menu-icon {
+  grid-area: 1 / 1;
+  transition:
+    opacity 160ms var(--ease-out),
+    transform 200ms var(--ease-out);
+}
+.menu-icon-close,
+.mobile-header[data-open="true"] .menu-icon-open {
+  opacity: 0;
+  transform: rotate(-45deg) scale(0.8);
+}
+.mobile-header[data-open="true"] .menu-icon-open {
+  transform: rotate(45deg) scale(0.8);
+}
+.mobile-header[data-open="true"] .menu-icon-close {
+  opacity: 1;
+  transform: none;
+}
+/* Closing is quicker than opening: the visitor has already decided. */
+.menu-scrim {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 100dvh;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 160ms var(--ease-out);
+}
+.menu-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: calc(100dvh - var(--bar-h));
+  overflow-y: auto;
+  background: var(--surface);
+  border-radius: 0 0 1.5rem 1.5rem;
+  opacity: 0;
+  visibility: hidden;
+  clip-path: inset(0 0 100% 0);
+  transition:
+    opacity 140ms var(--ease-out),
+    clip-path 180ms var(--ease-out),
+    visibility 0s linear 180ms;
+}
+.menu-panel li,
+.menu-theme {
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 120ms var(--ease-out),
+    transform 120ms var(--ease-out);
+}
+.mobile-header[data-open="true"] .menu-scrim {
+  opacity: 0.5;
+  pointer-events: auto;
+  transition-duration: 240ms;
+}
+.mobile-header[data-open="true"] .menu-panel {
+  opacity: 1;
+  visibility: visible;
+  clip-path: inset(0 0 0 0);
+  transition:
+    opacity 180ms var(--ease-out),
+    clip-path 280ms var(--ease-out),
+    visibility 0s;
+}
+/* Items arrive 30ms apart; the panel stays usable throughout. */
+.mobile-header[data-open="true"] .menu-panel li,
+.mobile-header[data-open="true"] .menu-theme {
+  opacity: 1;
+  transform: none;
+  transition-duration: 240ms;
+  transition-delay: calc(40ms + var(--i, 7) * 30ms);
+}
+@media (prefers-reduced-motion: reduce) {
+  .menu-icon,
+  .menu-panel li,
+  .menu-theme {
+    transform: none !important;
+  }
+  .menu-panel {
+    clip-path: none;
+    transition-property: opacity, visibility;
+  }
+  .mobile-header[data-open="true"] .menu-panel li,
+  .mobile-header[data-open="true"] .menu-theme {
+    transition-delay: 0ms;
+  }
+}
+
 /* Inactive nav and contact rows: ink on hover, and the row's section hue lights its icon. */
 .nav-item {
   transition-property: transform, color, background-color;

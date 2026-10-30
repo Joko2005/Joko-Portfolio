@@ -53,7 +53,7 @@ Rules:
 ## Layout
 
 - **Sidebar (desktop)**: the horizontal lockup on `bg` (the JC mark in `currentColor` beside "Joko Comia" in Funnel Display; `src/components/ui/Logo.tsx`), Search (⌘K / Ctrl K), nav grouped **Work** (Overview, Projects, Graphics), **Profile** (Experience, Stack, Certificates, Writing) and **Play** (Playground), and the Light / Dark switch at the bottom. Socials and the résumé live in the Overview hero and the footer, not here. Tone step off the page, no border.
-- **Mobile**: a 3.875rem top bar (`--bar-h`) with the JC mark, search icon and Menu.
+- **Mobile**: a 3.875rem top bar (`--bar-h`) with the JC mark, search icon and a list icon that morphs into a close icon. The menu wipes down from the bar over a 50% black scrim (280ms open, 180ms close), its items rising 8px 30ms apart. Scrim, Escape or a link closes it; the page behind doesn't scroll. Reduced motion: fades only.
 - **Browser icon**: `src/app/icon.svg`, the white mark on a black rounded tile, so it reads on light and dark tabs.
 - **Content column**: fills the space beside the sidebar; its right inset matches the sidebar's left one, so the page has one pair of outer margins.
 - **Overview, top to bottom**:
@@ -92,7 +92,7 @@ About 2s, once per session, skippable (click, key, Skip intro). JOKO rises in ou
 - The `h1` is the monument; its visually hidden line carries the role at body size.
 - Letters rise through a mask after the loader (0.9s, 60ms stagger), other parts follow; settled in about 1.1s. Reduced motion: fade only.
 - **Design / Build switch**: two pressed-state buttons on a pill; the active one fills with `ink`. Scrolling past half the pinned hero flips it too.
-- **Arrow**: an extruded cursor shape in R3F. Blueprint edges drawn from its own corners; a glossy physical solid (Overview hue) fades in on Build. Lit by a generated `RoomEnvironment`; tilts toward the pointer, floats, grows on hover, spins on click. Starts after the intro and the hero's entrance, once the browser is idle. Renders on demand while on screen: every frame while changing, 30 a second for the float; geometry disposed on unmount; an SVG outline stands in while it loads.
+- **Folio** (`HeroObject`): the mascot, built in code from the brand character sheet: a bevelled page with a blue fold, jointed limbs and a face. Design shows it as a blueprint outline; Build fades in the matte solid (limbs lift to dark grey on the dark theme) and it holds up an interface card. Poses (think, build, welcome, success) are joint angles that blend. It waves on arrival and on hover, hops and turns on click, blinks and breathes, and tilts toward the pointer. Starts after the intro and the hero's entrance, once the browser is idle. Renders on demand while on screen: every frame while changing, 30 a second at rest; geometry disposed on unmount; a drawn outline stands in while it loads. Reduced motion: poses snap, nothing idles.
 
 ### Work index (`WorkIndex`)
 Names at 72px; hover or focus makes one active and swaps the sticky preview (opacity 200ms; inactive stills are `visibility: hidden`). A preview is the project's screenshot when `image` is set in `src/content/work.ts`, otherwise a drawn title card on its tone (ink, a section hue, or surface).

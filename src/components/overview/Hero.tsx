@@ -13,24 +13,21 @@ import { cssVar, useThemeClass } from "@/lib/useThemeClass";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-/** Drawn stand-in while three.js loads, and the whole object when WebGL is off. */
-function ArrowSketch() {
+/** Drawn stand-in while three.js loads, and the whole mascot when WebGL is off: Folio as a blueprint. */
+function FolioSketch() {
   return (
     <div className="absolute inset-0 grid place-items-center">
-      <svg viewBox="-10 -10 140 200" className="h-1/2 -rotate-12 text-ink" aria-hidden>
-        <path
-          d="M0 0 L0 162 L40 124 L66 182 L92 170 L66 113 L118 113 Z"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinejoin="round"
-        />
+      <svg viewBox="-20 -10 240 300" className="h-[55%] text-ink" aria-hidden fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round">
+        <path d="M18 0 H120 L200 80 V232 Q200 250 182 250 H18 Q0 250 0 232 V18 Q0 0 18 0 Z" />
+        <path d="M120 0 L160 0 L204 42 L200 80" />
+        <path d="M0 150 Q-22 170 -14 200 M200 150 Q222 170 214 200 M58 250 V284 M142 250 V284" />
+        <path d="M66 105 V125 M134 105 V125 M90 138 Q100 148 110 138" />
       </svg>
     </div>
   );
 }
 
-const HeroObject = dynamic(() => import("./HeroObject"), { ssr: false, loading: () => <ArrowSketch /> });
+const HeroObject = dynamic(() => import("./HeroObject"), { ssr: false, loading: () => <FolioSketch /> });
 
 const REDUCE = "(prefers-reduced-motion: reduce)";
 function useReducedMotion() {
@@ -75,9 +72,9 @@ function useReadyFor3D() {
 const STATEMENTS = { design: "I design it.", build: "I build it." } as const;
 
 /**
- * The Overview hero. The name is the monument; a 3D cursor arrow sits on its letters.
- * Scrolling through the pinned hero (or the Design / Build switch) turns the arrow
- * from its outline (the design) into a solid object (the build).
+ * The Overview hero. The name is the monument; Folio, the 3D mascot, stands beside it.
+ * Scrolling through the pinned hero (or the Design / Build switch) turns Folio
+ * from a blueprint outline (the design) into a solid character (the build).
  */
 export function Hero({ name, role, intro }: { name: string; role: string; intro: string }) {
   const root = useRef<HTMLElement>(null);
@@ -87,7 +84,6 @@ export function Hero({ name, role, intro }: { name: string; role: string; intro:
   const reducedMotion = useReducedMotion();
   const theme = useThemeClass();
   const ink = theme ? cssVar("--ink") : "#000";
-  const accent = theme ? cssVar("--c-overview") : "#1d4ed8";
   const letters = name.toUpperCase().split("");
 
   useGSAP(
@@ -156,7 +152,7 @@ export function Hero({ name, role, intro }: { name: string; role: string; intro:
               <p className="text-base leading-snug text-muted">{site.location}</p>
             </div>
           </div>
-          <div role="group" aria-label="Show the arrow as" className="hero-fade switch" data-built={built}>
+          <div role="group" aria-label="Show Folio as" className="hero-fade switch" data-built={built}>
             <button type="button" aria-pressed={!built} onClick={() => setBuilt(false)} data-magnetic>
               Design
             </button>
@@ -181,26 +177,24 @@ export function Hero({ name, role, intro }: { name: string; role: string; intro:
           </span>
         </h1>
 
-        {/* The object, overlapping the name. */}
-        <div className="pointer-events-auto absolute inset-x-0 top-[31%] z-0 mx-auto h-[44%] max-w-[44rem] md:left-auto md:right-0 md:top-[10%] md:mx-0 md:h-[62%] md:w-[52%] md:max-w-none">
+        {/* Folio, overlapping the name. */}
+        <div className="pointer-events-auto absolute inset-x-0 top-[37%] z-0 mx-auto h-[38%] max-w-[44rem] md:left-auto md:right-0 md:top-[10%] md:mx-0 md:h-[62%] md:w-[52%] md:max-w-none">
           {ready3D ? (
             <HeroObject
               built={built}
               started={started}
               reducedMotion={reducedMotion}
               ink={ink}
-              accent={accent}
-              onSpin={() => setBuilt((b) => !b)}
             />
           ) : (
-            <ArrowSketch />
+            <FolioSketch />
           )}
         </div>
 
-        {/* The statement and the action, just above the name from md. */}
-        <div className="relative order-2 mt-auto">
+        {/* The statement and the action, just above the name from md. The empty space around them lets clicks reach Folio. */}
+        <div className="pointer-events-none relative order-2 mt-auto">
           <div className="relative z-20 mb-6 md:mb-8">
-            <div className="hero-fade max-w-md">
+            <div className="hero-fade pointer-events-auto max-w-md">
               <p className="statement font-display text-3xl font-semibold leading-tight tracking-[-0.02em] md:text-4xl" data-built={built}>
                 <span aria-hidden={built}>{STATEMENTS.design}</span>
                 <span aria-hidden={!built}>{STATEMENTS.build}</span>
@@ -208,7 +202,7 @@ export function Hero({ name, role, intro }: { name: string; role: string; intro:
               <p className="mt-3 hidden text-base leading-relaxed sm:block">{intro}</p>
             </div>
             {/* The first things a reviewer reaches for: the work, the résumé, and a way to get in touch. */}
-            <div className="hero-fade hero-actions mt-5 flex flex-wrap items-center gap-2">
+            <div className="hero-fade hero-actions pointer-events-auto mt-5 flex w-fit max-w-full flex-wrap items-center gap-2">
               <a href="#work" className="btn btn-primary pressable">
                 See the work
               </a>
