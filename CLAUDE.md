@@ -44,7 +44,7 @@ Spend boldness in one place: the Playground plus one signature detail in the she
 
 ## Libraries
 
-- **Use:** CSS transitions; Three.js via React Three Fiber (+ drei) in the Playground and Folio, the corner mascot, loaded with `dynamic(..., { ssr: false })`. Add Motion (`motion/react`) only if a spring or layout transition truly needs it; it was removed to lighten every page.
+- **Use:** CSS transitions; GSAP (ScrollTrigger, SplitText) for entrances and the work index; Lenis for wheel and trackpad smoothing (`SmoothScroll`); Three.js via React Three Fiber (+ drei) in the Playground and Folio, the corner mascot, loaded with `dynamic(..., { ssr: false })`. Add Motion (`motion/react`) only if a spring or layout transition truly needs it; it was removed to lighten every page.
 - **Optional:** GSAP, only for a scroll-driven sequence Motion can't handle well.
 - **Don't add:** AOS, AnimeJS.
 

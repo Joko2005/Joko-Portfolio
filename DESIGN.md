@@ -58,12 +58,12 @@ Rules:
 - **Content column**: fills the space beside the sidebar; its right inset matches the sidebar's left one, so the page has one pair of outer margins.
 - **Overview, top to bottom**:
   1. **Hero** (one screen from md): JOKO fitted to the text column, role and location, the statement "I design it. I build it." with one sentence and availability, the actions (See the work, CV, LinkedIn, GitHub, Email), and the 3:4 portrait at the side, vertically centred on the text. A row of four proof tiles from the CV closes the screen. On phones: JOKO, portrait beside the role, copy, actions, tiles two across, at natural height.
-  2. **Selected work**: a grid of stills so everything can be scanned at once: the highlights (AVERA, CryoLipo) two across, the rest three across, each with its name and kind beneath. Graphics takes the last cell; the Playground is reached from Play words.
-  3. **Experience** (`ExperiencePreview`): the three latest roles as bands (dates, organisation and role, kind), then the latest certificates and the main tools side by side, each linking to its page.
-  4. **Play words**: "I DESIGN / I CODE / I BUILD" as three display rows fitted margin to margin (`25.5cqi`), every letter loose (see Play words), plus a link to the Playground.
-  5. **Contact**: one "Say hello" band with a round arrow, then the email, GitHub and LinkedIn as links.
-  6. **Footer** (every page): inverted, link columns, colophon, JOKO fitted margin to margin.
-- Sections are 96–128px apart on desktop; each opens with a heading, with its "see everything" link across from it.
+  2. **Selected work**: seven project names as a compact index, about one screen, with one still beside them. Graphics and All projects link from the heading; the Playground is reached from Play words. Phones: a thumbnail in each row.
+  3. **Experience**, 4. **Certificates**, 5. **Stack** (`ExperiencePreview`): three sections, each a huge title that holds its place (sticky from lg) while its details pass beside it. Only what a recruiter scans: project, role, type and dates; verifiable certificates with their badges; the main tools by group. No bands or chips.
+  6. **Play words**: "I DESIGN / I CODE / I BUILD" as three display rows fitted margin to margin (`25.5cqi`), every letter loose (see Play words), plus a text link to the Playground.
+  7. **Contact**: display-size rows on alternating bands (email, GitHub, LinkedIn), then "Say hello" with a round arrow.
+  8. **Footer** (every page): inverted, link columns, colophon, JOKO fitted margin to margin.
+- Sections are 128–160px apart on desktop; each opens with a heading, with its "see everything" link beside or under it.
 
 ## Components
 
@@ -96,11 +96,14 @@ About 2s, once per session, skippable (click, key, Skip intro). JOKO rises in ou
 ### Folio (`FolioCorner`, `FolioScene`)
 The mascot, built in code from the brand character sheet (a bevelled page with a blue fold, jointed limbs and a face). A 112 × 144px companion fixed in the bottom-right corner from md, on every page; phones skip it. The one hidden mechanic: clicking makes it hop and turn, and flips it between the solid build and a blueprint outline of the design. It waves on arrival, on hover and at the footer, blinks, breathes and leans toward the pointer. Decorative and `aria-hidden`. Starts after the intro once the browser is idle; renders on demand (every frame while changing, 20 a second at rest, only while on screen). Reduced motion: poses snap, nothing idles.
 
-### Work grid (`WorkIndex`)
-A 16:9 still, then the name (36px for highlights, 24px for the rest) and kind. On hover the still scales to 1.02 inside its frame and an arrow appears beside the name, with the "View" cursor. A still is the project's screenshot when `image` is set in `src/content/work.ts` (`imageDark` swaps it in the dark theme), otherwise a drawn title card on its tone (ink, a section hue, or surface).
+### Work index (`WorkIndex`)
+Names up to 72px in tight rows, muted until active. Hover or focus activates a row: the name turns ink and leans in, and the 16:9 still travels to that row (`quickTo`, 0.7s `expo.out`) and wipes to the project in the direction the pointer moved (`clip-path`, with its image settling from `scale(1.12)`). Names rise through masks on entry, 50ms apart. A still is the project's screenshot when `image` is set in `src/content/work.ts` (`imageDark` swaps it in the dark theme), otherwise a drawn title card. Reduced motion: a fade, no travel.
 
-### Contact row
-A `surface` band, value at display size. It inverts to `ink` under the pointer; the round arrow turns 45°.
+### Smooth scrolling (`SmoothScroll`)
+Lenis eases wheel and trackpad scrolling (`lerp: 0.1`), run from GSAP's ticker so ScrollTrigger stays in step. Touch keeps native scrolling. Off under reduced motion, inside dialogs and over canvases, and while the phone menu or loader locks the page.
+
+### Contact rows
+Bands of `surface` / `card`, value at display size, left-aligned, lower part of the band. A linked row inverts to `ink` under the pointer; the round arrow turns 45°. Labels go to `aria-label`, not above the value.
 
 ### Play words (`PlayWords`)
 The Overview's one place to play. Fine pointers grab and throw letters (GSAP Draggable + InertiaPlugin, bounded to the section, tilt and 1.08 scale while held); touch taps make a letter hop, so the section never traps scrolling. A moved letter takes its row's hue (Overview, Projects, Playground). **Scatter** throws all letters to random spots; **Put back** springs them home (`elastic.out(1, 0.6)`, random 25ms stagger) and clears the hue. The `h2` carries the sentence for screen readers; letters are `aria-hidden`. Reduced motion: drag without momentum, Scatter and Put back jump.

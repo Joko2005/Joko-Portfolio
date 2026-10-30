@@ -3,6 +3,8 @@
 export type Experience = {
   role: string;
   org: string;
+  /** The name alone, for the Overview. */
+  short: string;
   kind: string;
   /** e.g. "Sep 2026" */
   start: string;
@@ -19,6 +21,7 @@ export const experience: Experience[] = [
   {
     role: "UI/UX designer and front-end developer",
     org: "CryoLipo, a client's Shopify storefront",
+    short: "CryoLipo",
     kind: "Freelance",
     start: "Sep 2026",
     end: "",
@@ -33,6 +36,7 @@ export const experience: Experience[] = [
   {
     role: "UI/UX designer and front-end developer",
     org: "AVERA capstone, LSPU San Pablo City",
+    short: "AVERA",
     kind: "Team thesis",
     start: "Apr 2026",
     end: "",
@@ -46,6 +50,7 @@ export const experience: Experience[] = [
   {
     role: "UI/UX designer and front-end contributor",
     org: "Team software projects, LSPU San Pablo City",
+    short: "Team software projects",
     kind: "Coursework",
     start: "Jan 2021",
     end: "May 2025",

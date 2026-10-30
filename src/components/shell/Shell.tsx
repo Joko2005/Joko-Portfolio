@@ -11,6 +11,7 @@ import { FolioCorner } from "./FolioCorner";
 import { Footer } from "./Footer";
 import { Reveals } from "./Reveals";
 import { NAV, NAV_GROUPS, sectionFromPath } from "./nav";
+import { SmoothScroll } from "./SmoothScroll";
 import { ThemeToggle } from "./ThemeToggle";
 
 /** The horizontal lockup: the JC mark, then the name. */
@@ -179,6 +180,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
 
       <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
       <Reveals />
+      <SmoothScroll />
       <FolioCorner />
     </div>
   );

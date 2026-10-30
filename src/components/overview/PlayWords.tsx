@@ -185,12 +185,12 @@ export function PlayWords() {
       <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
         <p className="text-base text-muted">
           <span className="play-hint-fine">Grab a letter and throw it.</span>
-          <span className="play-hint-touch">Tap a letter.</span>
-        </p>
-        <div className="flex flex-wrap gap-2">
-          <Link href="/playground" className="btn pressable">
+          <span className="play-hint-touch">Tap a letter.</span>{" "}
+          <Link href="/playground" className="link text-ink">
             More in the Playground
           </Link>
+        </p>
+        <div className="flex gap-2">
           <button type="button" onClick={() => scatterRef.current()} className="btn pressable">
             Scatter
           </button>

@@ -1,81 +1,85 @@
+import Image from "next/image";
 import Link from "next/link";
-import { Chip } from "@/components/ui";
 import { realCertificates } from "@/content/certificates";
 import { experience } from "@/content/experience";
 import { stack } from "@/content/stack";
 import { getAllCertificates } from "@/lib/credly";
 
+/** A huge title that holds its place while the details pass beside it, with the way to see everything under it. */
+function Ledger({ id, title, href, more, children }: { id: string; title: string; href: string; more: string; children: React.ReactNode }) {
+  return (
+    <section aria-labelledby={id} className="reveal grid gap-6 pt-24 md:pt-40 lg:grid-cols-12 lg:gap-8">
+      <div className="lg:sticky lg:top-16 lg:col-span-6 lg:self-start">
+        <h2 id={id} className="ledger-title" data-split="chars">
+          {title}
+        </h2>
+        <Link href={href} className="link mt-3 inline-block text-base">
+          {more}
+        </Link>
+      </div>
+      <div className="lg:col-span-6">{children}</div>
+    </section>
+  );
+}
+
 /**
- * The Overview's short look at the Profile pages: the latest roles as single lines, then the latest
- * certificates (Credly and hand-added) and the main tools. Everything else stays on its own page.
+ * The Overview's short look at the Profile pages, only what a recruiter scans for: where and as what, how
+ * recently, what's verified, and the main tools. Everything else stays on its own page.
  */
 export async function ExperiencePreview() {
   const roles = experience.slice(0, 3);
   const certs = (await getAllCertificates(realCertificates)).slice(0, 3);
-  const tools = stack.flatMap((g) => g.items.filter((i) => i.featured).map((i) => i.name));
+  const tools = stack
+    .map((g) => ({ label: g.label, names: g.items.filter((i) => i.featured).map((i) => i.name) }))
+    .filter((g) => g.names.length > 0);
 
   return (
-    <section aria-labelledby="experience-title" className="reveal pt-24 md:pt-32">
-      <div className="section-head">
-        <h2 id="experience-title" className="section-title" data-split="chars">
-          Experience
-        </h2>
-        <Link href="/experience" className="link">
-          Full history
-        </Link>
-      </div>
+    <>
+      <Ledger id="experience-title" title="Experience" href="/experience" more="Full history">
+        <ol className="flex flex-col gap-10">
+          {roles.map((e) => (
+            <li key={e.org} data-reveal>
+              <p className="ledger-item">{e.short}</p>
+              <p className="mt-2 text-base">{e.role}</p>
+              <p className="text-base text-muted">
+                {e.kind}, {e.start} – {e.end || "Present"}
+              </p>
+            </li>
+          ))}
+        </ol>
+      </Ledger>
 
-      <ol className="mt-6 flex flex-col gap-2 md:mt-8">
-        {roles.map((e) => (
-          <li key={e.org} data-reveal>
-            <Link href="/experience" className="preview-row">
-              <span className="text-base text-muted lg:col-span-3">
-                {e.start} – {e.end || "Present"}
-              </span>
-              <span className="lg:col-span-6">
-                <span className="block font-display text-xl font-semibold tracking-[-0.02em] md:text-2xl">{e.org}</span>
-                <span className="mt-1 block text-base">{e.role}</span>
-              </span>
-              <span className="text-base text-muted lg:col-span-3 lg:text-right">{e.kind}</span>
-            </Link>
-          </li>
-        ))}
-      </ol>
-
-      <div data-reveal className="mt-10 grid gap-10 lg:grid-cols-2 lg:gap-5">
-        {certs.length > 0 && (
-          <div>
-            <div className="section-head">
-              <h3 className="font-display text-xl font-semibold tracking-[-0.02em] md:text-2xl">Certificates</h3>
-              <Link href="/certificates" className="link">
-                All certificates
-              </Link>
-            </div>
-            <ul className="mt-4 flex flex-col gap-2 text-base">
-              {certs.map((c) => (
-                <li key={c.title}>
-                  {c.title} <span className="text-muted">{c.issuer}, {c.year}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-        <div>
-          <div className="section-head">
-            <h3 className="font-display text-xl font-semibold tracking-[-0.02em] md:text-2xl">Stack</h3>
-            <Link href="/stack" className="link">
-              All tools
-            </Link>
-          </div>
-          <ul className="mt-4 flex flex-wrap gap-1.5">
-            {tools.map((t) => (
-              <li key={t}>
-                <Chip>{t}</Chip>
+      {certs.length > 0 && (
+        <Ledger id="certificates-title" title="Certificates" href="/certificates" more="All certificates">
+          <ul className="flex flex-col gap-8">
+            {certs.map((c) => (
+              <li key={c.title} data-reveal>
+                <a href={c.href} target="_blank" rel="noopener noreferrer" className="group flex items-center gap-5">
+                  {c.image && <Image src={c.image} alt="" width={72} height={72} className="size-16 shrink-0 md:size-[4.5rem]" />}
+                  <span className="min-w-0">
+                    <span className="ledger-item block transition-colors duration-200 group-hover:text-accent">{c.title}</span>
+                    <span className="mt-1 block text-base text-muted">
+                      {c.issuer}, {c.year}
+                    </span>
+                  </span>
+                  <span className="sr-only"> (verify, opens in a new tab)</span>
+                </a>
               </li>
             ))}
           </ul>
-        </div>
-      </div>
-    </section>
+        </Ledger>
+      )}
+
+      <Ledger id="stack-title" title="Stack" href="/stack" more="All tools">
+        <dl className="flex flex-col gap-8">
+          {tools.map((g) => (
+            <div key={g.label} data-reveal>
+              <dt className="text-base text-muted">{g.label}</dt>
+              <dd className="ledger-item mt-1">{g.names.join(", ")}</dd>
+            </div>
+          ))}
+        </dl>
+      </Ledger>
+    </>
   );
 }
