@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ResumeLink } from "@/components/ui";
 import { site } from "@/content/site";
 import { NAV } from "./nav";
 import { SOCIALS } from "./socials";
@@ -37,6 +38,9 @@ export function Footer() {
         <div>
           <p className="font-medium">Contact</p>
           <p className="mt-2">{site.email ? <a href={`mailto:${site.email}`}>{site.email}</a> : "[Add your email]"}</p>
+          <p className="mt-1">
+            <ResumeLink label="Résumé" className="inline-flex items-center gap-1.5" />
+          </p>
         </div>
         <div>
           <p className="font-medium">Colophon</p>

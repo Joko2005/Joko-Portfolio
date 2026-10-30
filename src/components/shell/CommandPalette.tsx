@@ -86,6 +86,19 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
       });
     }
     list.push({
+      id: "action-resume",
+      group: "Actions",
+      label: "Download résumé",
+      hint: "PDF, one page",
+      keywords: "cv resume download pdf",
+      run: () => {
+        const a = document.createElement("a");
+        a.href = site.resume;
+        a.download = "Joko-Comia-Resume.pdf";
+        a.click();
+      },
+    });
+    list.push({
       id: "action-theme",
       group: "Actions",
       label: isDark ? "Switch to light mode" : "Switch to dark mode",

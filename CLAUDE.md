@@ -11,6 +11,7 @@ Read `PRODUCT.md` first: it is the source of truth for audience, structure, and 
 - Content lives in `src/content/*.ts`. Bracketed text like `[Your role]` and empty `href`s are placeholders to fill before launch.
 - Theme: `next-themes` (class on `<html>`). Section hue: `data-section` → `--accent`; use `text-accent`/`bg-accent`, never raw hex.
 - Components: `src/components/shell` (sidebar, mobile bar, theme toggle, intro, reveals), `src/components/overview`, `src/components/projects`, `src/components/graphics`, `src/components/ui` (PageHeader, ExternalLink, Chip).
+- Writing: one Markdown file per post in `src/content/posts/<slug>.md` with front matter (title, date, summary, linkedin); copy `_template.md`. Files starting with `_` are ignored.
 - Text animation: add `data-split="chars"` (headings) or `data-split="words"` (paragraphs); `Reveals` does the rest.
 
 ## Skills (in `.claude/skills/`)

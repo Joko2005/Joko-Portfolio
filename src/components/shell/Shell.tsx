@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { PiMagnifyingGlass } from "react-icons/pi";
+import { ResumeLink } from "@/components/ui";
 import { site } from "@/content/site";
 import { CommandPalette, ShortcutHint } from "./CommandPalette";
 import { Footer } from "./Footer";
@@ -80,10 +81,12 @@ function NavList({ id, pathname, onNavigate }: { id: string; pathname: string; o
   );
 }
 
-/** Ways to reach Joko as round icon buttons, so they read at a glance and never truncate. */
+/** The résumé download, then the ways to reach Joko as round icon buttons, so they read at a glance and never truncate. */
 function SocialLinks() {
   return (
-    <ul aria-label="Contact" className="flex gap-2">
+    <div className="flex flex-col gap-2">
+      <ResumeLink className="resume-link pressable justify-center" />
+      <ul aria-label="Contact" className="flex gap-2">
       {SOCIALS.map(({ id, label, href, icon: Icon, external }) => (
         <li key={id}>
           <a
@@ -96,7 +99,8 @@ function SocialLinks() {
           </a>
         </li>
       ))}
-    </ul>
+      </ul>
+    </div>
   );
 }
 
