@@ -15,7 +15,7 @@ import { work } from "@/content/work";
 function DropPortrait() {
   const cls = "float-left mr-[0.5em] mt-[0.2em] size-[3.6em] rounded-2xl";
   if (site.photo) {
-    return <Image data-split-ignore src={site.photo} alt={`Portrait of ${site.name}`} width={240} height={240} className={`${cls} object-cover`} />;
+    return <Image data-split-ignore src={site.photo} alt={`Portrait of ${site.name}`} width={240} height={240} className={`${cls} object-cover object-[50%_30%]`} />;
   }
   return (
     <span aria-hidden data-split-ignore className={`${cls} grid place-items-center bg-ink text-bg`}>
@@ -75,7 +75,7 @@ export const revalidate = 86400;
 export default function OverviewPage() {
   return (
     <div className="flex flex-col">
-      <Hero name={site.name} role={`${site.role}.`} intro={site.intro} />
+      <Hero name={site.name} role={site.role} intro={site.intro} />
 
       <section id="work" aria-labelledby="work-title" className="reveal scroll-mt-8 pt-24 md:pt-40">
         <h2 id="work-title" className="section-title" data-split="chars">

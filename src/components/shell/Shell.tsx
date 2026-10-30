@@ -5,30 +5,29 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { PiMagnifyingGlass } from "react-icons/pi";
-import { ResumeLink } from "@/components/ui";
+import { Logo } from "@/components/ui";
 import { site } from "@/content/site";
 import { CommandPalette, ShortcutHint } from "./CommandPalette";
 import { Footer } from "./Footer";
 import { Reveals } from "./Reveals";
 import { NAV, NAV_GROUPS, sectionFromPath } from "./nav";
-import { SOCIALS } from "./socials";
 import { ThemeToggle } from "./ThemeToggle";
 
-/** The name as a small monument, sized to its card like the hero's JOKO, with the role beneath. */
+/** The horizontal lockup: the JC mark, then the name. */
 function Brand() {
   return (
-    <Link href="/" className="@container block rounded-3xl bg-bg px-5 pb-4 pt-5">
-      <span className="sidebar-mark block">{site.name.toUpperCase()}</span>
-      <span className="mt-3 block text-[0.8125rem] leading-snug text-muted">{site.role}</span>
+    <Link href="/" className="flex items-center gap-3 rounded-3xl bg-bg px-4 py-3.5">
+      <Logo className="h-7 w-auto shrink-0" />
+      <span className="font-display text-lg font-semibold leading-none tracking-[-0.03em]">{site.brandName}</span>
     </Link>
   );
 }
 
-/** Compact name for the mobile bar. */
+/** The mark alone for the mobile bar. */
 function BrandCompact() {
   return (
-    <Link href="/" className="font-display text-2xl font-semibold leading-none tracking-[-0.05em]">
-      {site.name.toUpperCase()}
+    <Link href="/" aria-label={`${site.name}, home`}>
+      <Logo className="h-7 w-auto" />
     </Link>
   );
 }
@@ -81,29 +80,6 @@ function NavList({ id, pathname, onNavigate }: { id: string; pathname: string; o
   );
 }
 
-/** The résumé download, then the ways to reach Joko as round icon buttons, so they read at a glance and never truncate. */
-function SocialLinks() {
-  return (
-    <div className="flex flex-col gap-2">
-      <ResumeLink className="resume-link pressable justify-center" />
-      <ul aria-label="Contact" className="flex gap-2">
-      {SOCIALS.map(({ id, label, href, icon: Icon, external }) => (
-        <li key={id}>
-          <a
-            href={href}
-            {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-            aria-label={external ? `${label} (opens in a new tab)` : label}
-            className="social-link pressable"
-          >
-            <Icon aria-hidden className="size-5" />
-          </a>
-        </li>
-      ))}
-      </ul>
-    </div>
-  );
-}
-
 export function Shell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const section = sectionFromPath(pathname);
@@ -137,8 +113,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
             <NavList id="nav" pathname={pathname} />
           </nav>
         </div>
-        <div className="mt-auto flex flex-col gap-3 pt-5">
-          <SocialLinks />
+        <div className="mt-auto pt-5">
           <ThemeToggle />
         </div>
       </aside>
@@ -175,7 +150,6 @@ export function Shell({ children }: { children: React.ReactNode }) {
           <nav id="mobile-nav" aria-label="Main" className="flex flex-col gap-6 px-3 pb-6 pt-2">
             <NavList id="mobile-nav-list" pathname={pathname} onNavigate={() => setMenuOpen(false)} />
             <div className="flex flex-col gap-3 pt-2">
-              <SocialLinks />
               <ThemeToggle />
             </div>
           </nav>

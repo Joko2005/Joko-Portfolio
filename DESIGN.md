@@ -52,11 +52,12 @@ Rules:
 
 ## Layout
 
-- **Sidebar (desktop)**: a name card (JOKO fitted to the card at the hero's `40.5cqi` proportion, role beneath, on `bg`), Search (⌘K / Ctrl K), nav grouped **Work** (Overview, Projects, Graphics), **Profile** (Experience, Stack, Certificates, Writing) and **Play** (Playground), a full-width Résumé download pill, then the socials (LinkedIn, GitHub, Email) as a row of round icon buttons and the Light / Dark switch at the bottom. Every social is also listed in the footer and the About facts; all read from `src/components/shell/socials.ts`. Tone step off the page, no border.
-- **Mobile**: a 3.875rem top bar (`--bar-h`) with JOKO, search icon and Menu.
+- **Sidebar (desktop)**: the horizontal lockup on `bg` (the JC mark in `currentColor` beside "Joko Comia" in Funnel Display; `src/components/ui/Logo.tsx`), Search (⌘K / Ctrl K), nav grouped **Work** (Overview, Projects, Graphics), **Profile** (Experience, Stack, Certificates, Writing) and **Play** (Playground), and the Light / Dark switch at the bottom. Socials and the résumé live in the Overview hero and the footer, not here. Tone step off the page, no border.
+- **Mobile**: a 3.875rem top bar (`--bar-h`) with the JC mark, search icon and Menu.
+- **Browser icon**: `src/app/icon.svg`, the white mark on a black rounded tile, so it reads on light and dark tabs.
 - **Content column**: fills the space beside the sidebar; its right inset matches the sidebar's left one, so the page has one pair of outer margins.
 - **Overview, top to bottom**:
-  1. **Hero** (pinned, two screens): role line and Design / Build switch at the top, the statement ("I design it." / "I build it.") with one sentence and "See the work", the arrow in the right half, JOKO margin to margin at the bottom. On phones JOKO sits under the top row.
+  1. **Hero** (pinned, two screens): who this is at the top (the portrait, 56–72px, round on a `surface` ring so the dark studio backdrop doesn't dissolve into the dark page; "Joko Comia"; role · location) and the Design / Build switch, the statement ("I design it." / "I build it.") with one sentence, then the action row: "See the work" (`btn-primary`), Résumé (`btn`), and LinkedIn / GitHub / Email as round icon buttons on `surface`, the arrow in the right half, JOKO margin to margin at the bottom. On phones JOKO sits under the top row.
   2. **Selected work**: big names as the index (active one in full ink, the rest muted), each with its kind beneath; a sticky 4:5 preview on the right. Phones: still, then name.
   3. **Experience** (`ExperiencePreview`): the three latest roles as bands (dates, organisation and role, kind), the competition placings in one sentence, certificates only once real ones exist, then links to Experience, Certificates and Stack. The Profile pages hold everything else.
   4. **About**: 28px paragraph with the portrait as a three-line drop capital, facts in a side column.
@@ -112,7 +113,7 @@ One row per project, outcome first: kind and stack chips, the name at work-index
 4:5 pieces in three columns, the middle one set 6rem lower like a spread (two even columns on phones). A piece opens a full-screen viewer (native `<dialog>` on `bg`): title, close, the piece fitted to the height, previous / next and arrow keys. It settles in (opacity and `scale(0.98)`, 220ms, `@starting-style`) and closes instantly; stepping does not animate.
 
 ### Résumé (`ResumeLink`)
-One PDF, `public/joko-comia-resume.pdf` (one page, built from the CV in the developer résumé template), offered as a download (`download` attribute, saved as `Joko-Comia-Resume.pdf`) in the sidebar pill, the Experience header (`btn-primary`), the footer's Contact column and the palette's Actions. To update it, replace the file.
+One PDF, `public/joko-comia-resume.pdf` (one page, built from the CV in the developer résumé template), offered as a download (`download` attribute, saved as `Joko-Comia-Resume.pdf`) in the Overview hero's action row, the Experience header (`btn-primary`), the footer's Contact column and the palette's Actions. To update it, replace the file.
 
 ### Writing
 `/writing` lists posts newest first: date in a three-column side column, the title at heading size (takes the section hue under the pointer), its summary beneath. With no posts, one surface band says the first posts are coming and links to LinkedIn; the header count hides at zero. A post (`/writing/[slug]`) opens with "All writing", a display title (`clamp(2.5rem, 6vw, 5rem)`, balanced), the date and "First posted on LinkedIn" when set, then the body at 18px / 1.6 within 65ch (`.post-body`). Posts are Markdown files in `src/content/posts` (see `_template.md`), rendered at build time with `marked`.

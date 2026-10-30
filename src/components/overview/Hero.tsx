@@ -1,11 +1,14 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { INTRO_DONE, introFinished } from "@/components/shell/Intro";
+import { ResumeLink, SocialButtons } from "@/components/ui";
+import { site } from "@/content/site";
 import { cssVar, useThemeClass } from "@/lib/useThemeClass";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -120,9 +123,31 @@ export function Hero({ name, role, intro }: { name: string; role: string; intro:
   return (
     <section ref={root} aria-labelledby="hero-title" className="hero relative -mx-5 -mt-10 h-[200svh] md:-mt-16 md:-ml-12 md:-mr-5 lg:-ml-16">
       <div className="@container sticky top-[var(--bar-h)] flex h-[calc(100svh-var(--bar-h))] flex-col md:top-0 md:h-svh justify-between overflow-hidden px-5 pb-4 pt-6 md:pl-12 md:pr-5 md:pt-10 lg:pl-16">
-        {/* Top row: what this is, and the live switch. */}
+        {/* Top row: who this is, and the live switch. */}
         <div className="relative z-20 order-0 flex flex-wrap items-start justify-between gap-4">
-          <p className="hero-fade max-w-[26ch] text-base font-medium leading-snug md:text-lg">{role}</p>
+          <div className="hero-fade flex items-center gap-4">
+            {/* A surface ring, so the dark studio backdrop doesn't dissolve into the dark page. */}
+            {site.photo && (
+              <span className="shrink-0 rounded-full bg-surface p-1">
+                <Image
+                  src={site.photo}
+                  alt={`Portrait of ${site.brandName}`}
+                  width={144}
+                  height={144}
+                  priority
+                  className="size-14 rounded-full object-cover object-[50%_30%] md:size-[4.5rem]"
+                />
+              </span>
+            )}
+            <div>
+              <p className="font-display text-lg font-semibold leading-tight tracking-[-0.02em] md:text-xl">{site.brandName}</p>
+              <p className="mt-0.5 text-base leading-snug text-muted">
+                {role}
+                <span className="hidden sm:inline"> · </span>
+                <span className="block sm:inline">{site.location}</span>
+              </p>
+            </div>
+          </div>
           <div role="group" aria-label="Show the arrow as" className="hero-fade switch" data-built={built}>
             <button type="button" aria-pressed={!built} onClick={() => setBuilt(false)} data-magnetic>
               Design
@@ -174,9 +199,14 @@ export function Hero({ name, role, intro }: { name: string; role: string; intro:
               </p>
               <p className="mt-3 hidden text-base leading-relaxed sm:block">{intro}</p>
             </div>
-            <a href="#work" className="hero-fade btn btn-primary pressable mt-5">
-              See the work
-            </a>
+            {/* The first things a reviewer reaches for: the work, the résumé, and a way to get in touch. */}
+            <div className="hero-fade hero-actions mt-5 flex flex-wrap items-center gap-2">
+              <a href="#work" className="btn btn-primary pressable">
+                See the work
+              </a>
+              <ResumeLink className="btn pressable" />
+              <SocialButtons className="ml-1" />
+            </div>
           </div>
         </div>
       </div>

@@ -48,7 +48,8 @@ export function Reveals() {
         let played = false;
         splits.push(
           SplitText.create(el, {
-            type: "lines, chars",
+            // Words too, so a line can only break between words, never inside one.
+            type: "lines, words, chars",
             mask: "lines",
             autoSplit: true,
             // Re-split on resize and font load; once played, later splits just stay at rest.

@@ -29,7 +29,7 @@ export default async function PostPage({ params }: Props) {
         All writing
       </Link>
 
-      <header className="mt-10 max-w-[22ch] md:mt-14">
+      <header className="mt-10 md:mt-14">
         <h1 className="post-heading" data-split="chars">
           {post.title}
         </h1>

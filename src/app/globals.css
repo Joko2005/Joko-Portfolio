@@ -308,16 +308,6 @@
 }
 
 /* ---- Sidebar (Shell.tsx) ---- */
-/* The name fitted to its card, in the same proportion as the hero's monument. */
-.sidebar-mark {
-  font-family: var(--font-display);
-  font-size: 40.5cqi;
-  font-weight: 600;
-  line-height: 0.8;
-  letter-spacing: -0.05em;
-  white-space: nowrap;
-  margin-inline-start: -0.04em;
-}
 /* Inactive nav and contact rows: ink on hover, and the row's section hue lights its icon. */
 .nav-item {
   transition-property: transform, color;
@@ -334,7 +324,7 @@
   }
 }
 
-/* Socials: round icon buttons on the page ground, ink under the pointer. */
+/* Socials: round icon buttons, ink under the pointer. On the page ground in the hero they sit on surface. */
 .social-link {
   display: grid;
   place-items: center;
@@ -344,8 +334,13 @@
   background: var(--bg);
   color: var(--muted);
 }
+.hero-actions .social-link {
+  background: var(--surface);
+  color: var(--ink);
+}
 @media (hover: hover) and (pointer: fine) {
-  .social-link:hover {
+  .social-link:hover,
+  .hero-actions .social-link:hover {
     background: var(--ink);
     color: var(--bg);
   }
@@ -564,6 +559,7 @@ li:nth-child(even).exp-row {
   }
 }
 .post-heading {
+  max-width: 16ch;
   font-family: var(--font-display);
   font-size: clamp(2.5rem, 6vw, 5rem);
   font-weight: 600;
