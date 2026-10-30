@@ -4,6 +4,7 @@ import { Hero } from "@/components/overview/Hero";
 import { PlayWords } from "@/components/overview/PlayWords";
 import { WorkIndex } from "@/components/overview/WorkIndex";
 import { site } from "@/content/site";
+import { education } from "@/content/experience";
 import { stack } from "@/content/stack";
 import { work } from "@/content/work";
 
@@ -22,7 +23,8 @@ function DropPortrait() {
 
 const facts: { term: string; detail: React.ReactNode }[] = [
   { term: "Does", detail: "UI/UX design and front-end development" },
-  { term: "Works with", detail: stack.flatMap((g) => g.items).join(", ") },
+  { term: "Studying", detail: `${education.degree}, ${education.when}` },
+  { term: "Works with", detail: stack.flatMap((g) => g.items.map((i) => i.name)).join(", ") },
   {
     term: "Elsewhere",
     detail: (

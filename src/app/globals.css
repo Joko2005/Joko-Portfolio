@@ -15,6 +15,7 @@
   /* Section hues: shown only on interaction. */
   --c-overview: #1d4ed8;
   --c-projects: #c2410c;
+  --c-experience: #6d28d9;
   --c-graphics: #0369a1;
   --c-certificates: #15803d;
   --c-playground: #a64b00;
@@ -35,6 +36,7 @@
 
   --c-overview: #7b9cff;
   --c-projects: #ff8a3d;
+  --c-experience: #b69cff;
   --c-graphics: #4fc3f7;
   --c-certificates: #5ee38b;
   --c-playground: #ffb547;
@@ -45,6 +47,7 @@
 /* Any element can take a section's hue as --accent. */
 [data-section="overview"] { --accent: var(--c-overview); }
 [data-section="projects"] { --accent: var(--c-projects); }
+[data-section="experience"] { --accent: var(--c-experience); }
 [data-section="graphics"] { --accent: var(--c-graphics); }
 [data-section="certificates"] { --accent: var(--c-certificates); }
 [data-section="playground"] { --accent: var(--c-playground); }
@@ -466,6 +469,41 @@
   font-weight: 600;
   line-height: 1;
   color: var(--muted);
+}
+
+/* Experience: one band per role; the dates take a narrow column on wide screens. */
+.exp-row {
+  display: grid;
+  gap: 1rem;
+  border-radius: 1.5rem;
+  background: var(--surface);
+  padding: 1.5rem;
+}
+li:nth-child(even).exp-row {
+  background: var(--card);
+}
+@media (min-width: 64rem) {
+  .exp-row {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 2rem;
+    padding: 2rem;
+  }
+}
+.exp-role {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3.5vw, 3rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+/* Competitions: the placing set at display size, the event beneath it. */
+.comp-result {
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 8vw, 6rem);
+  font-weight: 600;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
 }
 
 /* Certificates: bands like the contact rows, the title at heading size, inverting under the pointer. */

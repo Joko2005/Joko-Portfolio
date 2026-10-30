@@ -1,13 +1,14 @@
 import type { IconType } from "react-icons";
-import { PiCertificate, PiCube, PiFolderSimple, PiHouseSimple, PiPaintBrushBroad } from "react-icons/pi";
+import { PiBriefcase, PiCertificate, PiCube, PiFolderSimple, PiHouseSimple, PiPaintBrushBroad } from "react-icons/pi";
 
-export type SectionId = "overview" | "projects" | "graphics" | "certificates" | "playground";
+export type SectionId = "overview" | "projects" | "experience" | "graphics" | "certificates" | "playground";
 
 export type NavGroup = "Work" | "Play";
 
 export const NAV: readonly { id: SectionId; label: string; href: string; group: NavGroup; icon: IconType }[] = [
   { id: "overview", label: "Overview", href: "/", group: "Work", icon: PiHouseSimple },
   { id: "projects", label: "Projects", href: "/projects", group: "Work", icon: PiFolderSimple },
+  { id: "experience", label: "Experience", href: "/experience", group: "Work", icon: PiBriefcase },
   { id: "graphics", label: "Graphics", href: "/graphics", group: "Work", icon: PiPaintBrushBroad },
   { id: "certificates", label: "Certificates", href: "/certificates", group: "Work", icon: PiCertificate },
   { id: "playground", label: "Playground", href: "/playground", group: "Play", icon: PiCube },

@@ -17,7 +17,7 @@ export type WorkItem = {
   image?: string;
 };
 
-const tones: Record<string, WorkTone> = { avera: "ink", cryolipo: "projects", resqline: "overview", statera: "surface" };
+const tones: Record<string, WorkTone> = { avera: "ink", cryolipo: "projects", resqline: "overview", statera: "surface", workhive: "playground" };
 
 export const work: WorkItem[] = [
   ...projects.map((p) => {

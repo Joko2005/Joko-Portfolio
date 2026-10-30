@@ -30,6 +30,7 @@ Direction dealt by design-taste-frontend: *The name as a monument* (seed 7436437
 | Overview | `#1D4ED8` blue | `#7B9CFF` |
 | Projects | `#C2410C` orange | `#FF8A3D` |
 | Graphics | `#0369A1` sky | `#4FC3F7` |
+| Experience | `#6D28D9` violet | `#B69CFF` |
 | Certificates | `#15803D` green | `#5EE38B` |
 | Playground | `#A64B00` amber | `#FFB547` |
 
@@ -49,7 +50,7 @@ Rules:
 
 ## Layout
 
-- **Sidebar (desktop)**: a name card (JOKO fitted to the card at the hero's `40.5cqi` proportion, role beneath, on `bg`), Search (⌘K / Ctrl K), nav grouped **Work** (Overview, Projects, Graphics, Certificates) and **Play** (Playground), contact links and the Light / Dark switch at the bottom. Tone step off the page, no border.
+- **Sidebar (desktop)**: a name card (JOKO fitted to the card at the hero's `40.5cqi` proportion, role beneath, on `bg`), Search (⌘K / Ctrl K), nav grouped **Work** (Overview, Projects, Experience, Graphics, Certificates) and **Play** (Playground), contact links and the Light / Dark switch at the bottom. Tone step off the page, no border.
 - **Mobile**: a 3.875rem top bar (`--bar-h`) with JOKO, search icon and Menu.
 - **Content column**: fills the space beside the sidebar; its right inset matches the sidebar's left one, so the page has one pair of outer margins.
 - **Overview, top to bottom**:
@@ -106,6 +107,9 @@ One row per project, outcome first: kind and stack chips, the name at work-index
 
 ### Graphics (`GraphicsGallery`)
 4:5 pieces in three columns, the middle one set 6rem lower like a spread (two even columns on phones). A piece opens a full-screen viewer (native `<dialog>` on `bg`): title, close, the piece fitted to the height, previous / next and arrow keys. It settles in (opacity and `scale(0.98)`, 220ms, `@starting-style`) and closes instantly; stepping does not animate.
+
+### Experience
+One band per role (`surface` / `card` alternating), newest first. On wide screens the dates take three of twelve columns; the role at heading size, then organisation (linked when it has a site), kind and location in muted, the outcome lines, and skill chips. Content lives in `src/content/experience.ts`.
 
 ### Certificates
 Bands like the contact rows: title at heading size, issuer and year beneath, a round arrow at the right that turns 45° as the linked band inverts to `ink`.

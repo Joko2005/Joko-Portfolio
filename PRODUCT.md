@@ -48,11 +48,14 @@ Personality: composed and minimalist on the outside, playful and creative on the
 
 ## Evidence on Hand
 
-- **AVERA:** forensic signature-verification Android app with an ML model; team thesis project (completed). Describe Joko's own role accurately.
-- **CryoLipo:** Shopify store theme Joko designed and built, including custom sections.
-- **ResQLine** (frontend, admin, backend) and **Statera** (app, frontend): project folders exist locally; descriptions not yet written.
+- **AVERA:** Android app for handwritten signature verification (Siamese neural networks with explainable AI); team thesis at LSPU, in progress since April 2026. Joko: UI/UX designer and front-end developer (admin and analyst flows in Figma, the React Native interface).
+- **CryoLipo:** the freelance client Shopify storefront from the CV (Sep 2026–present): Joko designed it in Figma and builds it as reusable Liquid theme sections with a development partner.
+- **ResQLine:** AI disaster classifier and live dispatcher map, built at the Batang Techno Hackathon (April 2026, Top 12 of 48+ universities); Joko was web developer and UI/UX designer.
+- **WorkHive:** team coursework project, a WinForms project management app (tasks, progress, team communication); Joko designed and built interfaces.
+- **Statera:** team coursework project; Joko designed and built interfaces. Description not yet written.
+- **CV (source of truth for facts):** freelance Shopify storefront (Sep 2026–present), LSPU BS Computer Science in Intelligent Systems (expected 2027), Figma workshop talks, design team leader, class president, SIKAPtala 2026 design competition (5th of 106 schools).
 - **Graphics/pubmats and certificates:** not yet collected.
-- **No testimonials, metrics, awards, or client quotes on hand. Do not fabricate any.**
+- **No testimonials or client quotes on hand.** The only results to state are the ones in the CV. Do not fabricate any.
 
 ## Product Principles
 
