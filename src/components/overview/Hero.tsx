@@ -46,21 +46,30 @@ function useReducedMotion() {
 }
 
 /**
- * True once the browser is idle after the page mounts. Starting WebGL (context, shaders, lighting) is the
- * heaviest thing on the page, so it waits until the navigation has painted; the sketch stands in until then.
+ * True once the intro is over, the hero's letters have landed and the browser is idle. Starting WebGL
+ * (context, shaders, lighting) is the heaviest thing on the page, so it never competes with an animation;
+ * the sketch stands in until then.
  */
-function useIdle() {
-  const [idle, setIdle] = useState(false);
+function useReadyFor3D() {
+  const [ready, setReady] = useState(false);
   useEffect(() => {
-    const done = () => setIdle(true);
-    if ("requestIdleCallback" in window) {
-      const id = requestIdleCallback(done, { timeout: 800 });
-      return () => cancelIdleCallback(id);
-    }
-    const id = setTimeout(done, 200);
-    return () => clearTimeout(id);
+    let timer = 0;
+    let idle = 0;
+    const start = () => {
+      timer = window.setTimeout(() => {
+        if ("requestIdleCallback" in window) idle = requestIdleCallback(() => setReady(true), { timeout: 800 });
+        else setReady(true);
+      }, 1100);
+    };
+    if (introFinished()) start();
+    else window.addEventListener(INTRO_DONE, start, { once: true });
+    return () => {
+      window.removeEventListener(INTRO_DONE, start);
+      clearTimeout(timer);
+      if (idle) cancelIdleCallback(idle);
+    };
   }, []);
-  return idle;
+  return ready;
 }
 
 const STATEMENTS = { design: "I design it.", build: "I build it." } as const;
@@ -74,7 +83,7 @@ export function Hero({ name, role, intro }: { name: string; role: string; intro:
   const root = useRef<HTMLElement>(null);
   const [built, setBuilt] = useState(false);
   const [started, setStarted] = useState(false);
-  const idle = useIdle();
+  const ready3D = useReadyFor3D();
   const reducedMotion = useReducedMotion();
   const theme = useThemeClass();
   const ink = theme ? cssVar("--ink") : "#000";
@@ -125,27 +134,26 @@ export function Hero({ name, role, intro }: { name: string; role: string; intro:
       <div className="@container sticky top-[var(--bar-h)] flex h-[calc(100svh-var(--bar-h))] flex-col md:top-0 md:h-svh justify-between overflow-hidden px-5 pb-4 pt-6 md:pl-12 md:pr-5 md:pt-10 lg:pl-16">
         {/* Top row: who this is, and the live switch. */}
         <div className="relative z-20 order-0 flex flex-wrap items-start justify-between gap-4">
-          <div className="hero-fade flex items-center gap-4">
-            {/* A surface ring, so the dark studio backdrop doesn't dissolve into the dark page. */}
+          <div className="hero-fade flex items-center gap-4 md:gap-5">
+            {/* A surface frame, so the dark studio backdrop doesn't dissolve into the dark page. */}
             {site.photo && (
-              <span className="shrink-0 rounded-full bg-surface p-1">
+              <span className="shrink-0 rounded-[1.25rem] bg-surface p-1 md:rounded-3xl">
                 <Image
                   src={site.photo}
                   alt={`Portrait of ${site.brandName}`}
-                  width={144}
-                  height={144}
+                  width={224}
+                  height={224}
+                  sizes="112px"
                   priority
-                  className="size-14 rounded-full object-cover object-[50%_30%] md:size-[4.5rem]"
+                  className="size-20 rounded-2xl object-cover object-[50%_30%] md:size-28 md:rounded-[1.25rem]"
                 />
               </span>
             )}
             <div>
-              <p className="font-display text-lg font-semibold leading-tight tracking-[-0.02em] md:text-xl">{site.brandName}</p>
-              <p className="mt-0.5 text-base leading-snug text-muted">
-                {role}
-                <span className="hidden sm:inline"> · </span>
-                <span className="block sm:inline">{site.location}</span>
-              </p>
+              {/* The sidebar names him from md; the phone bar only has the mark. */}
+              <p className="font-display text-lg font-semibold leading-tight tracking-[-0.02em] md:hidden">{site.brandName}</p>
+              <p className="mt-0.5 text-base font-medium leading-snug md:mt-0 md:text-lg">{role}</p>
+              <p className="text-base leading-snug text-muted">{site.location}</p>
             </div>
           </div>
           <div role="group" aria-label="Show the arrow as" className="hero-fade switch" data-built={built}>
@@ -175,7 +183,7 @@ export function Hero({ name, role, intro }: { name: string; role: string; intro:
 
         {/* The object, overlapping the name. */}
         <div className="pointer-events-auto absolute inset-x-0 top-[31%] z-0 mx-auto h-[44%] max-w-[44rem] md:left-auto md:right-0 md:top-[10%] md:mx-0 md:h-[62%] md:w-[52%] md:max-w-none">
-          {idle ? (
+          {ready3D ? (
             <HeroObject
               built={built}
               started={started}
@@ -191,7 +199,7 @@ export function Hero({ name, role, intro }: { name: string; role: string; intro:
 
         {/* The statement and the action, just above the name from md. */}
         <div className="relative order-2 mt-auto">
-          <div className="relative z-20 mb-2">
+          <div className="relative z-20 mb-6 md:mb-8">
             <div className="hero-fade max-w-md">
               <p className="statement font-display text-3xl font-semibold leading-tight tracking-[-0.02em] md:text-4xl" data-built={built}>
                 <span aria-hidden={built}>{STATEMENTS.design}</span>

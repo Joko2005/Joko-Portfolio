@@ -78,8 +78,8 @@ export function DeskPiece() {
 
   return (
     <div>
-      {/* Height-capped on wider screens so the chips and caption stay in the first viewport. */}
-      <div className="relative aspect-3/2 w-full sm:aspect-auto sm:h-[clamp(20rem,calc(100svh-34rem),31.5rem)]">
+      {/* Tall enough to show the whole desk, while leaving a little of the object list in view. */}
+      <div className="relative aspect-square w-full sm:aspect-auto sm:h-[clamp(30rem,calc(100svh-8rem),52rem)]">
         {!webgl ? (
           <SceneMessage>The 3D desk needs WebGL, which is turned off in this browser. The list below still works.</SceneMessage>
         ) : (

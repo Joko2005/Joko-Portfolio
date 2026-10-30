@@ -116,6 +116,17 @@
 .is-loading {
   overflow: hidden;
 }
+/* Scrollbar space stays reserved, so unlocking scroll after the intro doesn't shift the page. */
+html {
+  scrollbar-gutter: stable;
+}
+.intro,
+.intro-word,
+.intro-fill,
+.intro-fill-inner,
+.intro-char {
+  will-change: transform;
+}
 .intro-type {
   font-family: var(--font-display);
   font-size: clamp(6rem, 37vw, 40rem);
@@ -232,13 +243,14 @@
   left: 0;
   top: 0;
   z-index: 100;
-  /* GSAP moves the wrapper; the dot scales inside it so the two never fight.
-     The blend sits on the wrapper: a fixed, z-indexed box is its own stacking context,
-     so a blend on the dot alone would only mix with the empty wrapper. */
-  mix-blend-mode: difference;
+  /* GSAP moves the wrapper; the dot scales inside it so the two never fight. */
+  will-change: transform;
 }
-.cursor[data-state="label"] {
-  mix-blend-mode: normal;
+/* Blending makes the browser re-composite the whole page as the cursor moves, so it only runs while
+   inverting a control. It sits on the wrapper: a fixed, z-indexed box is its own stacking context,
+   so a blend on the dot alone would only mix with the empty wrapper. */
+.cursor[data-state="hover"] {
+  mix-blend-mode: difference;
 }
 .cursor-dot,
 .cursor-label {
@@ -254,8 +266,11 @@
 .cursor-dot {
   width: 56px;
   height: 56px;
-  background: #fff;
+  background: #808080; /* Mid grey reads on both the white and black grounds without blending. */
   scale: 0.22;
+}
+.cursor[data-state="hover"] .cursor-dot {
+  background: #fff;
 }
 .cursor-label {
   display: grid;
@@ -310,7 +325,7 @@
 /* ---- Sidebar (Shell.tsx) ---- */
 /* Inactive nav and contact rows: ink on hover, and the row's section hue lights its icon. */
 .nav-item {
-  transition-property: transform, color;
+  transition-property: transform, color, background-color;
 }
 .nav-icon {
   transition: color 150ms var(--ease-out);
@@ -408,7 +423,7 @@
 /* The name, sized to the hero's own width so it runs margin to margin beside the sidebar. */
 .hero-name {
   font-family: var(--font-display);
-  font-size: 40.5cqi;
+  font-size: min(40.5cqi, 42svh);
   font-weight: 600;
   line-height: 0.9;
   letter-spacing: -0.05em;
@@ -623,7 +638,17 @@ li:nth-child(even).exp-row {
   font-size: 1.25rem;
 }
 .post-body img {
+  width: 100%;
+  height: auto;
   border-radius: 1.5rem;
+}
+.post-body figure {
+  margin-block: 2em;
+}
+.post-body figcaption {
+  margin-top: 0.75rem;
+  font-size: 1rem;
+  color: var(--muted);
 }
 
 @media (hover: hover) and (pointer: fine) {

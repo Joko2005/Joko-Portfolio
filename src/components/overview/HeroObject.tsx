@@ -63,13 +63,15 @@ function RoomLight() {
   useEffect(() => {
     let env: THREE.Texture | null = null;
     const frame = requestAnimationFrame(() => {
-      const { gl, scene } = get();
+      const { gl, scene, camera } = get();
       const pmrem = new THREE.PMREMGenerator(gl);
       const room = new RoomEnvironment();
       env = pmrem.fromScene(room, 0.04).texture;
       scene.environment = env;
       room.dispose();
       pmrem.dispose();
+      // Compile the glossy material now, so flipping to Build doesn't stall on its shaders.
+      gl.compile(scene, camera);
     });
     return () => {
       cancelAnimationFrame(frame);
@@ -82,6 +84,8 @@ function RoomLight() {
 
 function Arrow({ built, started, reducedMotion, ink, accent, onSpin }: HeroObjectProps) {
   const group = useRef<THREE.Group>(null);
+  const solidMesh = useRef<THREE.Mesh>(null);
+  const invalidate = useThree((s) => s.invalidate);
   const [hovered, setHovered] = useState(false);
 
   const shapes = useMemo(() => {
@@ -90,7 +94,7 @@ function Arrow({ built, started, reducedMotion, ink, accent, onSpin }: HeroObjec
       bevelEnabled: true,
       bevelThickness: 0.08,
       bevelSize: 0.07,
-      bevelSegments: 6,
+      bevelSegments: 4,
       curveSegments: 4,
     });
     g.computeBoundingBox();
@@ -122,6 +126,22 @@ function Arrow({ built, started, reducedMotion, ink, accent, onSpin }: HeroObjec
   }, []);
 
   const state = useRef({ appear: 0, build: 0, spin: 0, spinTarget: 0, hover: 0, rx: 0, ry: 0 });
+  const settled = useRef(false);
+
+  // Rendering on demand: every frame while something is changing, 30 a second for the slow float,
+  // and not at all under reduced motion once it has come to rest.
+  useEffect(() => {
+    let frame = 0;
+    let last = 0;
+    const tick = (now: number) => {
+      frame = requestAnimationFrame(tick);
+      if (settled.current && (reducedMotion || now - last < 33)) return;
+      last = now;
+      invalidate();
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [invalidate, reducedMotion]);
 
   useFrame(({ clock }, delta) => {
     const g = group.current;
@@ -142,6 +162,16 @@ function Arrow({ built, started, reducedMotion, ink, accent, onSpin }: HeroObjec
       s.ry = damp(s.ry, pointer.current.x * 0.55, 3, dt);
     }
 
+    const near = (a: number, b: number) => Math.abs(a - b) < 0.002;
+    settled.current =
+      reducedMotion ||
+      (near(s.appear, started ? 1 : 0) &&
+        near(s.build, built ? 1 : 0) &&
+        near(s.spin, s.spinTarget) &&
+        near(s.hover, hovered ? 1 : 0) &&
+        near(s.rx, pointer.current.y * 0.35) &&
+        near(s.ry, pointer.current.x * 0.55));
+
     // Grows in from 85%, never from nothing.
     g.scale.setScalar((0.85 + 0.15 * s.appear) * (1 + 0.06 * s.hover));
     g.position.y = reducedMotion ? 0 : Math.sin(t * 1.1) * 0.08;
@@ -152,6 +182,8 @@ function Arrow({ built, started, reducedMotion, ink, accent, onSpin }: HeroObjec
     if (solid) {
       solid.opacity = s.build * s.appear;
       solid.depthWrite = solid.opacity > 0.98;
+      // Fully see-through in the design state: skip drawing the costly glossy body at all.
+      if (solidMesh.current) solidMesh.current.visible = solid.opacity > 0.005;
     }
     if (lines) lines.opacity = (1 - 0.75 * s.build) * s.appear;
   });
@@ -174,7 +206,7 @@ function Arrow({ built, started, reducedMotion, ink, accent, onSpin }: HeroObjec
         onSpin?.();
       }}
     >
-      <mesh geometry={shapes.solid}>
+      <mesh ref={solidMesh} geometry={shapes.solid} visible={false}>
         <meshPhysicalMaterial
           ref={solidRef}
           color={accent}
@@ -209,9 +241,9 @@ export default function HeroObject(props: HeroObjectProps) {
   return (
     <div ref={wrap} className="absolute inset-0">
       <Canvas
-        frameloop={visible ? "always" : "never"}
+        frameloop={visible ? "demand" : "never"}
         flat
-        dpr={[1, 2]}
+        dpr={[1, 1.5]}
         camera={{ position: [0, 0, 6.2], fov: 32 }}
         gl={{ antialias: true, alpha: true }}
         onPointerLeave={() => (document.body.style.cursor = "")}

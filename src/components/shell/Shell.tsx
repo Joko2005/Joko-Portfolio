@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { motion, useReducedMotion } from "motion/react";
 import { PiMagnifyingGlass } from "react-icons/pi";
 import { Logo } from "@/components/ui";
 import { site } from "@/content/site";
@@ -32,11 +31,8 @@ function BrandCompact() {
   );
 }
 
-const PILL_EASE = [0.23, 1, 0.32, 1] as const;
-
 function NavList({ id, pathname, onNavigate }: { id: string; pathname: string; onNavigate?: () => void }) {
   const current = sectionFromPath(pathname);
-  const reduceMotion = useReducedMotion();
   return (
     <div className="flex flex-col gap-4">
       {NAV_GROUPS.map((group) => (
@@ -55,18 +51,9 @@ function NavList({ id, pathname, onNavigate }: { id: string; pathname: string; o
                     aria-current={active ? "page" : undefined}
                     onClick={onNavigate}
                     className={`nav-item pressable relative flex items-center gap-3 rounded-full px-4 py-2.5 text-[0.9375rem] font-medium ${
-                      active ? "text-bg" : "text-muted"
+                      active ? "bg-ink text-bg" : "text-muted"
                     }`}
                   >
-                    {/* The ink pill (the hero switch's active fill) slides to the new page's item. */}
-                    {active && (
-                      <motion.span
-                        layoutId={`${id}-pill`}
-                        aria-hidden
-                        className="absolute inset-0 rounded-full bg-ink"
-                        transition={{ duration: reduceMotion ? 0 : 0.2, ease: PILL_EASE }}
-                      />
-                    )}
                     <Icon aria-hidden className="nav-icon relative size-[1.125rem] shrink-0" />
                     <span className="relative">{label}</span>
                   </Link>

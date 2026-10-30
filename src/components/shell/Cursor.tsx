@@ -102,9 +102,13 @@ export function Cursor() {
       update(e.clientX, e.clientY, e.target);
     };
 
+    let scrollFrame = 0;
     const onScroll = () => {
-      if (lastX < 0) return;
-      update(lastX, lastY, document.elementFromPoint(lastX, lastY));
+      if (lastX < 0 || scrollFrame) return;
+      scrollFrame = requestAnimationFrame(() => {
+        scrollFrame = 0;
+        update(lastX, lastY, document.elementFromPoint(lastX, lastY));
+      });
     };
 
     const onLeave = () => {
@@ -122,6 +126,7 @@ export function Cursor() {
     window.addEventListener("pointerup", onUp);
     return () => {
       root.classList.remove("has-cursor");
+      cancelAnimationFrame(scrollFrame);
       releaseMagnet();
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("scroll", onScroll);

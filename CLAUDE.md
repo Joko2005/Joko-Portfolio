@@ -11,7 +11,7 @@ Read `PRODUCT.md` first: it is the source of truth for audience, structure, and 
 - Content lives in `src/content/*.ts`. Bracketed text like `[Your role]` and empty `href`s are placeholders to fill before launch.
 - Theme: `next-themes` (class on `<html>`). Section hue: `data-section` → `--accent`; use `text-accent`/`bg-accent`, never raw hex.
 - Components: `src/components/shell` (sidebar, mobile bar, theme toggle, intro, reveals), `src/components/overview`, `src/components/projects`, `src/components/graphics`, `src/components/ui` (PageHeader, ExternalLink, Chip).
-- Writing: one Markdown file per post in `src/content/posts/<slug>.md` with front matter (title, date, summary, linkedin); copy `_template.md`. Files starting with `_` are ignored.
+- Writing: one Markdown file per post in `src/content/posts/<slug>.md` with front matter (title, date, summary, linkedin); copy `_template.md`. Files starting with `_` are ignored. Pictures go in `public/posts/<slug>/`.
 - Text animation: add `data-split="chars"` (headings) or `data-split="words"` (paragraphs); `Reveals` does the rest.
 
 ## Skills (in `.claude/skills/`)
@@ -44,7 +44,7 @@ Spend boldness in one place: the Playground plus one signature detail in the she
 
 ## Libraries
 
-- **Use:** CSS transitions; Motion (`motion/react`) for springs and layout transitions; Three.js via React Three Fiber (+ drei) **only inside Playground**, loaded with `dynamic(..., { ssr: false })`.
+- **Use:** CSS transitions; Three.js via React Three Fiber (+ drei) in the Playground and the hero arrow, loaded with `dynamic(..., { ssr: false })`. Add Motion (`motion/react`) only if a spring or layout transition truly needs it; it was removed to lighten every page.
 - **Optional:** GSAP, only for a scroll-driven sequence Motion can't handle well.
 - **Don't add:** AOS, AnimeJS.
 

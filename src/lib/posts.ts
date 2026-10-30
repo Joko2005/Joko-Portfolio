@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { marked } from "marked";
+import { Marked } from "marked";
 
 /**
  * Writing: one Markdown file per post in src/content/posts, named <slug>.md.
@@ -11,10 +11,25 @@ import { marked } from "marked";
  *   date: 2026-10-30
  *   summary: One line for the list
  *   linkedin: https://www.linkedin.com/posts/... (optional, where it was first posted)
+ *
+ * Pictures live in public/posts/<slug>/ and go in the body as:
+ *   ![What the picture shows](/posts/<slug>/photo.webp "Optional caption")
  */
 export type Post = { slug: string; title: string; date: string; summary: string; linkedin?: string; body: string };
 
 const DIR = path.join(process.cwd(), "src/content/posts");
+
+const attr = (value: string) => value.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+
+// Pictures render as figures: the alt text for screen readers, the Markdown title as a visible caption.
+const markdown = new Marked({
+  renderer: {
+    image({ href, title, text }) {
+      const caption = title ? `<figcaption>${attr(title)}</figcaption>` : "";
+      return `<figure><img src="${attr(href)}" alt="${attr(text)}" loading="lazy" decoding="async" />${caption}</figure>`;
+    },
+  },
+});
 
 function parse(file: string): Post {
   const raw = fs.readFileSync(path.join(DIR, file), "utf8").replace(/\r\n/g, "\n");
@@ -50,7 +65,8 @@ export function getPost(slug: string): Post | undefined {
 
 /** The post's own Markdown, written by Joko, rendered to HTML at build time. */
 export function renderPost(post: Post): string {
-  return marked.parse(post.body, { async: false });
+  // A picture alone on its line arrives wrapped in <p>, where a <figure> isn't allowed.
+  return markdown.parse(post.body, { async: false }).replace(/<p>(<figure>[\s\S]*?<\/figure>)<\/p>/g, "$1");
 }
 
 export function formatDate(date: string) {
