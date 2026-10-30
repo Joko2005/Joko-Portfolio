@@ -461,26 +461,6 @@ html {
   }
 }
 
-/* Résumé: a pill beside the social buttons, same height, labelled because a download needs a name. */
-.resume-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  height: 2.75rem;
-  border-radius: 9999px;
-  background: var(--bg);
-  padding-inline: 1rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--ink);
-}
-@media (hover: hover) and (pointer: fine) {
-  .resume-link:hover {
-    background: var(--ink);
-    color: var(--bg);
-  }
-}
-
 /* Theme switch: the hero switch at sidebar size, on the page ground, with icons. */
 .switch.switch-compact {
   background: var(--bg);
@@ -520,15 +500,105 @@ html {
 }
 
 /* ---- Overview hero (Hero.tsx) ---- */
-/* The name, sized to the hero's own width so it runs margin to margin beside the sidebar. */
+/* Phone: name, then portrait beside the role, then the copy. From md: text centred on a portrait at the side. */
+.hero-grid {
+  container-type: inline-size;
+  display: grid;
+  grid-template-columns: 6.5rem minmax(0, 1fr);
+  grid-template-areas:
+    "name name"
+    "photo role"
+    "copy copy";
+  align-items: center;
+  gap: 1.25rem 1rem;
+}
 .hero-name {
+  grid-area: name;
   font-family: var(--font-display);
-  font-size: min(40.5cqi, 50svh);
+  font-size: 40.5cqi;
   font-weight: 600;
   line-height: 0.9;
   letter-spacing: -0.05em;
   white-space: nowrap;
   margin-inline-start: -0.04em;
+}
+.hero-photo {
+  grid-area: photo;
+  aspect-ratio: 3 / 4;
+}
+.hero-role {
+  grid-area: role;
+}
+.hero-copy {
+  grid-area: copy;
+}
+@media (min-width: 48rem) {
+  .hero-grid {
+    grid-template-columns: minmax(0, 1fr) auto;
+    /* The empty rows take the slack, which keeps the text centred on the portrait. */
+    grid-template-rows: 1fr auto auto auto 1fr;
+    grid-template-areas:
+      ". photo"
+      "name photo"
+      "role photo"
+      "copy photo"
+      ". photo";
+    gap: 1rem 3rem;
+  }
+  .hero-grid > * {
+    /* As tall as the screen leaves room for, without crowding the text on narrow windows. */
+    --hero-photo: min(40cqi, calc((100svh - 11rem) * 0.75));
+  }
+  .hero-photo {
+    width: var(--hero-photo);
+  }
+  .hero-name {
+    font-size: min(calc((100cqi - var(--hero-photo) - 3rem) * 0.405), 32svh);
+  }
+}
+/* A letter takes a section hue the moment it's touched and lets go of it slowly, leaving a trail. */
+.hero-char {
+  transition: color 700ms var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .hero-char:hover {
+    transition-duration: 0ms;
+  }
+  .hero-char:nth-child(1):hover {
+    color: var(--c-overview);
+  }
+  .hero-char:nth-child(2):hover {
+    color: var(--c-projects);
+  }
+  .hero-char:nth-child(3):hover {
+    color: var(--c-certificates);
+  }
+  .hero-char:nth-child(4):hover {
+    color: var(--c-playground);
+  }
+}
+/* Proof row: flat bands that invert under the pointer, like the rows further down. */
+.proof-tile {
+  display: block;
+  height: 100%;
+  border-radius: 1.5rem;
+  background: var(--surface);
+  padding: 1rem 1.25rem;
+  transition:
+    background-color 200ms var(--ease-out),
+    color 200ms var(--ease-out);
+}
+li:nth-child(even) > .proof-tile {
+  background: var(--card);
+}
+@media (hover: hover) and (pointer: fine) {
+  a.proof-tile:hover {
+    background: var(--ink);
+    color: var(--bg);
+  }
+  a.proof-tile:hover .proof-detail {
+    color: color-mix(in srgb, var(--bg) 65%, var(--ink));
+  }
 }
 /* The mask the letters rise through; padded so it never clips the glyphs at rest. */
 .hero-name > span[aria-hidden] {
@@ -919,24 +989,56 @@ li:nth-child(even) > .cert-row {
   letter-spacing: -0.04em;
   transition: color 200ms var(--ease-out);
 }
-/* Inactive stills are hidden outright once faded, so their titles aren't text lying under the active one. */
-.work-still {
-  opacity: 0;
-  visibility: hidden;
-  transition:
-    opacity 200ms var(--ease-out),
-    visibility 0s linear 200ms;
+/* Overview work grid: the still leads, the name and what it is follow. */
+.work-card {
+  display: block;
+  border-radius: 1.5rem;
 }
-.work-still.is-active {
-  opacity: 1;
-  visibility: visible;
-  transition:
-    opacity 200ms var(--ease-out),
-    visibility 0s;
-}
-.work-row:focus-visible {
+.work-card:focus-visible {
   outline-offset: 6px;
-  border-radius: 0.75rem;
+}
+.work-card-still {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 1.5rem;
+  background: var(--surface);
+}
+/* The still scales on its own layer, so the frame's corners stay put. */
+.work-card-still > span {
+  position: absolute;
+  inset: 0;
+  transition: transform 300ms var(--ease-out);
+}
+.work-card-arrow {
+  opacity: 0;
+  transform: translate(-4px, 4px);
+  transition:
+    opacity 150ms var(--ease-out),
+    transform 200ms var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .work-card:hover .work-card-still > span {
+    transform: scale(1.02);
+  }
+  .work-card:hover .work-card-arrow {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .work-card-still > span,
+  .work-card-arrow {
+    transform: none !important;
+  }
+}
+/* Section heading with its "see everything" link across from it. */
+.section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1.5rem;
 }
 
 /* Experience preview: one band per role, a tone step under the pointer; the whole row goes to /experience. */
@@ -968,7 +1070,7 @@ li:nth-child(even) > .preview-row {
   }
 }
 
-/* About: a statement-sized paragraph with the portrait as its drop capital. */
+/* A statement-sized paragraph. */
 .about-text {
   font-size: clamp(1.375rem, 2vw, 1.75rem);
   line-height: 1.3;
@@ -982,10 +1084,9 @@ li:nth-child(even) > .preview-row {
   flex-direction: column;
   justify-content: flex-end;
   gap: 0.5rem;
-  min-height: 9rem;
   border-radius: 1.5rem;
   background: var(--surface);
-  padding: 1.25rem;
+  padding: 1.25rem 1.5rem;
   transition:
     background-color 200ms var(--ease-out),
     color 200ms var(--ease-out);

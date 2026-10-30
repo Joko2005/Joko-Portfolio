@@ -86,15 +86,15 @@ export function CommandPalette({ open, onOpenChange }: { open: boolean; onOpenCh
       });
     }
     list.push({
-      id: "action-resume",
+      id: "action-cv",
       group: "Actions",
-      label: "Download résumé",
+      label: "Download CV",
       hint: "PDF, one page",
       keywords: "cv resume download pdf",
       run: () => {
         const a = document.createElement("a");
-        a.href = site.resume;
-        a.download = "Joko-Comia-Resume.pdf";
+        a.href = site.cv;
+        a.download = "Joko-Comia-CV.pdf";
         a.click();
       },
     });

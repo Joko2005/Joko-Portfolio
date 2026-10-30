@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Chip, PageHeader, ResumeLink } from "@/components/ui";
+import { Chip, PageHeader, CvLink } from "@/components/ui";
 import { competitions, education, experience, leadership } from "@/content/experience";
 
 export const metadata: Metadata = { title: "Experience" };
@@ -15,7 +15,7 @@ export default function ExperiencePage() {
         title="Experience"
         lead="Freelance, thesis and team work, plus the competitions, talks and roles around them."
         count={experience.length}
-        action={<ResumeLink label="Download résumé" className="btn btn-primary pressable" />}
+        action={<CvLink label="Download CV" className="btn btn-primary pressable" />}
       />
 
       <ol className="reveal flex flex-col gap-2" aria-label="Work">

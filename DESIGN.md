@@ -52,19 +52,18 @@ Rules:
 
 ## Layout
 
-- **Sidebar (desktop)**: the horizontal lockup on `bg` (the JC mark in `currentColor` beside "Joko Comia" in Funnel Display; `src/components/ui/Logo.tsx`), Search (⌘K / Ctrl K), nav grouped **Work** (Overview, Projects, Graphics), **Profile** (Experience, Stack, Certificates, Writing) and **Play** (Playground), and the Light / Dark switch at the bottom. Socials and the résumé live in the Overview hero and the footer, not here. Tone step off the page, no border.
+- **Sidebar (desktop)**: the horizontal lockup on `bg` (the JC mark in `currentColor` beside "Joko Comia" in Funnel Display; `src/components/ui/Logo.tsx`), Search (⌘K / Ctrl K), nav grouped **Work** (Overview, Projects, Graphics), **Profile** (Experience, Stack, Certificates, Writing) and **Play** (Playground), and the Light / Dark switch at the bottom. Socials and the CV live in the Overview hero and the footer, not here. Tone step off the page, no border.
 - **Mobile**: a 3.875rem top bar (`--bar-h`) with the JC mark, search icon and a list icon that morphs into a close icon. The menu wipes down from the bar over a 50% black scrim (280ms open, 180ms close), its items rising 8px 30ms apart. Scrim, Escape or a link closes it; the page behind doesn't scroll. Reduced motion: fades only.
 - **Browser icon**: `src/app/icon.svg`, the white mark on a black rounded tile, so it reads on light and dark tabs.
 - **Content column**: fills the space beside the sidebar; its right inset matches the sidebar's left one, so the page has one pair of outer margins.
 - **Overview, top to bottom**:
-  1. **Hero** (one screen from md): the portrait with role and location, the statement "I design it. I build it." with one sentence on the left and the actions (See the work, Résumé, LinkedIn, GitHub, Email) on the right, then JOKO as the one big element, capped at `50svh`. On phones: portrait, JOKO, statement, actions, at natural height.
-  2. **Selected work**: big names as the index (active one in full ink, the rest muted), each with its kind beneath; a sticky 4:5 preview on the right. Phones: still, then name.
-  3. **Experience** (`ExperiencePreview`): the three latest roles as bands (dates, organisation and role, kind), the competition placings in one sentence, certificates only once real ones exist, then links to Experience, Certificates and Stack. The Profile pages hold everything else.
-  4. **About**: 28px paragraph with the portrait as a three-line drop capital, facts in a side column.
-  5. **Play words**: "I DESIGN / I CODE / I BUILD" as three display rows fitted margin to margin (`25.5cqi`), every letter loose (see Play words).
-  6. **Contact**: display-size rows on alternating bands, then "Say hello" with a round arrow.
-  7. **Footer** (every page): inverted, link columns, colophon, JOKO fitted margin to margin.
-- Sections are 160–190px apart on desktop; each opens with a heading.
+  1. **Hero** (one screen from md): JOKO fitted to the text column, role and location, the statement "I design it. I build it." with one sentence and availability, the actions (See the work, CV, LinkedIn, GitHub, Email), and the 3:4 portrait at the side, vertically centred on the text. A row of four proof tiles from the CV closes the screen. On phones: JOKO, portrait beside the role, copy, actions, tiles two across, at natural height.
+  2. **Selected work**: a grid of stills so everything can be scanned at once: the highlights (AVERA, CryoLipo) two across, the rest three across, each with its name and kind beneath. Graphics takes the last cell; the Playground is reached from Play words.
+  3. **Experience** (`ExperiencePreview`): the three latest roles as bands (dates, organisation and role, kind), then the latest certificates and the main tools side by side, each linking to its page.
+  4. **Play words**: "I DESIGN / I CODE / I BUILD" as three display rows fitted margin to margin (`25.5cqi`), every letter loose (see Play words), plus a link to the Playground.
+  5. **Contact**: one "Say hello" band with a round arrow, then the email, GitHub and LinkedIn as links.
+  6. **Footer** (every page): inverted, link columns, colophon, JOKO fitted margin to margin.
+- Sections are 96–128px apart on desktop; each opens with a heading, with its "see everything" link across from it.
 
 ## Components
 
@@ -88,19 +87,20 @@ A 12px mid-grey dot that follows the mouse (GSAP `quickTo`, 0.18s). Over links a
 ### Loader (`Intro`)
 About 2s, once per session, skippable (click, key, Skip intro). JOKO rises in outline, a solid fill sweeps left to right while a counter runs 000→100 ("Designing" → "Building"), then the panel lifts away (`expo.inOut`) and fires `INTRO_DONE` for the hero. Waits for fonts, locks scroll, hides itself after 5s if script fails. Skipped under reduced motion; `?nointro` skips it for testing.
 
-### Hero (`Hero`, `HeroObject`)
+### Hero (`Hero`)
 - The `h1` is the monument; its visually hidden line carries the role at body size.
 - Letters rise through a mask after the loader (0.9s, 60ms stagger), other parts follow; settled in about 1.1s. Reduced motion: fade only.
-- **Design / Build switch**: two pressed-state buttons on a pill; the active one fills with `ink`. Scrolling past half the pinned hero flips it too.
+- JOKO's letters take a section hue the moment the pointer touches them and fade back over 700ms, leaving a trail. Fine pointers only.
+- **Proof tiles**: `surface` / `card` bands that invert to `ink` under the pointer; each opens Experience. CV facts only.
 
 ### Folio (`FolioCorner`, `FolioScene`)
 The mascot, built in code from the brand character sheet (a bevelled page with a blue fold, jointed limbs and a face). A 112 × 144px companion fixed in the bottom-right corner from md, on every page; phones skip it. The one hidden mechanic: clicking makes it hop and turn, and flips it between the solid build and a blueprint outline of the design. It waves on arrival, on hover and at the footer, blinks, breathes and leans toward the pointer. Decorative and `aria-hidden`. Starts after the intro once the browser is idle; renders on demand (every frame while changing, 20 a second at rest, only while on screen). Reduced motion: poses snap, nothing idles.
 
-### Work index (`WorkIndex`)
-Names at 72px; hover or focus makes one active and swaps the sticky preview (opacity 200ms; inactive stills are `visibility: hidden`). A preview is the project's screenshot when `image` is set in `src/content/work.ts`, otherwise a drawn title card on its tone (ink, a section hue, or surface).
+### Work grid (`WorkIndex`)
+A 16:9 still, then the name (36px for highlights, 24px for the rest) and kind. On hover the still scales to 1.02 inside its frame and an arrow appears beside the name, with the "View" cursor. A still is the project's screenshot when `image` is set in `src/content/work.ts` (`imageDark` swaps it in the dark theme), otherwise a drawn title card on its tone (ink, a section hue, or surface).
 
-### Contact rows
-Bands of `surface` / `card`, value at display size, left-aligned, lower part of the band. A linked row inverts to `ink` under the pointer; the round arrow turns 45°. Labels go to `aria-label`, not above the value.
+### Contact row
+A `surface` band, value at display size. It inverts to `ink` under the pointer; the round arrow turns 45°.
 
 ### Play words (`PlayWords`)
 The Overview's one place to play. Fine pointers grab and throw letters (GSAP Draggable + InertiaPlugin, bounded to the section, tilt and 1.08 scale while held); touch taps make a letter hop, so the section never traps scrolling. A moved letter takes its row's hue (Overview, Projects, Playground). **Scatter** throws all letters to random spots; **Put back** springs them home (`elastic.out(1, 0.6)`, random 25ms stagger) and clears the hue. The `h2` carries the sentence for screen readers; letters are `aria-hidden`. Reduced motion: drag without momentum, Scatter and Put back jump.
@@ -114,8 +114,8 @@ One row per project, outcome first: kind and stack chips, the name at work-index
 ### Graphics (`GraphicsGallery`)
 4:5 pieces in three columns, the middle one set 6rem lower like a spread (two even columns on phones). A piece opens a full-screen viewer (native `<dialog>` on `bg`): title, close, the piece fitted to the height, previous / next and arrow keys. It settles in (opacity and `scale(0.98)`, 220ms, `@starting-style`) and closes instantly; stepping does not animate.
 
-### Résumé (`ResumeLink`)
-One PDF, `public/joko-comia-resume.pdf` (one page, built from the CV in the developer résumé template), offered as a download (`download` attribute, saved as `Joko-Comia-Resume.pdf`) in the Overview hero's action row, the Experience header (`btn-primary`), the footer's Contact column and the palette's Actions. To update it, replace the file.
+### CV (`CvLink`)
+One PDF, `public/joko-comia-cv.pdf` (one page), offered as a download (`download` attribute, saved as `Joko-Comia-CV.pdf`) in the Overview hero's action row, the Experience header (`btn-primary`), the footer's Contact column and the palette's Actions. To update it, replace the file.
 
 ### Writing
 `/writing` lists posts newest first: date in a three-column side column, the title at heading size (takes the section hue under the pointer), its summary beneath. With no posts, one surface band says the first posts are coming and links to LinkedIn; the header count hides at zero. A post (`/writing/[slug]`) opens with "All writing", a display title (`clamp(2.5rem, 6vw, 5rem)`, balanced), the date and "First posted on LinkedIn" when set, then the body at 18px / 1.6 within 65ch (`.post-body`). Posts are Markdown files in `src/content/posts` (see `_template.md`), rendered at build time with `marked`. Pictures live in `public/posts/<slug>/` and render as full-column figures (24px radius, lazy-loaded), with the Markdown title as a muted caption.

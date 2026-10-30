@@ -13,8 +13,8 @@ export const site = {
   // 1200 × 1600 portrait (3:4), cropped from the studio photo; next/image serves smaller sizes.
   photo: "/joko.webp",
   email: "jokocomia103@gmail.com",
-  // One-page PDF built from the CV in the developer résumé template; replace the file to update it.
-  resume: "/joko-comia-resume.pdf",
+  // One-page CV PDF; replace the file to update it.
+  cv: "/joko-comia-cv.pdf",
   // Credly username: public badges are listed on Certificates automatically (refreshed daily).
   credly: "joko-ymmanuel-comia",
   links: {

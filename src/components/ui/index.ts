@@ -3,6 +3,6 @@ export { Card, CardLink } from "./Card";
 export { Chip } from "./Chip";
 export { SectionHeader } from "./SectionHeader";
 export { PageHeader } from "./PageHeader";
-export { ResumeLink } from "./ResumeLink";
+export { CvLink } from "./CvLink";
 export { Logo } from "./Logo";
 export { SocialButtons } from "./SocialButtons";

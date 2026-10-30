@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRef } from "react";
 import gsap from "gsap";
 import { InertiaPlugin } from "gsap/InertiaPlugin";
@@ -164,7 +165,7 @@ export function PlayWords() {
   );
 
   return (
-    <section ref={root} aria-labelledby="play-title" className="play-words relative pt-28 md:pt-48">
+    <section ref={root} aria-labelledby="play-title" className="play-words relative pt-24 md:pt-32">
       <h2 id="play-title" className="@container">
         <span className="sr-only">I design. I code. I build.</span>
         {LINES.map((line) => (
@@ -186,7 +187,10 @@ export function PlayWords() {
           <span className="play-hint-fine">Grab a letter and throw it.</span>
           <span className="play-hint-touch">Tap a letter.</span>
         </p>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <Link href="/playground" className="btn pressable">
+            More in the Playground
+          </Link>
           <button type="button" onClick={() => scatterRef.current()} className="btn pressable">
             Scatter
           </button>

@@ -15,9 +15,21 @@ export type WorkItem = {
   external: boolean;
   tone: WorkTone;
   image?: string;
+  /** Shown instead of `image` in the dark theme. */
+  imageDark?: string;
 };
 
 const tones: Record<string, WorkTone> = { avera: "ink", cryolipo: "projects", resqline: "overview", statera: "surface", workhive: "playground" };
+
+// Placeholder stills, 1920 × 1080. A project missing here falls back to its drawn title card.
+const images: Record<string, Pick<WorkItem, "image" | "imageDark">> = {
+  avera: { image: "/projects/avera.webp" },
+  resqline: { image: "/projects/resqline.webp" },
+  statera: { image: "/projects/statera.webp" },
+  workhive: { image: "/projects/workhive.webp" },
+  sona: { image: "/projects/sona-light.webp", imageDark: "/projects/sona-dark.webp" },
+  learn: { image: "/projects/learn.webp" },
+};
 
 export const work: WorkItem[] = [
   ...projects.map((p) => {
@@ -30,6 +42,7 @@ export const work: WorkItem[] = [
       href: link || `/projects#${p.slug}`,
       external: Boolean(link),
       tone: tones[p.slug] ?? "surface",
+      ...images[p.slug],
     };
   }),
   {

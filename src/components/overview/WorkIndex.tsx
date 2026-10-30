@@ -1,8 +1,7 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { PiArrowUpRight } from "react-icons/pi";
+import { highlightedProjects } from "@/content/projects";
 import type { WorkItem, WorkTone } from "@/content/work";
 
 // Field and text colour for each drawn preview. Hue fields take the page ground as text,
@@ -22,9 +21,17 @@ const FIELD: Record<WorkTone, string> = {
  */
 export function WorkStill({ item, className = "", compact = false }: { item: WorkItem; className?: string; compact?: boolean }) {
   if (item.image) {
-    return (
-      <Image src={item.image} alt={`${item.title} screenshot`} fill sizes="(min-width: 1024px) 40vw, 100vw" className={`object-cover ${className}`} />
-    );
+    const alt = `${item.title} screenshot`;
+    const sizes = "(min-width: 1024px) 40vw, 100vw";
+    if (item.imageDark) {
+      return (
+        <>
+          <Image src={item.image} alt={alt} fill sizes={sizes} className={`object-cover dark:hidden ${className}`} />
+          <Image src={item.imageDark} alt={alt} fill sizes={sizes} className={`hidden object-cover dark:block ${className}`} />
+        </>
+      );
+    }
+    return <Image src={item.image} alt={alt} fill sizes={sizes} className={`object-cover ${className}`} />;
   }
   return (
     <div role="img" aria-label={`${item.title} title card`} className={`flex flex-col justify-end p-6 ${FIELD[item.tone]} ${className}`}>
@@ -40,19 +47,22 @@ export function WorkStill({ item, className = "", compact = false }: { item: Wor
   );
 }
 
-function Row({ item, active, onActivate }: { item: WorkItem; active: boolean; onActivate: () => void }) {
+function Card({ item, large = false }: { item: WorkItem; large?: boolean }) {
   const inner = (
     <>
-      <span className={`work-name ${active ? "text-ink" : "text-muted"}`}>{item.title}</span>
-      <span className="text-base text-muted">{item.kind}</span>
+      <span className="work-card-still block">
+        <span className="block">
+          <WorkStill item={item} compact className="absolute inset-0" />
+        </span>
+      </span>
+      <span className="mt-3 flex items-center gap-2">
+        <span className={`font-display font-semibold tracking-[-0.03em] ${large ? "text-3xl md:text-4xl" : "text-xl md:text-2xl"}`}>{item.title}</span>
+        <PiArrowUpRight aria-hidden className="work-card-arrow size-5 shrink-0" />
+      </span>
+      <span className="mt-0.5 block text-base text-muted">{item.kind}</span>
     </>
   );
-  const props = {
-    className: "work-row group flex flex-col gap-1 pb-6 pt-1",
-    "data-cursor": "View",
-    onPointerEnter: onActivate,
-    onFocus: onActivate,
-  };
+  const props = { className: "work-card", "data-cursor": "View" };
   return item.external ? (
     <a href={item.href} target="_blank" rel="noopener noreferrer" {...props}>
       {inner}
@@ -65,44 +75,27 @@ function Row({ item, active, onActivate }: { item: WorkItem; active: boolean; on
   );
 }
 
-/** Big names as the index; a sticky frame beside them shows the one under the cursor or focus. */
+/** The two highlights large, then everything else in a tighter grid, so a reviewer can scan it all at a glance. */
 export function WorkIndex({ items }: { items: WorkItem[] }) {
-  const [active, setActive] = useState(items[0]?.id);
+  const isHighlight = (item: WorkItem) => highlightedProjects.some((p) => p.slug === item.id);
 
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-12 lg:gap-8">
-      {/* Desktop: names on the left, one sticky still on the right. */}
-      <ul className="hidden lg:col-span-7 lg:block">
-        {items.map((item) => (
+    <div className="flex flex-col gap-8 md:gap-10">
+      <ul className="grid gap-8 md:grid-cols-2 md:gap-5">
+        {items.filter(isHighlight).map((item) => (
           <li key={item.id} data-reveal>
-            <Row item={item} active={item.id === active} onActivate={() => setActive(item.id)} />
+            <Card item={item} large />
           </li>
         ))}
       </ul>
-      <div className="hidden lg:col-span-5 lg:block" data-reveal>
-        <div className="sticky top-[15vh] aspect-4/5 overflow-hidden rounded-3xl">
-          {items.map((item) => (
-            <div
-              key={item.id}
-              aria-hidden={item.id !== active}
-              className={`work-still absolute inset-0 ${item.id === active ? "is-active" : ""}`}
-            >
-              <WorkStill item={item} className="absolute inset-0" />
-            </div>
+      <ul className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:gap-x-5 lg:grid-cols-3">
+        {items
+          .filter((item) => !isHighlight(item))
+          .map((item) => (
+            <li key={item.id} data-reveal>
+              <Card item={item} />
+            </li>
           ))}
-        </div>
-      </div>
-
-      {/* Phone and tablet: each name follows its own still. */}
-      <ul className="flex flex-col gap-10 lg:hidden">
-        {items.map((item) => (
-          <li key={item.id} data-reveal>
-            <div className="relative aspect-16/10 overflow-hidden rounded-3xl">
-              <WorkStill item={item} compact className="absolute inset-0" />
-            </div>
-            <Row item={item} active onActivate={() => {}} />
-          </li>
-        ))}
       </ul>
     </div>
   );

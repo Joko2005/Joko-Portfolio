@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ResumeLink } from "@/components/ui";
+import { CvLink } from "@/components/ui";
 import { site } from "@/content/site";
 import { NAV } from "./nav";
 import { SOCIALS } from "./socials";
@@ -44,7 +44,7 @@ export function Footer() {
             {site.email ? <a href={`mailto:${site.email}`}>{site.email}</a> : "[Add your email]"}
           </p>
           <p className="mt-1">
-            <ResumeLink label="Résumé" className="inline-flex items-center gap-1.5" />
+            <CvLink label="CV" className="inline-flex items-center gap-1.5" />
           </p>
         </div>
         <div>

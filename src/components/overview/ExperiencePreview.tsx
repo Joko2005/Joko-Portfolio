@@ -1,23 +1,31 @@
 import Link from "next/link";
+import { Chip } from "@/components/ui";
 import { realCertificates } from "@/content/certificates";
-import { competitions, experience } from "@/content/experience";
+import { experience } from "@/content/experience";
+import { stack } from "@/content/stack";
 import { getAllCertificates } from "@/lib/credly";
 
 /**
- * The Overview's short look at the Profile pages: the latest roles as single lines, the placings in one
- * sentence, and the latest certificates (Credly and hand-added). Everything else stays on its own page.
+ * The Overview's short look at the Profile pages: the latest roles as single lines, then the latest
+ * certificates (Credly and hand-added) and the main tools. Everything else stays on its own page.
  */
 export async function ExperiencePreview() {
   const roles = experience.slice(0, 3);
   const certs = (await getAllCertificates(realCertificates)).slice(0, 3);
+  const tools = stack.flatMap((g) => g.items.filter((i) => i.featured).map((i) => i.name));
 
   return (
-    <section aria-labelledby="experience-title" className="reveal pt-28 md:pt-48">
-      <h2 id="experience-title" className="section-title" data-split="chars">
-        Experience
-      </h2>
+    <section aria-labelledby="experience-title" className="reveal pt-24 md:pt-32">
+      <div className="section-head">
+        <h2 id="experience-title" className="section-title" data-split="chars">
+          Experience
+        </h2>
+        <Link href="/experience" className="link">
+          Full history
+        </Link>
+      </div>
 
-      <ol className="mt-10 flex flex-col gap-2">
+      <ol className="mt-6 flex flex-col gap-2 md:mt-8">
         {roles.map((e) => (
           <li key={e.org} data-reveal>
             <Link href="/experience" className="preview-row">
@@ -34,39 +42,39 @@ export async function ExperiencePreview() {
         ))}
       </ol>
 
-      <div data-reveal className="mt-10 grid gap-6 lg:grid-cols-12 lg:gap-8">
-        <p className="text-lg leading-snug lg:col-span-9 lg:col-start-4">
-          {competitions.map((c, i) => (
-            <span key={c.event}>
-              {i > 0 && " "}
-              <span className="font-medium">
-                {c.place} {c.field.replace(",", "")}
-              </span>{" "}
-              at {c.short}
-              {i < competitions.length - 1 ? ";" : "."}
-            </span>
-          ))}
-        </p>
+      <div data-reveal className="mt-10 grid gap-10 lg:grid-cols-2 lg:gap-5">
         {certs.length > 0 && (
-          <ul className="flex flex-col gap-1 text-base lg:col-span-9 lg:col-start-4">
-            {certs.map((c) => (
-              <li key={c.title}>
-                {c.title} <span className="text-muted">{c.issuer}, {c.year}</span>
+          <div>
+            <div className="section-head">
+              <h3 className="font-display text-xl font-semibold tracking-[-0.02em] md:text-2xl">Certificates</h3>
+              <Link href="/certificates" className="link">
+                All certificates
+              </Link>
+            </div>
+            <ul className="mt-4 flex flex-col gap-2 text-base">
+              {certs.map((c) => (
+                <li key={c.title}>
+                  {c.title} <span className="text-muted">{c.issuer}, {c.year}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        <div>
+          <div className="section-head">
+            <h3 className="font-display text-xl font-semibold tracking-[-0.02em] md:text-2xl">Stack</h3>
+            <Link href="/stack" className="link">
+              All tools
+            </Link>
+          </div>
+          <ul className="mt-4 flex flex-wrap gap-1.5">
+            {tools.map((t) => (
+              <li key={t}>
+                <Chip>{t}</Chip>
               </li>
             ))}
           </ul>
-        )}
-        <p className="flex flex-wrap gap-x-6 gap-y-2 text-base lg:col-span-9 lg:col-start-4">
-          <Link href="/experience" className="link">
-            Full history
-          </Link>
-          <Link href="/certificates" className="link">
-            Certificates
-          </Link>
-          <Link href="/stack" className="link">
-            Stack
-          </Link>
-        </p>
+        </div>
       </div>
     </section>
   );
