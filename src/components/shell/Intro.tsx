@@ -74,7 +74,7 @@ export function Intro({ name }: { name: string }) {
         0.3,
       )
       // The reveal: a clipping frame slides in while its contents slide the other way, holding the letters still.
-      .fromTo(q(".intro-fill"), { xPercent: -100 }, { xPercent: 0, duration: 1, ease: "power2.inOut" }, 0.3)
+      .fromTo(q(".intro-fill"), { xPercent: -100, autoAlpha: 1 }, { xPercent: 0, duration: 1, ease: "power2.inOut" }, 0.3)
       .fromTo(q(".intro-fill-inner"), { xPercent: 100 }, { xPercent: 0, duration: 1, ease: "power2.inOut" }, 0.3)
       .addLabel("exit")
       .to(q(".intro-word"), { yPercent: -40, duration: 0.7, ease: "expo.inOut" }, "exit")
@@ -125,8 +125,8 @@ export function Intro({ name }: { name: string }) {
           ))}
         </div>
         {/* Fill, revealed left to right: the build. */}
-        <div className="intro-fill absolute inset-0 overflow-hidden" style={{ transform: "translateX(-100%)" }}>
-          <div className="intro-fill-inner intro-type overflow-hidden" style={{ transform: "translateX(100%)" }}>
+        <div className="intro-fill absolute inset-0 overflow-hidden" style={{ visibility: "hidden" }}>
+          <div className="intro-fill-inner intro-type overflow-hidden">
             {letters.map((c, i) => (
               <span key={i} className="intro-char inline-block">
                 {c}

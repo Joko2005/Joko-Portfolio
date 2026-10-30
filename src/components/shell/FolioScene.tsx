@@ -5,11 +5,7 @@ import * as THREE from "three";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 
-export type HeroObjectProps = {
-  /** false = the design (blueprint outline), true = the build (solid character). */
-  built: boolean;
-  /** Becomes true when the intro has left; Folio then grows in and waves. */
-  started: boolean;
+export type FolioSceneProps = {
   reducedMotion: boolean;
   ink: string;
 };
@@ -20,7 +16,6 @@ const damp = THREE.MathUtils.damp;
 const PAPER = "#f4efe3";
 const FOLD = "#2457f5";
 const CREASE = "#cfcbc0";
-const MARK = "#8c8a83";
 const FACE = "#111111";
 const LIMB_ON_LIGHT = "#141414";
 const LIMB_ON_DARK = "#4a4a4c";
@@ -85,7 +80,7 @@ function outline(shape: THREE.Shape) {
   return g;
 }
 
-type Materials = Record<"paper" | "fold" | "crease" | "limb" | "face" | "mark", THREE.Material> & { lines: THREE.Material };
+type Materials = Record<"paper" | "fold" | "crease" | "limb" | "face", THREE.Material> & { lines: THREE.Material };
 
 function setFade({ lines, ...solids }: Materials, solid: number, outlined: number) {
   for (const m of Object.values(solids)) {
@@ -126,7 +121,7 @@ type Pose = { tilt: number; lean: number; armL: number; armR: number; frontL: nu
 
 const POSES = {
   think: { tilt: -0.1, lean: 0.06, armL: 1.5, armR: 0.28, frontL: 1, legL: 0.04, legR: -0.04 },
-  build: { tilt: -0.08, lean: 0, armL: 1.25, armR: 2.0, frontL: 1, legL: 0.1, legR: 0 },
+  rest: { tilt: 0, lean: 0, armL: -0.32, armR: 0.32, frontL: 0, legL: 0.04, legR: -0.04 },
   welcome: { tilt: 0.02, lean: 0, armL: -2.45, armR: 0.3, frontL: 0, legL: 0.05, legR: -0.05 },
   success: { tilt: 0.14, lean: 0, armL: -2.3, armR: 2.3, frontL: 0, legL: 0.5, legR: -0.4 },
 } satisfies Record<string, Pose>;
@@ -134,7 +129,7 @@ const POSES = {
 const WAVE_MS = 2200;
 const HOP_MS = 800;
 
-function Folio({ built, started, reducedMotion, ink }: HeroObjectProps) {
+function Folio({ reducedMotion, ink }: FolioSceneProps) {
   const root = useRef<THREE.Group>(null);
   const body = useRef<THREE.Group>(null);
   const armL = useRef<THREE.Group>(null);
@@ -142,9 +137,10 @@ function Folio({ built, started, reducedMotion, ink }: HeroObjectProps) {
   const legL = useRef<THREE.Group>(null);
   const legR = useRef<THREE.Group>(null);
   const eyes = useRef<THREE.Group>(null);
-  const card = useRef<THREE.Group>(null);
   const invalidate = useThree((s) => s.invalidate);
   const [hovered, setHovered] = useState(false);
+  // The hidden mechanic: a click flips Folio between the build (solid) and the design (blueprint).
+  const [built, setBuilt] = useState(true);
 
   const parts = useMemo(() => {
     const page = pageShape();
@@ -175,10 +171,6 @@ function Folio({ built, started, reducedMotion, ink }: HeroObjectProps) {
       foot: new THREE.SphereGeometry(0.2, 16, 12).scale(1.35, 0.72, 1.1).translate(0, -0.48, 0.05),
       eye: new THREE.CapsuleGeometry(0.065, 0.18, 4, 10),
       smile: new THREE.TorusGeometry(0.1, 0.021, 6, 16, Math.PI),
-      cardBase: new THREE.BoxGeometry(1.05, 0.74, 0.05),
-      cardBar: new THREE.BoxGeometry(0.42, 0.11, 0.06),
-      cardBlock: new THREE.BoxGeometry(0.28, 0.25, 0.06),
-      cardLine: new THREE.BoxGeometry(0.4, 0.06, 0.06),
     };
     // The blueprint: limbs, fold and face drawn as flat outlines.
     const armWire = loops([stadium(0.12, -0.05, -armLen - 0.05), ellipse(0, -armLen - 0.14, 0.17, 0.17)]);
@@ -204,7 +196,6 @@ function Folio({ built, started, reducedMotion, ink }: HeroObjectProps) {
       crease: matte(CREASE),
       limb: matte(LIMB_ON_DARK),
       face: matte(FACE),
-      mark: matte(MARK),
       lines: new THREE.LineBasicMaterial({ transparent: true, opacity: 0 }),
     };
     return { geometries, wires: { armWire, legWire, foldWire, eyeWire, smileWire }, materials };
@@ -254,19 +245,27 @@ function Folio({ built, started, reducedMotion, ink }: HeroObjectProps) {
   });
   const settled = useRef(false);
 
-  // Wave hello once when Folio arrives.
+  // Wave hello on arrival, and goodbye whenever the visitor reaches the footer.
   useEffect(() => {
-    if (started && !reducedMotion) s.current.waveUntil = performance.now() + WAVE_MS;
-  }, [started, reducedMotion]);
+    if (reducedMotion) return;
+    s.current.waveUntil = performance.now() + WAVE_MS;
+    const footer = document.querySelector("footer");
+    if (!footer) return;
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) s.current.waveUntil = performance.now() + WAVE_MS;
+    }, { threshold: 0.6 });
+    io.observe(footer);
+    return () => io.disconnect();
+  }, [reducedMotion]);
 
-  // Rendering on demand: every frame while something is changing, 30 a second for the idle breath,
+  // Rendering on demand: every frame while something is changing, 20 a second for the idle breath,
   // and not at all under reduced motion once at rest.
   useEffect(() => {
     let frame = 0;
     let last = 0;
     const tick = (now: number) => {
       frame = requestAnimationFrame(tick);
-      if (settled.current && (reducedMotion || now - last < 33)) return;
+      if (settled.current && (reducedMotion || now - last < 50)) return;
       last = now;
       invalidate();
     };
@@ -282,7 +281,7 @@ function Folio({ built, started, reducedMotion, ink }: HeroObjectProps) {
     const now = performance.now();
     const waving = !reducedMotion && (hovered || now < st.waveUntil);
     const hopping = now < st.hopUntil;
-    const target: Pose = hopping ? POSES.success : waving ? POSES.welcome : built ? POSES.build : POSES.think;
+    const target: Pose = hopping ? POSES.success : waving ? POSES.welcome : built ? POSES.rest : POSES.think;
 
     let moving = waving || hopping;
     const ease = (from: number, to: number, speed: number) => {
@@ -290,7 +289,7 @@ function Folio({ built, started, reducedMotion, ink }: HeroObjectProps) {
       if (Math.abs(from - to) > 0.002) moving = true;
       return damp(from, to, speed, dt);
     };
-    st.appear = ease(st.appear, started ? 1 : 0, 3.2);
+    st.appear = ease(st.appear, 1, 3.2);
     st.build = ease(st.build, built ? 1 : 0, 5);
     st.spin = ease(st.spin, st.spinTarget, 4);
     st.hop = ease(st.hop, hopping ? 1 : 0, 9);
@@ -304,7 +303,7 @@ function Folio({ built, started, reducedMotion, ink }: HeroObjectProps) {
     root.current.scale.setScalar(0.8 * (0.85 + 0.15 * st.appear) * (1 + 0.04 * st.hover));
     root.current.rotation.set(st.rx + 0.04, st.ry - 0.22 + st.spin, 0);
     const breath = reducedMotion ? 0 : Math.sin(t * 1.6) * 0.012;
-    root.current.position.y = 0.3 + breath + st.hop * 0.42;
+    root.current.position.y = 0.1 + breath + st.hop * 0.3;
     body.current.rotation.set(st.pose.lean, 0, st.pose.tilt);
     body.current.scale.set(1 - breath * 0.5, 1 + breath, 1);
 
@@ -320,13 +319,6 @@ function Folio({ built, started, reducedMotion, ink }: HeroObjectProps) {
       if (t > st.nextBlink + 0.13) st.nextBlink = t + 2.6 + (Math.sin(t * 7.3) + 1) * 1.4;
       const closing = t > st.nextBlink;
       eyes.current.scale.y = closing ? 0.12 : 1;
-    }
-
-    // The card rises into Folio's hand on Build.
-    if (card.current) {
-      card.current.visible = st.build > 0.02;
-      card.current.scale.setScalar(0.8 + 0.2 * st.build);
-      card.current.position.y = 0.25 + 0.25 * st.build;
     }
 
     // Fade between the blueprint and the solid; the solid isn't drawn at all until it's needed.
@@ -350,8 +342,12 @@ function Folio({ built, started, reducedMotion, ink }: HeroObjectProps) {
       }}
       onClick={(e) => {
         e.stopPropagation();
-        if (reducedMotion) return;
-        // A happy hop and a full turn, showing off the back of the page.
+        if (reducedMotion) {
+          setBuilt((b) => !b);
+          return;
+        }
+        // A happy hop and a full turn, landing as the other half of "I design it. I build it."
+        setBuilt((b) => !b);
         s.current.hopUntil = performance.now() + HOP_MS;
         s.current.spinTarget += Math.PI * 2;
       }}
@@ -384,14 +380,6 @@ function Folio({ built, started, reducedMotion, ink }: HeroObjectProps) {
           <lineSegments geometry={wires.armWire} material={m.lines} />
         </group>
 
-        {/* The interface Folio built, held up on Build. */}
-        <group ref={card} position={[1.64, 0.5, 0.2]} rotation={[0, -0.18, -0.09]} visible={false}>
-          <mesh geometry={g.cardBase} material={m.crease} />
-          <mesh geometry={g.cardBar} material={m.fold} position={[-0.22, 0.2, 0.02]} />
-          <mesh geometry={g.cardBlock} material={m.mark} position={[-0.29, -0.11, 0.02]} />
-          <mesh geometry={g.cardLine} material={m.mark} position={[0.2, -0.05, 0.02]} />
-          <mesh geometry={g.cardLine} material={m.mark} position={[0.2, -0.17, 0.02]} />
-        </group>
       </group>
 
       <group ref={legL} position={[-0.42, -H, 0]}>
@@ -437,8 +425,8 @@ function RoomLight() {
   return null;
 }
 
-/** Hero mascot: Folio, a page drawn as a blueprint (design) that fills into a solid character (build). */
-export default function HeroObject(props: HeroObjectProps) {
+/** Folio, the mascot: a page that is either a blueprint (design) or a solid character (build). */
+export default function FolioScene(props: FolioSceneProps) {
   const wrap = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(true);
 
@@ -457,7 +445,7 @@ export default function HeroObject(props: HeroObjectProps) {
         frameloop={visible ? "demand" : "never"}
         flat
         dpr={[1, 1.5]}
-        camera={{ position: [0, 0, 6.2], fov: 32 }}
+        camera={{ position: [0, 0, 7.6], fov: 32 }}
         gl={{ antialias: true, alpha: true }}
         onPointerLeave={() => (document.body.style.cursor = "")}
       >

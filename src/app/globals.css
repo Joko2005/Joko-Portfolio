@@ -523,7 +523,7 @@ html {
 /* The name, sized to the hero's own width so it runs margin to margin beside the sidebar. */
 .hero-name {
   font-family: var(--font-display);
-  font-size: min(40.5cqi, 42svh);
+  font-size: min(40.5cqi, 50svh);
   font-weight: 600;
   line-height: 0.9;
   letter-spacing: -0.05em;
@@ -571,38 +571,9 @@ html {
   background: var(--ink);
   color: var(--bg);
 }
-/* Statement: the two lines share one slot and swap with a short roll. */
-.statement {
-  display: grid;
-  overflow: hidden;
-}
-.statement > span {
-  grid-area: 1 / 1;
-  transition:
-    translate 420ms var(--ease-out),
-    opacity 300ms var(--ease-out);
-}
-.statement > span:last-child,
-.statement[data-built="true"] > span:first-child {
-  translate: 0 -100%;
-  opacity: 0;
-}
-.statement[data-built="true"] > span:last-child {
-  translate: 0 0;
-  opacity: 1;
-}
-.statement > span:last-child {
-  translate: 0 100%;
-}
-
 @media (min-width: 48rem) {
   :root {
     --bar-h: 0px;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .statement > span {
-    transition-property: opacity;
   }
 }
 

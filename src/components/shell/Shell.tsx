@@ -7,6 +7,7 @@ import { PiList, PiMagnifyingGlass, PiX } from "react-icons/pi";
 import { Logo } from "@/components/ui";
 import { site } from "@/content/site";
 import { CommandPalette, ShortcutHint } from "./CommandPalette";
+import { FolioCorner } from "./FolioCorner";
 import { Footer } from "./Footer";
 import { Reveals } from "./Reveals";
 import { NAV, NAV_GROUPS, sectionFromPath } from "./nav";
@@ -178,6 +179,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
 
       <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
       <Reveals />
+      <FolioCorner />
     </div>
   );
 }

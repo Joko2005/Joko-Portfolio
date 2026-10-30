@@ -57,7 +57,7 @@ Rules:
 - **Browser icon**: `src/app/icon.svg`, the white mark on a black rounded tile, so it reads on light and dark tabs.
 - **Content column**: fills the space beside the sidebar; its right inset matches the sidebar's left one, so the page has one pair of outer margins.
 - **Overview, top to bottom**:
-  1. **Hero** (pinned, two screens): who this is at the top (a square portrait, 80px on phones and 112px from md, in a `surface` frame so the dark backdrop doesn't dissolve into the page; role and location, plus the name on phones) and the Design / Build switch, the statement ("I design it." / "I build it.") with one sentence, then the action row: "See the work" (`btn-primary`), Résumé (`btn`), and LinkedIn / GitHub / Email as round icon buttons on `surface`, the arrow in the right half, JOKO at the bottom as the one big element, margin to margin in tall windows and capped at `42svh` in shorter ones. On phones JOKO sits under the top row.
+  1. **Hero** (one screen from md): the portrait with role and location, the statement "I design it. I build it." with one sentence on the left and the actions (See the work, Résumé, LinkedIn, GitHub, Email) on the right, then JOKO as the one big element, capped at `50svh`. On phones: portrait, JOKO, statement, actions, at natural height.
   2. **Selected work**: big names as the index (active one in full ink, the rest muted), each with its kind beneath; a sticky 4:5 preview on the right. Phones: still, then name.
   3. **Experience** (`ExperiencePreview`): the three latest roles as bands (dates, organisation and role, kind), the competition placings in one sentence, certificates only once real ones exist, then links to Experience, Certificates and Stack. The Profile pages hold everything else.
   4. **About**: 28px paragraph with the portrait as a three-line drop capital, facts in a side column.
@@ -92,7 +92,9 @@ About 2s, once per session, skippable (click, key, Skip intro). JOKO rises in ou
 - The `h1` is the monument; its visually hidden line carries the role at body size.
 - Letters rise through a mask after the loader (0.9s, 60ms stagger), other parts follow; settled in about 1.1s. Reduced motion: fade only.
 - **Design / Build switch**: two pressed-state buttons on a pill; the active one fills with `ink`. Scrolling past half the pinned hero flips it too.
-- **Folio** (`HeroObject`): the mascot, built in code from the brand character sheet: a bevelled page with a blue fold, jointed limbs and a face. Design shows it as a blueprint outline; Build fades in the matte solid (limbs lift to dark grey on the dark theme) and it holds up an interface card. Poses (think, build, welcome, success) are joint angles that blend. It waves on arrival and on hover, hops and turns on click, blinks and breathes, and tilts toward the pointer. Starts after the intro and the hero's entrance, once the browser is idle. Renders on demand while on screen: every frame while changing, 30 a second at rest; geometry disposed on unmount; a drawn outline stands in while it loads. Reduced motion: poses snap, nothing idles.
+
+### Folio (`FolioCorner`, `FolioScene`)
+The mascot, built in code from the brand character sheet (a bevelled page with a blue fold, jointed limbs and a face). A 112 × 144px companion fixed in the bottom-right corner from md, on every page; phones skip it. The one hidden mechanic: clicking makes it hop and turn, and flips it between the solid build and a blueprint outline of the design. It waves on arrival, on hover and at the footer, blinks, breathes and leans toward the pointer. Decorative and `aria-hidden`. Starts after the intro once the browser is idle; renders on demand (every frame while changing, 20 a second at rest, only while on screen). Reduced motion: poses snap, nothing idles.
 
 ### Work index (`WorkIndex`)
 Names at 72px; hover or focus makes one active and swaps the sticky preview (opacity 200ms; inactive stills are `visibility: hidden`). A preview is the project's screenshot when `image` is set in `src/content/work.ts`, otherwise a drawn title card on its tone (ink, a section hue, or surface).
@@ -145,7 +147,7 @@ Joko's tools as monochrome clay; each object opens real work. The selected objec
 
 Emil-design-eng rules (CLAUDE.md) hold: transform and opacity, `--ease-out`, hover gated to fine pointers, reduced motion keeps opacity and colour only.
 
-- **Signature**: the pinned hero, design → build.
+- **Signature**: the theme change through the cursor arrow, and Folio in the corner.
 - **Loader**: the one long showpiece (see Loader).
 - **Section entrances** (`Reveals`, GSAP ScrollTrigger): in each `.reveal` section the heading, then every `[data-reveal]` part, rise 24px and fade, 70ms apart, once at 80% of the viewport. Hidden only by the tween, so content stays if script fails.
 - **Text** (`Reveals`, GSAP SplitText): `data-split="chars"` headings rise letter by letter through their line masks (0.9s, 22ms stagger, once); `data-split="words"` paragraphs fill from 18% to full ink, scrubbed as they cross the view (reading pace). Screen readers get the whole text. Reduced motion: headings fade, paragraphs stay solid.
